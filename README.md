@@ -164,7 +164,7 @@ journal= {arXiv preprint arXiv:2505.02833}
 and this github repo:
 ```bibtex
 @software{ze2025gmr,
-title={General Motion Retargeting},
+title={GMR: General Motion Retargeting},
 author= {Yanjie Ze and João Pedro Araújo and Jiajun Wu and C. Karen Liu},
 year= {2025},
 url= {https://github.com/YanjieZe/GMR},
