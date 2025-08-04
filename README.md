@@ -30,6 +30,10 @@ Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Booster T1,
 
 
 
+https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
+
+
+
 
 
 
