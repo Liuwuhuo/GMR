@@ -192,6 +192,20 @@ def main():
     SMPLX_FOLDER = HERE / ".." / "assets" / "body_models"
 
     verbose = False
+
+    hard_motions_paths = ["../assets/hard_motions/0.txt", 
+                          "../assets/hard_motions/1.txt"]
+    hard_motions = []
+    for hard_motions_path in hard_motions_paths:
+        with open(hard_motions_path, "r") as f:
+            for line in f:
+                if "Motion:" in line:
+                    motion_path = line.split(":")[1].strip()
+                else:
+                    continue
+                motion_path = motion_path.split(",")[0].strip().split(".")[0]
+                hard_motions.append(motion_path)
+                
                 
     args_list = []
     for dirpath, _, filenames in os.walk(src_folder):
@@ -211,6 +225,8 @@ def main():
     new_args_list = []
     for arguments in args_list:
         motion_name = arguments[0].split("/")[-1].split('.')[0]
+        if motion_name in hard_motions:
+            continue
         if any(content in motion_name for content in exclude_file_content):
             continue
         new_args_list.append(arguments)
