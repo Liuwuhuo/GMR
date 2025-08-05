@@ -10,6 +10,9 @@
   <a href="https://github.com/YanjieZe/GMR/releases">
     <img src="https://img.shields.io/badge/version-0.1.0-blue.svg" alt="Version"/>
   </a>
+  <a href="https://x.com/ZeYanjie/status/1952446745696469334">
+    <img src="https://img.shields.io/badge/twitter-ZeYanjie-blue.svg" alt="Twitter"/>
+  </a>
 
 
 ![Banner for GMR](./assets/GMR.png)
@@ -41,11 +44,11 @@ https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
 
 | Robot/Data Format | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
 | --- | --- | --- | --- | --- |
-| Unitree G1 | ✅ | ✅ | ✅ |
-| Booster T1 | ✅ |  ✅  | TBD | 
-| Stanford ToddlerBot | ✅ | ✅ | TBD |
-| Fourier N1 | ✅ | ✅ | TBD |
-| ENGINEAI PM01 | ✅ | ✅ | TBD |
+| Unitree G1 `unitree_g1` | ✅ | ✅ | ✅ |
+| Booster T1 `booster_t1` | ✅ |  ✅  | TBD | 
+| Stanford ToddlerBot `stanford_toddy` | ✅ | ✅ | TBD |
+| Fourier N1 `fourier_n1` | ✅ | ✅ | TBD |
+| ENGINEAI PM01 `engineai_pm01` | ✅ | ✅ | TBD |
 | More robots coming soon |
 
 
