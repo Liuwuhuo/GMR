@@ -29,11 +29,17 @@ This repo is licensed under the [MIT License](LICENSE).
 
 # Demo
 
-Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Booster T1, Stanford ToddlerBot, Fourier N1, and ENGINEAI PM01):
+Demo 1: Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Booster T1, Stanford ToddlerBot, Fourier N1, and ENGINEAI PM01):
 
 
 
 https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
+
+
+Demo 2: Screen recording of my one command line usage.
+
+
+https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 
 
 
