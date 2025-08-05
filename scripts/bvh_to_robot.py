@@ -83,7 +83,6 @@ if __name__ == "__main__":
     # Start the viewer
     i = 0
 
-    origin_xyz = None
     while i < len(lafan1_data_frames):
         
         # FPS measurement
@@ -106,7 +105,7 @@ if __name__ == "__main__":
 
         # visualize
         robot_motion_viewer.step(
-            root_pos=qpos[:3] - origin_xyz,
+            root_pos=qpos[:3],
             root_rot=qpos[3:7],
             dof_pos=qpos[7:],
             human_motion_data=retargeter.scaled_human_data,
