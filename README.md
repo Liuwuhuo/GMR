@@ -206,6 +206,10 @@ url= {https://github.com/YanjieZe/GMR},
 note= {GitHub repository}
 }
 ```
+# Known Issues
+
+Designing a single config for all different humans is not trivial. We observe some motions might have bad retargeting results. If you observe some bad results, please let us know! We now have a collection of such motions in [TEST_MOTIONS.md](TEST_MOTIONS.md).
+
 
 
 # Acknowledgement
