@@ -39,13 +39,13 @@ https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
 
 # Supported Robots and Data Formats
 
-| Robot/Data Format | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | More formats coming soon | 
-| --- | --- | --- | --- |
-| Unitree G1 | ✅ | ✅ | - |
-| Booster T1 | ✅ |  ✅  | - | 
-| Stanford ToddlerBot | ✅ | ✅ | - |
-| Fourier N1 | ✅ | ✅ | - |
-| ENGINEAI PM01 | ✅ | ✅ | - |
+| Robot/Data Format | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
+| --- | --- | --- | --- | --- |
+| Unitree G1 | ✅ | ✅ | ✅ |
+| Booster T1 | ✅ |  ✅  | TBD | 
+| Stanford ToddlerBot | ✅ | ✅ | TBD |
+| Fourier N1 | ✅ | ✅ | TBD |
+| ENGINEAI PM01 | ✅ | ✅ | TBD |
 | More robots coming soon |
 
 
@@ -135,6 +135,23 @@ Retarget a folder of motions:
 python scripts/bvh_to_robot_dataset.py --src_folder <path_to_dir_of_bvh_data> --tgt_folder <path_to_dir_to_save_robot_data> --robot <robot_name>
 ```
 By default there is no visualization for batch retargeting.
+
+
+## Retargeting from FBX (OptiTrack) to Robot
+
+We provide the script to use OptiTrack MoCap data for real-time streaming and retargeting.
+
+Usually you will have two computers, one is the server that installed with Motive (Desktop APP for OptiTrack) and the other is the client that installed with GMR.
+
+Find the server ip (the computer that installed with Motive) and client ip (your computer). Set the streaming as follows:
+
+![OptiTrack Streaming](./assets/optitrack.png)
+
+And then run:
+```bash
+python scripts/optitrack_to_robot.py --server_ip <server_ip> --client_ip <client_ip> --use_multicast False --robot unitree_g1
+```
+You should see the visualization of the retargeted robot motion in a mujoco window.
 
 
 ## Visualize saved robot motion

@@ -28,29 +28,24 @@ IK_CONFIG_DICT = {
         "stanford_toddy": IK_CONFIG_ROOT / "bvh_to_toddy.json",
         "engineai_pm01": IK_CONFIG_ROOT / "bvh_to_pm01.json",
     },
+    "fbx":{
+        "unitree_g1": IK_CONFIG_ROOT / "fbx_to_g1.json",
+    },
 }
 
 
 ROBOT_BASE_DICT = {
     "unitree_g1": "pelvis",
-    "unitree_g1_with_hands": "pelvis",
     "booster_t1": "Waist",
     "stanford_toddy": "waist_link",
     "fourier_n1": "base_link",
     "engineai_pm01": "LINK_BASE",
-    # Hand models use hand palm as base
-    "dex31_left_hand": "left_hand_palm",
-    "dex31_right_hand": "right_hand_palm",
 }
 
 VIEWER_CAM_DISTANCE_DICT = {
     "unitree_g1": 2.0,
-    "unitree_g1_with_hands": 2.0,
     "booster_t1": 2.0,
     "stanford_toddy": 1.0,
     "fourier_n1": 2.0,
     "engineai_pm01": 2.0,
-    # Hand models need closer camera for detailed view
-    "dex31_left_hand": 0.5,
-    "dex31_right_hand": 0.5,
 }
