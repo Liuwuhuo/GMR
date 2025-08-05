@@ -190,11 +190,12 @@ def main():
     tgt_folder = args.tgt_folder
 
     SMPLX_FOLDER = HERE / ".." / "assets" / "body_models"
+    hard_motions_folder = HERE / ".." / "assets" / "hard_motions"
 
     verbose = False
 
-    hard_motions_paths = ["../assets/hard_motions/0.txt", 
-                          "../assets/hard_motions/1.txt"]
+    hard_motions_paths = [hard_motions_folder / "0.txt", 
+                          hard_motions_folder / "1.txt"]
     hard_motions = []
     for hard_motions_path in hard_motions_paths:
         with open(hard_motions_path, "r") as f:
