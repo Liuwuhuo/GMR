@@ -18,8 +18,8 @@
 ![Banner for GMR](./assets/GMR.png)
 
 Key features of GMR:
-- Real-time retargeting, unlock the potential of real-time whole-body teleoperation, i.e., [TWIST](https://github.com/YanjieZe/TWIST).
-- Carefully tuned for goof performance of RL tracking policies.
+- Real-time high-quality retargeting, unlock the potential of real-time whole-body teleoperation, i.e., [TWIST](https://github.com/YanjieZe/TWIST).
+- Carefully tuned for good performance of RL tracking policies.
 - Support multiple humanoid robots and multiple human motion data formats (See our table below).
 
 **NOTE: If you want this repo to support a new robot or a new human motion data format, send the robot files (`.xml` and meshes) / human motion data to <a href="mailto:lastyanjieze@gmail.com">Yanjie Ze</a> or create an issue, we will support it as soon as possible.**
