@@ -25,7 +25,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "kuavo_s45"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "kuavo_s45", "hightorque_hi"],
         default="unitree_g1",
     )
     
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
         # retarget
         qpos = retarget.retarget(smplx_data)
-        
+
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],

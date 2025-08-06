@@ -13,6 +13,9 @@
   <a href="https://x.com/ZeYanjie/status/1952446745696469334">
     <img src="https://img.shields.io/badge/twitter-ZeYanjie-blue.svg" alt="Twitter"/>
   </a>
+  <a href="https://yanjieze.github.io/humanoid-foundation/#GMR">
+    <img src="https://img.shields.io/badge/blog-GMR-blue.svg" alt="Blog"/>
+  </a>
 
 
 ![Banner for GMR](./assets/GMR.png)
@@ -25,6 +28,11 @@ Key features of GMR:
 **NOTE: If you want this repo to support a new robot or a new human motion data format, send the robot files (`.xml`, `.urdf`, and meshes) / human motion data to <a href="mailto:lastyanjieze@gmail.com">Yanjie Ze</a> or create an issue, we will support it as soon as possible.**
 
 This repo is licensed under the [MIT License](LICENSE).
+
+# News & Updates
+
+- 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
+- 2025-08-04: Initial release of GMR. Check our [twitter post](https://x.com/ZeYanjie/status/1952446745696469334).
 
 
 # Demo
@@ -55,6 +63,8 @@ https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 | Stanford ToddlerBot `stanford_toddy` | ✅ | ✅ | TBD |
 | Fourier N1 `fourier_n1` | ✅ | ✅ | TBD |
 | ENGINEAI PM01 `engineai_pm01` | ✅ | ✅ | TBD |
+| HighTorque Hi `hightorque_hi` | ✅ | TBD | TBD |
+| Kuavo S45 `kuavo_s45` | TBD | TBD | TBD |
 | More robots coming soon |
 
 
@@ -222,3 +232,4 @@ The original robot models can be found at the following locations:
 * [Fourier N1](https://github.com/FFTAI/Wiki-GRx-Gym): [Link to file](https://github.com/FFTAI/Wiki-GRx-Gym/tree/FourierN1/legged_gym/resources/robots/N1)
 * [Toddlerbot](https://github.com/hshi74/toddlerbot): [Link to file](https://github.com/hshi74/toddlerbot/tree/main/toddlerbot/descriptions/toddlerbot_active)
 * [Unitree G1](https://github.com/unitreerobotics/unitree_ros): [Link to file](https://github.com/unitreerobotics/unitree_ros/tree/master/robots/g1_description)
+* [HighToqure Hi](https://www.hightorquerobotics.com/hi/)
