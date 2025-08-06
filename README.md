@@ -56,16 +56,16 @@ https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 
 # Supported Robots and Data Formats
 
-| Robot/Data Format | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
-| --- | --- | --- | --- | --- |
-| Unitree G1 `unitree_g1` | ✅ | ✅ | ✅ |
-| Booster T1 `booster_t1` | ✅ |  ✅  | TBD | 
-| Stanford ToddlerBot `stanford_toddy` | ✅ | ✅ | TBD |
-| Fourier N1 `fourier_n1` | ✅ | ✅ | TBD |
-| ENGINEAI PM01 `engineai_pm01` | ✅ | ✅ | TBD |
-| HighTorque Hi `hightorque_hi` | ✅ | TBD | TBD |
-| Kuavo S45 `kuavo_s45` | TBD | TBD | TBD |
-| More robots coming soon |
+| Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
+| --- | --- | --- | --- | --- | --- |
+| Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
+| Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
+| Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
+| Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
+| ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
+| HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
+| Kuavo S45 `kuavo_s45` | TBD | TBD | TBD | TBD |
+| More robots coming soon | |
 
 
 
