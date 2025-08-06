@@ -25,7 +25,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "kuavo_s45", "hightorque_hi"],
         default="unitree_g1",
     )
     
@@ -100,6 +100,7 @@ if __name__ == "__main__":
     
     # Start the viewer
     i = 0
+
     while True:
         if args.loop:
             i = (i + 1) % len(smplx_data_frames)
@@ -122,7 +123,7 @@ if __name__ == "__main__":
 
         # retarget
         qpos = retarget.retarget(smplx_data)
-        
+
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],
@@ -134,7 +135,7 @@ if __name__ == "__main__":
             show_human_body_name=False,
             rate_limit=args.rate_limit,
         )
-        
+
         if args.save_path is not None:
             qpos_list.append(qpos)
             
