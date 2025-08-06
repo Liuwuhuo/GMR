@@ -100,6 +100,7 @@ if __name__ == "__main__":
     
     # Start the viewer
     i = 0
+
     while True:
         if args.loop:
             i = (i + 1) % len(smplx_data_frames)
@@ -134,7 +135,7 @@ if __name__ == "__main__":
             show_human_body_name=False,
             rate_limit=args.rate_limit,
         )
-        
+
         if args.save_path is not None:
             qpos_list.append(qpos)
             
