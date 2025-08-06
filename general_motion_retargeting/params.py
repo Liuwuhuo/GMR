@@ -10,6 +10,7 @@ ROBOT_XML_DICT = {
     "stanford_toddy": ASSET_ROOT / "stanford_toddy" / "toddy_mocap.xml",
     "fourier_n1": ASSET_ROOT / "fourier_n1" / "n1_mocap.xml",
     "engineai_pm01": ASSET_ROOT / "engineai_pm01" / "pm_v2.xml",
+    "kuavo_s45": ASSET_ROOT / "kuavo_s45" / "biped_s45_collision.xml",
 }
 
 IK_CONFIG_DICT = {
@@ -20,6 +21,7 @@ IK_CONFIG_DICT = {
         "stanford_toddy": IK_CONFIG_ROOT / "smplx_to_toddy.json",
         "fourier_n1": IK_CONFIG_ROOT / "smplx_to_n1.json",
         "engineai_pm01": IK_CONFIG_ROOT / "smplx_to_pm01.json",
+        "kuavo_s45": IK_CONFIG_ROOT / "smplx_to_kuavo.json",
     },
     "bvh":{
         "unitree_g1": IK_CONFIG_ROOT / "bvh_to_g1.json",
@@ -40,6 +42,7 @@ ROBOT_BASE_DICT = {
     "stanford_toddy": "waist_link",
     "fourier_n1": "base_link",
     "engineai_pm01": "LINK_BASE",
+    "kuavo_s45": "base_link",
 }
 
 VIEWER_CAM_DISTANCE_DICT = {
@@ -48,4 +51,5 @@ VIEWER_CAM_DISTANCE_DICT = {
     "stanford_toddy": 1.0,
     "fourier_n1": 2.0,
     "engineai_pm01": 2.0,
+    "kuavo_s45": 2.0,
 }
