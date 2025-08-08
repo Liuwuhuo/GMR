@@ -14,6 +14,19 @@ def load_optitrack_fbx_motion_file(motion_file):
         motion_data = pickle.load(f)
     return motion_data
 
+def offset_to_ground(retargeter: GMR, motion_data):
+    offset = np.inf
+    for human_data in motion_data:
+        human_data = retargeter.to_numpy(human_data)
+        human_data = retargeter.scale_human_data(human_data, retargeter.human_root_name, retargeter.human_scale_table)
+        human_data = retargeter.offset_human_data(human_data, retargeter.pos_offsets1, retargeter.rot_offsets1)
+        for body_name in human_data.keys():
+            pos, quat = human_data[body_name]
+            if pos[2] < offset:
+                offset = pos[2]
+
+    return offset
+
 if __name__ == "__main__":
     
     HERE = pathlib.Path(__file__).parent
@@ -70,6 +83,7 @@ if __name__ == "__main__":
     # Load OptiTrack FMB motion trajectory
     print(f"Loading OptiTrack FBX motion file: {args.motion_file}")
     lafan1_data_frames = load_optitrack_fbx_motion_file(args.motion_file)
+    lafan1_data_frames = lafan1_data_frames[:1500] # FIXME:
     print(f"Loaded {len(lafan1_data_frames)} frames")
     
     
@@ -77,8 +91,11 @@ if __name__ == "__main__":
     retargeter = GMR(
         src_human="fbx_offline",  # Use the new fbx configuration
         tgt_robot=args.robot,
-        actual_human_height=1.6,
+        actual_human_height=1.8,
     )
+
+    height_offset = offset_to_ground(retargeter, lafan1_data_frames)
+    retargeter.set_ground_offset(height_offset)
 
     motion_fps = 120
     
@@ -140,6 +157,32 @@ if __name__ == "__main__":
         if args.save_path is not None:
             qpos_list.append(qpos)
 
+    # Apply smoothing to qpos_list before plotting and saving
+    import scipy.ndimage
+
+    if len(qpos_list) > 0:
+        qpos_array = np.array(qpos_list)
+        # Apply a Gaussian filter along the time axis for smoothing
+        # You can adjust sigma for more/less smoothing
+        smoothed_qpos_array = scipy.ndimage.gaussian_filter1d(qpos_array, sigma=10, axis=0)
+        qpos_list = [smoothed_qpos_array[i] for i in range(smoothed_qpos_array.shape[0])]
+
+    # Visualize qpos as 1D time series, each entry in a separate subplot
+    import matplotlib.pyplot as plt
+    qpos_array = np.array(qpos_list)  # shape: (num_frames, qpos_dim)
+    num_entries = qpos_array.shape[1]
+    fig, axes = plt.subplots(num_entries, 1, figsize=(10, 2 * num_entries), sharex=True)
+    if num_entries == 1:
+        axes = [axes]
+    time = np.arange(qpos_array.shape[0])
+    for idx in range(num_entries):
+        axes[idx].plot(time, qpos_array[:, idx])
+        axes[idx].set_ylabel(f'qpos[{idx}]')
+        axes[idx].grid(True)
+    axes[-1].set_xlabel('Frame')
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(os.path.join(save_dir, "qpos_time_series.png"))
 
     if args.save_path is not None:
         import pickle
