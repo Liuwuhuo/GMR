@@ -49,8 +49,16 @@ Demo 2: Screen recording of my one command line usage.
 
 https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 
+Demo 3: HighTorque robot doing a twist dance
 
 
+
+https://github.com/user-attachments/assets/1d3e663b-f29e-41b1-8e15-5c0deb6a4a5c
+
+Demo 4: Kuavo robot picking up a box
+
+
+https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 
 
 
