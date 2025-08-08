@@ -43,19 +43,27 @@ Demo 1: Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Boo
 
 https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
 
+Demo 2: Galexea R1 Pro, a wheeled humanoid robot, doing human motion
 
-Demo 2: Screen recording of my one command line usage.
+
+https://github.com/user-attachments/assets/903ed0b0-0ac5-4226-8f82-5a88631e9b7c
+
+
+https://github.com/user-attachments/assets/deea0e64-f1c6-41bc-8661-351682006d5d
+
+
+Demo 3: Screen recording of my one command line usage. Switch robots with just changign an argument.
 
 
 https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 
-Demo 3: HighTorque robot doing a twist dance
+Demo 4: HighTorque robot doing a twist dance
 
 
 
 https://github.com/user-attachments/assets/1d3e663b-f29e-41b1-8e15-5c0deb6a4a5c
 
-Demo 4: Kuavo robot picking up a box
+Demo 5: Kuavo robot picking up a box
 
 
 https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
