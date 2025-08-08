@@ -251,4 +251,5 @@ The original robot models can be found at the following locations:
 * [Unitree G1](https://github.com/unitreerobotics/unitree_ros): [Link to file](https://github.com/unitreerobotics/unitree_ros/tree/master/robots/g1_description)
 * [HighToqure Hi](https://www.hightorquerobotics.com/hi/)
 * [Galaxea R1 Pro](https://galaxea-dynamics.com/): MIT license
+* [LEJU Kuavo S45](https://gitee.com/leju-robot/kuavo-ros-opensource/blob/master/LICENSE): MIT license
 
