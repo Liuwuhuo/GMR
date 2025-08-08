@@ -72,6 +72,7 @@ https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
+| Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
 | More robots coming soon | |
 

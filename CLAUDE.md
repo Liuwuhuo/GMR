@@ -37,6 +37,9 @@ Core robot models in `assets/` directory:
 - Stanford ToddlerBot (`stanford_toddy`) 
 - Fourier N1 (`fourier_n1`)
 - ENGINEAI PM01 (`engineai_pm01`)
+- Kuavo S45 (`kuavo_s45`)
+- HighTorque Hi (`hightorque_hi`)
+- Galaxea R1 Pro (`galaxea_r1pro`)
 
 Additional models retained in ROBOT_BASE_DICT for compatibility:
 - `unitree_g1_with_hands`, `dex31_left_hand`, `dex31_right_hand`
@@ -79,6 +82,7 @@ Add `--record_video --video_path <output.mp4>` to any visualization command to r
 - `scripts/`: Entry point scripts for different retargeting workflows
 - `general_motion_retargeting/`: Core library code
 - `assets/`: Robot models (MuJoCo XML) and body models (SMPL-X)
-- `general_motion_retargeting/ik_configs/`: Cleaned JSON configuration files - simplified to core robot mappings:
-  - SMPL-X configs: `smplx_to_{g1,t1,toddy,n1,pm01}.json`
+- `general_motion_retargeting/ik_configs/`: JSON configuration files for human-to-robot body mappings:
+  - SMPL-X configs: `smplx_to_{g1,t1,toddy,n1,pm01,kuavo,hi,r1pro}.json`
   - BVH configs: `bvh_to_{g1,t1,toddy,n1,pm01}.json`
+  - FBX configs: `fbx_to_g1.json`
