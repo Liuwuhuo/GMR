@@ -98,6 +98,10 @@
 
   <worldbody>
   <body name="base_link" childclass="galaxea_base" gravcomp="1">
+    <!-- <freejoint name="base_joint"/> -->
+      <joint name="base_x" type="slide" axis="1 0 0"/>
+    <joint name="base_y" type="slide" axis="0 1 0"/>
+    <joint name="base_yaw" type="hinge" axis="0 0 1"/>
     <geom type="mesh" mesh="base_link"/>
     <body name="steer_motor_link1" pos="0.16897 0.28 0.15765" >
       <inertial pos="7.7174e-06 -0.004623 -0.049428" quat="0.707095 -0.000176703 0.000138216 0.707118" mass="50" diaginertia="0.00032908 0.00022164 0.00015872"/>
