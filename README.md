@@ -30,7 +30,7 @@ Key features of GMR:
 This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
-- 2025-08-07: GMR now supports [KUAVO](https://www.kuavo.ai/), the 7th humanoid robot in the repo.
+- 2025-08-07: GMR now supports [Galexea R1 Pro](https://galaxea-dynamics.com/) (this is a wheeled humanoid robot!) and [KUAVO](https://www.kuavo.ai/), the 7th and 8th humanoid robots in the repo.
 - 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
 - 2025-08-04: Initial release of GMR. Check our [twitter post](https://x.com/ZeYanjie/status/1952446745696469334).
 
@@ -250,3 +250,5 @@ The original robot models can be found at the following locations:
 * [Toddlerbot](https://github.com/hshi74/toddlerbot): [Link to file](https://github.com/hshi74/toddlerbot/tree/main/toddlerbot/descriptions/toddlerbot_active)
 * [Unitree G1](https://github.com/unitreerobotics/unitree_ros): [Link to file](https://github.com/unitreerobotics/unitree_ros/tree/master/robots/g1_description)
 * [HighToqure Hi](https://www.hightorquerobotics.com/hi/)
+* [Galaxea R1 Pro](https://galaxea-dynamics.com/): MIT license
+
