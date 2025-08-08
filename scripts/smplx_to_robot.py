@@ -25,7 +25,8 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "kuavo_s45", "hightorque_hi"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", 
+                "engineai_pm01", "kuavo_s45", "hightorque_hi", "galaxea_r1pro"],
         default="unitree_g1",
     )
     
@@ -135,7 +136,6 @@ if __name__ == "__main__":
             show_human_body_name=False,
             rate_limit=args.rate_limit,
         )
-
         if args.save_path is not None:
             qpos_list.append(qpos)
             

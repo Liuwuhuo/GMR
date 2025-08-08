@@ -30,7 +30,7 @@ Key features of GMR:
 This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
-
+- 2025-08-07: GMR now supports [KUAVO](https://www.kuavo.ai/), the 7th humanoid robot in the repo.
 - 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
 - 2025-08-04: Initial release of GMR. Check our [twitter post](https://x.com/ZeYanjie/status/1952446745696469334).
 
@@ -64,7 +64,7 @@ https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
-| Kuavo S45 `kuavo_s45` | TBD | TBD | TBD | TBD |
+| Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
 | More robots coming soon | |
 
 
