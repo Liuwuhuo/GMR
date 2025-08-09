@@ -59,6 +59,7 @@ https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 | Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
 | --- | --- | --- | --- | --- | --- |
 | Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
+| Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
 | Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
