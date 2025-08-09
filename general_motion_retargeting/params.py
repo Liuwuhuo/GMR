@@ -6,6 +6,7 @@ ASSET_ROOT = HERE / ".." / "assets"
 
 ROBOT_XML_DICT = {
     "unitree_g1": ASSET_ROOT / "unitree_g1" / "g1_mocap_29dof.xml",
+    "unitree_g1_with_hands": ASSET_ROOT / "unitree_g1" / "g1_mocap_29dof_with_hands.xml",
     "booster_t1": ASSET_ROOT / "booster_t1" / "t1_mocap.xml",
     "stanford_toddy": ASSET_ROOT / "stanford_toddy" / "toddy_mocap.xml",
     "fourier_n1": ASSET_ROOT / "fourier_n1" / "n1_mocap.xml",
@@ -19,6 +20,7 @@ IK_CONFIG_DICT = {
     # offline data
     "smplx":{
         "unitree_g1": IK_CONFIG_ROOT / "smplx_to_g1.json",
+        "unitree_g1_with_hands": IK_CONFIG_ROOT / "smplx_to_g1.json",
         "booster_t1": IK_CONFIG_ROOT / "smplx_to_t1.json",
         "stanford_toddy": IK_CONFIG_ROOT / "smplx_to_toddy.json",
         "fourier_n1": IK_CONFIG_ROOT / "smplx_to_n1.json",
@@ -29,6 +31,7 @@ IK_CONFIG_DICT = {
     },
     "bvh":{
         "unitree_g1": IK_CONFIG_ROOT / "bvh_to_g1.json",
+        "unitree_g1_with_hands": IK_CONFIG_ROOT / "bvh_to_g1.json",
         "booster_t1": IK_CONFIG_ROOT / "bvh_to_t1.json",
         "fourier_n1": IK_CONFIG_ROOT / "bvh_to_n1.json",
         "stanford_toddy": IK_CONFIG_ROOT / "bvh_to_toddy.json",
@@ -36,12 +39,14 @@ IK_CONFIG_DICT = {
     },
     "fbx":{
         "unitree_g1": IK_CONFIG_ROOT / "fbx_to_g1.json",
+        "unitree_g1_with_hands": IK_CONFIG_ROOT / "fbx_to_g1.json",
     },
 }
 
 
 ROBOT_BASE_DICT = {
     "unitree_g1": "pelvis",
+    "unitree_g1_with_hands": "pelvis",
     "booster_t1": "Waist",
     "stanford_toddy": "waist_link",
     "fourier_n1": "base_link",
@@ -53,6 +58,7 @@ ROBOT_BASE_DICT = {
 
 VIEWER_CAM_DISTANCE_DICT = {
     "unitree_g1": 2.0,
+    "unitree_g1_with_hands": 2.0,
     "booster_t1": 2.0,
     "stanford_toddy": 1.0,
     "fourier_n1": 2.0,
