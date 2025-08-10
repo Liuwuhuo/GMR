@@ -30,6 +30,8 @@ Key features of GMR:
 This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
+
+- 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/) and [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 9th and 10th humanoid robots in the repo.
 - 2025-08-09: GMR now supports *Unitree G1 with Dex31 hands*.
 - 2025-08-07: GMR now supports [Galexea R1 Pro](https://galaxea-dynamics.com/) (this is a wheeled humanoid robot!) and [KUAVO](https://www.kuavo.ai/), the 7th and 8th humanoid robots in the repo.
 - 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
@@ -78,7 +80,9 @@ https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 | Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
 | Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
 | Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
+| Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
+| Berkeley Humanoid Lite `berkeley_humanoid_lite` | TBD | TBD | TBD | TBD |
 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
@@ -254,4 +258,5 @@ The original robot models can be found at the following locations:
 * [HighToqure Hi](https://www.hightorquerobotics.com/hi/)
 * [Galaxea R1 Pro](https://galaxea-dynamics.com/): MIT license
 * [LEJU Kuavo S45](https://gitee.com/leju-robot/kuavo-ros-opensource/blob/master/LICENSE): MIT license
-
+* [Berkley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets): CC-BY-SA-4.0 license
+* [Booster K1](https://www.boosterobotics.com/)

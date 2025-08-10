@@ -14,6 +14,8 @@ ROBOT_XML_DICT = {
     "kuavo_s45": ASSET_ROOT / "kuavo_s45" / "biped_s45_collision.xml",
     "hightorque_hi": ASSET_ROOT / "hightorque_hi" / "hi_25dof.xml",
     "galaxea_r1pro": ASSET_ROOT / "galaxea_r1pro" / "r1_pro.xml",
+    "berkeley_humanoid_lite": ASSET_ROOT / "berkeley_humanoid_lite" / "bhl_scene.xml",
+    "booster_k1": ASSET_ROOT / "booster_k1" / "K1_serial.xml",
 }
 
 IK_CONFIG_DICT = {
@@ -28,6 +30,8 @@ IK_CONFIG_DICT = {
         "kuavo_s45": IK_CONFIG_ROOT / "smplx_to_kuavo.json",
         "hightorque_hi": IK_CONFIG_ROOT / "smplx_to_hi.json",
         "galaxea_r1pro": IK_CONFIG_ROOT / "smplx_to_r1pro.json",
+        "berkeley_humanoid_lite": IK_CONFIG_ROOT / "smplx_to_bhl.json",
+        "booster_k1": IK_CONFIG_ROOT / "smplx_to_k1.json",
     },
     "bvh":{
         "unitree_g1": IK_CONFIG_ROOT / "bvh_to_g1.json",
@@ -54,6 +58,8 @@ ROBOT_BASE_DICT = {
     "kuavo_s45": "base_link",
     "hightorque_hi": "base_link",
     "galaxea_r1pro": "torso_link4",
+    "berkeley_humanoid_lite": "pelvis",
+    "booster_k1": "Trunk",
 }
 
 VIEWER_CAM_DISTANCE_DICT = {
@@ -66,4 +72,6 @@ VIEWER_CAM_DISTANCE_DICT = {
     "kuavo_s45": 3.0,
     "hightorque_hi": 2.0,
     "galaxea_r1pro": 3.0,
+    "berkeley_humanoid_lite": 2.0,
+    "booster_k1": 2.0,
 }
