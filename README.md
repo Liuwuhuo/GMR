@@ -31,7 +31,7 @@ This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
 
-- 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/) and [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 9th and 10th humanoid robots in the repo.
+- 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/), the 9th robot in the repo.
 - 2025-08-09: GMR now supports *Unitree G1 with Dex31 hands*.
 - 2025-08-07: GMR now supports [Galexea R1 Pro](https://galaxea-dynamics.com/) (this is a wheeled humanoid robot!) and [KUAVO](https://www.kuavo.ai/), the 7th and 8th humanoid robots in the repo.
 - 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
@@ -79,6 +79,8 @@ https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 | --- | --- | --- | --- | --- | --- |
 | Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
 | Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
+| Unitree H1 | TBD | TBD | TBD | TBD |
+| AgiBot X1 | TBD | TBD | TBD | TBD |
 | Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
 | Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
