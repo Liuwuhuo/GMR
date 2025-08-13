@@ -13,6 +13,9 @@
   <a href="https://x.com/ZeYanjie/status/1952446745696469334">
     <img src="https://img.shields.io/badge/twitter-ZeYanjie-blue.svg" alt="Twitter"/>
   </a>
+  <a href="https://yanjieze.github.io/humanoid-foundation/#GMR">
+    <img src="https://img.shields.io/badge/blog-GMR-blue.svg" alt="Blog"/>
+  </a>
 
 
 ![Banner for GMR](./assets/GMR.png)
@@ -22,9 +25,17 @@ Key features of GMR:
 - Carefully tuned for good performance of RL tracking policies.
 - Support multiple humanoid robots and multiple human motion data formats (See our table below).
 
-**NOTE: If you want this repo to support a new robot or a new human motion data format, send the robot files (`.xml`, `.urdf`, and meshes) / human motion data to <a href="mailto:lastyanjieze@gmail.com">Yanjie Ze</a> or create an issue, we will support it as soon as possible.**
+**NOTE: If you want this repo to support a new robot or a new human motion data format, send the robot files (`.xml` (must), `.urdf` (must), and meshes (must)) / human motion data to <a href="mailto:lastyanjieze@gmail.com">Yanjie Ze</a> or create an issue, we will support it as soon as possible.** Please make sure the robot files you sent can be open-sourced in this repo.
 
 This repo is licensed under the [MIT License](LICENSE).
+
+# News & Updates
+
+- 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/), the 9th robot in the repo.
+- 2025-08-09: GMR now supports *Unitree G1 with Dex31 hands*.
+- 2025-08-07: GMR now supports [Galexea R1 Pro](https://galaxea-dynamics.com/) (this is a wheeled humanoid robot!) and [KUAVO](https://www.kuavo.ai/), the 7th and 8th humanoid robots in the repo.
+- 2025-08-06: GMR now supports [HighTorque Hi](https://www.hightorquerobotics.com/hi/), the 6th humanoid robot in the repo.
+- 2025-08-04: Initial release of GMR. Check our [twitter post](https://x.com/ZeYanjie/status/1952446745696469334).
 
 
 # Demo
@@ -35,27 +46,51 @@ Demo 1: Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Boo
 
 https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
 
+Demo 2: Galexea R1 Pro, a wheeled humanoid robot, doing human motion
 
-Demo 2: Screen recording of my one command line usage.
+
+https://github.com/user-attachments/assets/903ed0b0-0ac5-4226-8f82-5a88631e9b7c
+
+
+https://github.com/user-attachments/assets/deea0e64-f1c6-41bc-8661-351682006d5d
+
+
+Demo 3: Screen recording of my one command line usage. Switch robots with just changign an argument.
 
 
 https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
 
+Demo 4: HighTorque robot doing a twist dance
 
 
+
+https://github.com/user-attachments/assets/1d3e663b-f29e-41b1-8e15-5c0deb6a4a5c
+
+Demo 5: Kuavo robot picking up a box
+
+
+https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 
 
 
 # Supported Robots and Data Formats
 
-| Robot/Data Format | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
-| --- | --- | --- | --- | --- |
-| Unitree G1 `unitree_g1` | ✅ | ✅ | ✅ |
-| Booster T1 `booster_t1` | ✅ |  ✅  | TBD | 
-| Stanford ToddlerBot `stanford_toddy` | ✅ | ✅ | TBD |
-| Fourier N1 `fourier_n1` | ✅ | ✅ | TBD |
-| ENGINEAI PM01 `engineai_pm01` | ✅ | ✅ | TBD |
-| More robots coming soon |
+| Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ( [OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
+| --- | --- | --- | --- | --- | --- |
+| Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
+| Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
+| Unitree H1 | TBD | TBD | TBD | TBD |
+| AgiBot X1 | TBD | TBD | TBD | TBD |
+| Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
+| Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
+| Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
+| Berkeley Humanoid Lite `berkeley_humanoid_lite` | TBD | TBD | TBD | TBD |
+| Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
+| ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
+| HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
+| Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
+| Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
+| More robots coming soon | |
 
 
 
@@ -92,7 +127,7 @@ conda install -c conda-forge libstdcxx-ng -y
 -- SMPLX_MALE.pkl
 ```
 
-[[AMASS](https://amass.is.tue.mpg.de/) motion data] download raw SMPL-X data to any folder you want from [AMASS](https://amass.is.tue.mpg.de/).
+[[AMASS](https://amass.is.tue.mpg.de/) motion data] download raw SMPL-X data to any folder you want from [AMASS](https://amass.is.tue.mpg.de/). NOTE: Do not download SMPL+H data.
 
 [[OMOMO](https://github.com/lijiaman/omomo_release) motion data] download raw OMOMO data to any folder you want from [this google drive file](https://drive.google.com/file/d/1tZVqLB7II0whI-Qjz-z-AU3ponSEyAmm/view?usp=sharing). And process the data into the SMPL-X format using `scripts/convert_omomo_to_smplx.py`.
 
@@ -222,3 +257,8 @@ The original robot models can be found at the following locations:
 * [Fourier N1](https://github.com/FFTAI/Wiki-GRx-Gym): [Link to file](https://github.com/FFTAI/Wiki-GRx-Gym/tree/FourierN1/legged_gym/resources/robots/N1)
 * [Toddlerbot](https://github.com/hshi74/toddlerbot): [Link to file](https://github.com/hshi74/toddlerbot/tree/main/toddlerbot/descriptions/toddlerbot_active)
 * [Unitree G1](https://github.com/unitreerobotics/unitree_ros): [Link to file](https://github.com/unitreerobotics/unitree_ros/tree/master/robots/g1_description)
+* [HighToqure Hi](https://www.hightorquerobotics.com/hi/)
+* [Galaxea R1 Pro](https://galaxea-dynamics.com/): MIT license
+* [LEJU Kuavo S45](https://gitee.com/leju-robot/kuavo-ros-opensource/blob/master/LICENSE): MIT license
+* [Berkley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets): CC-BY-SA-4.0 license
+* [Booster K1](https://www.boosterobotics.com/)
