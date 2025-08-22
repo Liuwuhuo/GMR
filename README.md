@@ -170,6 +170,17 @@ By default there is no visualization for batch retargeting.
 
 
 ## Retargeting from FBX (OptiTrack) to Robot
+### Offline FBX Files
+Retarget a single motion:
+```bash
+# single motion
+python scripts/fbx_offline_to_robot.py --bvh_file <path_to_bvh_data> --robot <path_to_robot_data> --save_path <path_to_save_robot_data.pkl> --rate_limit
+```
+By default you should see the visualization of the retargeted robot motion in a mujoco window. 
+- `--rate_limit` is used to limit the rate of the retargeted robot motion to keep the same as the human motion. If you want it as fast as possible, remove `--rate_limit`.
+
+
+### Online Streaming
 
 We provide the script to use OptiTrack MoCap data for real-time streaming and retargeting.
 

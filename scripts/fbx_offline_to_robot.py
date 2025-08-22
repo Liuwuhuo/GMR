@@ -83,7 +83,6 @@ if __name__ == "__main__":
     # Load OptiTrack FMB motion trajectory
     print(f"Loading OptiTrack FBX motion file: {args.motion_file}")
     lafan1_data_frames = load_optitrack_fbx_motion_file(args.motion_file)
-    lafan1_data_frames = lafan1_data_frames[:1500] # FIXME:
     print(f"Loaded {len(lafan1_data_frames)} frames")
     
     
@@ -156,33 +155,6 @@ if __name__ == "__main__":
 
         if args.save_path is not None:
             qpos_list.append(qpos)
-
-    # Apply smoothing to qpos_list before plotting and saving
-    import scipy.ndimage
-
-    if len(qpos_list) > 0:
-        qpos_array = np.array(qpos_list)
-        # Apply a Gaussian filter along the time axis for smoothing
-        # You can adjust sigma for more/less smoothing
-        smoothed_qpos_array = scipy.ndimage.gaussian_filter1d(qpos_array, sigma=10, axis=0)
-        qpos_list = [smoothed_qpos_array[i] for i in range(smoothed_qpos_array.shape[0])]
-
-    # Visualize qpos as 1D time series, each entry in a separate subplot
-    import matplotlib.pyplot as plt
-    qpos_array = np.array(qpos_list)  # shape: (num_frames, qpos_dim)
-    num_entries = qpos_array.shape[1]
-    fig, axes = plt.subplots(num_entries, 1, figsize=(10, 2 * num_entries), sharex=True)
-    if num_entries == 1:
-        axes = [axes]
-    time = np.arange(qpos_array.shape[0])
-    for idx in range(num_entries):
-        axes[idx].plot(time, qpos_array[:, idx])
-        axes[idx].set_ylabel(f'qpos[{idx}]')
-        axes[idx].grid(True)
-    axes[-1].set_xlabel('Frame')
-    plt.tight_layout()
-    plt.show()
-    plt.savefig(os.path.join(save_dir, "qpos_time_series.png"))
 
     if args.save_path is not None:
         import pickle
