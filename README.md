@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
   </a>
   <a href="https://github.com/YanjieZe/GMR/releases">
-    <img src="https://img.shields.io/badge/version-0.1.0-blue.svg" alt="Version"/>
+    <img src="https://img.shields.io/badge/version-0.2.0-blue.svg" alt="Version"/>
   </a>
   <a href="https://x.com/ZeYanjie/status/1952446745696469334">
     <img src="https://img.shields.io/badge/twitter-ZeYanjie-blue.svg" alt="Twitter"/>
@@ -31,6 +31,7 @@ This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
 
+- 2025-08-24: GMR now supports velocity limits for the robot motors, `use_velocity_limit=True` by default in `GeneralMotionRetargeting` class (and we use 3*pi as the velocity limit by default); we also add printing of robot DoF/Body/Motor names and their IDs by default, and you can access them via `robot_dof_names`, `robot_body_names`, and `robot_motor_names` attributes.
 - 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/), the 9th robot in the repo.
 - 2025-08-09: GMR now supports *Unitree G1 with Dex31 hands*.
 - 2025-08-07: GMR now supports [Galexea R1 Pro](https://galaxea-dynamics.com/) (this is a wheeled humanoid robot!) and [KUAVO](https://www.kuavo.ai/), the 7th and 8th humanoid robots in the repo.
