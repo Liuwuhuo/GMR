@@ -82,8 +82,8 @@ if __name__ == "__main__":
     
     # Load OptiTrack FMB motion trajectory
     print(f"Loading OptiTrack FBX motion file: {args.motion_file}")
-    lafan1_data_frames = load_optitrack_fbx_motion_file(args.motion_file)
-    print(f"Loaded {len(lafan1_data_frames)} frames")
+    data_frames = load_optitrack_fbx_motion_file(args.motion_file)
+    print(f"Loaded {len(data_frames)} frames")
     
     
     # Initialize the retargeting system with fbx configuration
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         actual_human_height=1.8,
     )
 
-    height_offset = offset_to_ground(retargeter, lafan1_data_frames)
+    height_offset = offset_to_ground(retargeter, data_frames)
     retargeter.set_ground_offset(height_offset)
 
     motion_fps = 120
@@ -116,12 +116,12 @@ if __name__ == "__main__":
     print(f"mocap_frame_rate: {motion_fps}")
     
     # Create tqdm progress bar for the total number of frames
-    pbar = tqdm(total=len(lafan1_data_frames), desc="Retargeting OptiTrack motion")
+    pbar = tqdm(total=len(data_frames), desc="Retargeting OptiTrack motion")
     
     # Start the viewer
     i = 0
 
-    while i < len(lafan1_data_frames):
+    while i < len(data_frames):
         
         # FPS measurement
         fps_counter += 1
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         pbar.update(1)
 
         # Update task targets.
-        smplx_data = lafan1_data_frames[i]
+        smplx_data = data_frames[i]
 
         # retarget
         qpos = retargeter.retarget(smplx_data)
