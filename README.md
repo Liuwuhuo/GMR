@@ -73,6 +73,11 @@ Demo 5: Kuavo robot picking up a box
 
 https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
 
+Demo 6: Unitree H1 doing ChaCha dance
+
+
+https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
+
 
 
 # Supported Robots and Data Formats
