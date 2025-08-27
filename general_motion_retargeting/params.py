@@ -17,6 +17,7 @@ ROBOT_XML_DICT = {
     "galaxea_r1pro": ASSET_ROOT / "galaxea_r1pro" / "r1_pro.xml",
     "berkeley_humanoid_lite": ASSET_ROOT / "berkeley_humanoid_lite" / "bhl_scene.xml",
     "booster_k1": ASSET_ROOT / "booster_k1" / "K1_serial.xml",
+    "pnd_adam_lite": ASSET_ROOT / "adam_lite" / "scene.xml",
 }
 
 IK_CONFIG_DICT = {
@@ -34,6 +35,7 @@ IK_CONFIG_DICT = {
         "galaxea_r1pro": IK_CONFIG_ROOT / "smplx_to_r1pro.json",
         "berkeley_humanoid_lite": IK_CONFIG_ROOT / "smplx_to_bhl.json",
         "booster_k1": IK_CONFIG_ROOT / "smplx_to_k1.json",
+        "pnd_adam_lite": IK_CONFIG_ROOT / "smplx_to_adam.json",
     },
     "bvh":{
         "unitree_g1": IK_CONFIG_ROOT / "bvh_to_g1.json",
@@ -63,6 +65,7 @@ ROBOT_BASE_DICT = {
     "galaxea_r1pro": "torso_link4",
     "berkeley_humanoid_lite": "pelvis",
     "booster_k1": "Trunk",
+    "pnd_adam_lite": "pelvis",
 }
 
 VIEWER_CAM_DISTANCE_DICT = {
@@ -78,4 +81,5 @@ VIEWER_CAM_DISTANCE_DICT = {
     "galaxea_r1pro": 3.0,
     "berkeley_humanoid_lite": 2.0,
     "booster_k1": 2.0,
+    "pnd_adam_lite": 2.0,
 }

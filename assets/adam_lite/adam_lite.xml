@@ -25,8 +25,6 @@
 		<mesh file="hipRollLeft_0.obj" />
 		<mesh file="hipRollLeft_1.obj" />
 		<mesh file="hipRollLeft_2.obj" />
-		<mesh file="hipRollLeft_3.obj" />
-		<mesh file="thighLeft_0.obj" />
 		<mesh file="thighLeft_1.obj" />
 		<mesh file="thighLeft_2.obj" />
 		<mesh file="shinLeft_0.obj" />
@@ -114,11 +112,9 @@
 					<geom mesh="hipRollLeft_0" class="visual" />
 					<geom mesh="hipRollLeft_1" material="black" class="visual" />
 					<geom mesh="hipRollLeft_2" material="black" class="visual" />
-					<geom mesh="hipRollLeft_3" material="pnd_logo" class="visual" />
 					<body name="thighLeft" pos="0.044 0 -0.0525">
 						<inertial pos="0.00331195 -0.0111247 -0.135198" quat="0.675183 0.0507397 -0.0286771 0.735344" mass="6.6475" diaginertia="0.0628071 0.056896 0.0145546" />
 						<joint name="hipYaw_Left" pos="0 0 0" axis="0 0 1" range="-0.78 0.78" actuatorfrcrange="-105 105" />
-						<geom mesh="thighLeft_0" material="pnd_logo" class="visual" />
 						<geom mesh="thighLeft_1" class="visual" />
 						<geom mesh="thighLeft_2" material="black" class="visual" />
 						<geom size="0.09 0.068 0.15" quat="0.9990482 -0.0436194 0 0" pos="0 -0.01 -0.13" type="ellipsoid" class="collision" />
@@ -155,11 +151,11 @@
 				<geom mesh="hipPitchRight_1" class="visual" />
 				<geom mesh="hipPitchRight_2" material="black" class="visual" />
 				<geom mesh="hipPitchRight_3" material="black" class="visual" />
-				<body name="hipRollRight" pos="-0.0255 -0.069 0" quat="0.953716 -0.300708 0 0">
+				<body name="hipRollRight" pos="-0.0255 -0.069 0" quat="0.953716 -0.300708 0 0" >
 					<inertial pos="0.0398817 0.00011594 -0.0110209" quat="0.102657 0.530738 -0.0414919 0.840272" mass="1.29423" diaginertia="0.00147637 0.00137013 0.00131019" />
 					<joint name="hipRoll_Right" pos="0 0 0" axis="1 0 0" range="-1.57 0.78" actuatorfrcrange="-160 160" />
 					<geom mesh="hipRollRight_0" material="black" class="visual" />
-					<geom mesh="hipRollRight_1" material="black" class="visual" />
+					<geom mesh="hipRollRight_1" material="black" class="visual"/>
 					<geom mesh="hipRollRight_2" material="sliver" class="visual" />
 					<geom mesh="hipRollRight_3" material="black" class="visual" />
 					<body name="thighRight" pos="0.044 0 -0.0525">

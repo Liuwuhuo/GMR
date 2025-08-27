@@ -98,8 +98,8 @@ https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
 | More robots coming soon ! |
 | 11 | Berkeley Humanoid Lite `berkeley_humanoid_lite` | TBD | TBD | TBD | TBD |
 | 12 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
-| 13 | Openlong `openlong` | TBD | TBD | TBD | TBD |
-| 14 | PND Adam Lite `pnd_adam_lite` | TBD | TBD | TBD | TBD |
+| 13 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
+| 14 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
 
 
 

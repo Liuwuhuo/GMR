@@ -49,8 +49,9 @@ env_upper = gymapi.Vec3(spacing, 0.0, spacing)
 
 asset_root = f"../assets/"
 # asset_file = "agibot_a2/urdf/model.urdf"
-asset_file = "unitree_h1/h1.urdf"
-
+# asset_file = "unitree_h1/h1.urdf"
+# asset_file = "adam_lite/adam_lite.urdf"
+asset_file = "openloong/AzureLoong.urdf"
 
 # Load asset with default control type of position for all joints
 asset_options = gymapi.AssetOptions()
@@ -63,8 +64,8 @@ asset_options.vhacd_enabled = True
 asset_options.vhacd_params = gymapi.VhacdParams() 
 asset_options.vhacd_params.resolution = 200000 
 
-asset_options.flip_visual_attachments = True
-# asset_options.flip_visual_attachments = False
+# asset_options.flip_visual_attachments = True
+asset_options.flip_visual_attachments = False
 
 print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
 robot_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
