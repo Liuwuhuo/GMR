@@ -84,6 +84,14 @@ https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
 Demo 7: Booster T1 23dof/29dof doing some jumping
 
 
+
+https://github.com/user-attachments/assets/2c75a146-e28f-4327-930f-5281bfc2ca9c
+
+
+
+https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d
+
+
 # Supported Robots and Data Formats
 
 | Assigned ID | Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ([OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
