@@ -49,6 +49,9 @@ IK_CONFIG_DICT = {
         "unitree_g1": IK_CONFIG_ROOT / "fbx_to_g1.json",
         "unitree_g1_with_hands": IK_CONFIG_ROOT / "fbx_to_g1.json",
     },
+    "fbx_offline":{
+        "unitree_g1": IK_CONFIG_ROOT / "fbx_offline_to_g1.json",
+    },
 }
 
 

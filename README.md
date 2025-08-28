@@ -198,6 +198,25 @@ By default there is no visualization for batch retargeting.
 
 
 ## Retargeting from FBX (OptiTrack) to Robot
+### Offline FBX Files
+Retarget a single motion:
+1. Install `fbx_sdk` by following [these instructions](https://github.com/nv-tlabs/ASE/tree/main/ase/poselib#importing-from-fbx) and [these instructions](https://github.com/nv-tlabs/ASE/issues/61#issuecomment-2670315114). You will probably need a new conda environment for this.
+2. Activate the conda environment where you installed `fbx_sdk`.
+Use the following command to extract motion data from your `.fbx` file:
+```bash
+python poselib/fbx_importer.py --input <path_to_fbx_file.fbx> --output <path_to_save_motion_data.pkl> --root-joint <root_joint_name> --fps <fps>
+```
+3. Then, run the command below to retarget the extracted motion data to your robot:
+```bash
+conda activate gmr
+# single motion
+python scripts/fbx_offline_to_robot.py --motion_file <path_to_saved_motion_data.pkl> --robot <path_to_robot_data> --save_path <path_to_save_robot_data.pkl> --rate_limit
+```
+By default you should see the visualization of the retargeted robot motion in a mujoco window. 
+- `--rate_limit` is used to limit the rate of the retargeted robot motion to keep the same as the human motion. If you want it as fast as possible, remove `--rate_limit`.
+
+
+### Online Streaming
 
 We provide the script to use OptiTrack MoCap data for real-time streaming and retargeting.
 

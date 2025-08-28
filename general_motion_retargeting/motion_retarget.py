@@ -102,6 +102,7 @@ class GeneralMotionRetargeting:
             
         self.setup_retarget_configuration()
         
+        self.ground_offset = 0.0
 
     def setup_retarget_configuration(self):
         self.configuration = mink.Configuration(self.model)
@@ -151,6 +152,7 @@ class GeneralMotionRetargeting:
         human_data = self.to_numpy(human_data)
         human_data = self.scale_human_data(human_data, self.human_root_name, self.human_scale_table)
         human_data = self.offset_human_data(human_data, self.pos_offsets1, self.rot_offsets1)
+        human_data = self.apply_ground_offset(human_data)
         if offset_to_ground:
             human_data = self.offset_human_data_to_ground(human_data)
         self.scaled_human_data = human_data
@@ -300,3 +302,12 @@ class GeneralMotionRetargeting:
             offset_human_data[body_name] = [pos, quat]
             offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos]) + np.array([0, 0, ground_offset])
         return offset_human_data
+
+    def set_ground_offset(self, ground_offset):
+        self.ground_offset = ground_offset
+
+    def apply_ground_offset(self, human_data):
+        for body_name in human_data.keys():
+            pos, quat = human_data[body_name]
+            human_data[body_name][0] = pos - np.array([0, 0, self.ground_offset])
+        return human_data
