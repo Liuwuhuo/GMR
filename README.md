@@ -108,7 +108,7 @@ https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d
 | 9 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
 | 10 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
 | 11 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
-| 12 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | TBD | ✅ | TBD | TBD |
+| 12 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | Leg (2\*6) + Arm (2\*5) = 22 | ✅ | TBD | TBD |
 | More robots coming soon ! |
 | 13 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
 | 14 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
