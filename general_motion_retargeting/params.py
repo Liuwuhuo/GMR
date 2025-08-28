@@ -8,7 +8,8 @@ ROBOT_XML_DICT = {
     "unitree_g1": ASSET_ROOT / "unitree_g1" / "g1_mocap_29dof.xml",
     "unitree_g1_with_hands": ASSET_ROOT / "unitree_g1" / "g1_mocap_29dof_with_hands.xml",
     "unitree_h1": ASSET_ROOT / "unitree_h1" / "h1.xml",
-    "booster_t1": ASSET_ROOT / "booster_t1" / "t1_mocap.xml",
+    "booster_t1": ASSET_ROOT / "booster_t1" / "T1_serial.xml",
+    "booster_t1_29dof": ASSET_ROOT / "booster_t1_29dof" / "t1_mocap.xml",
     "stanford_toddy": ASSET_ROOT / "stanford_toddy" / "toddy_mocap.xml",
     "fourier_n1": ASSET_ROOT / "fourier_n1" / "n1_mocap.xml",
     "engineai_pm01": ASSET_ROOT / "engineai_pm01" / "pm_v2.xml",
@@ -17,7 +18,7 @@ ROBOT_XML_DICT = {
     "galaxea_r1pro": ASSET_ROOT / "galaxea_r1pro" / "r1_pro.xml",
     "berkeley_humanoid_lite": ASSET_ROOT / "berkeley_humanoid_lite" / "bhl_scene.xml",
     "booster_k1": ASSET_ROOT / "booster_k1" / "K1_serial.xml",
-    "pnd_adam_lite": ASSET_ROOT / "adam_lite" / "scene.xml",
+    "pnd_adam_lite": ASSET_ROOT / "pnd_adam_lite" / "adam_lite.xml",
 }
 
 IK_CONFIG_DICT = {
@@ -27,6 +28,7 @@ IK_CONFIG_DICT = {
         "unitree_g1_with_hands": IK_CONFIG_ROOT / "smplx_to_g1.json",
         "unitree_h1": IK_CONFIG_ROOT / "smplx_to_h1.json",
         "booster_t1": IK_CONFIG_ROOT / "smplx_to_t1.json",
+        "booster_t1_29dof": IK_CONFIG_ROOT / "smplx_to_t1_29dof.json",
         "stanford_toddy": IK_CONFIG_ROOT / "smplx_to_toddy.json",
         "fourier_n1": IK_CONFIG_ROOT / "smplx_to_n1.json",
         "engineai_pm01": IK_CONFIG_ROOT / "smplx_to_pm01.json",
@@ -40,7 +42,7 @@ IK_CONFIG_DICT = {
     "bvh":{
         "unitree_g1": IK_CONFIG_ROOT / "bvh_to_g1.json",
         "unitree_g1_with_hands": IK_CONFIG_ROOT / "bvh_to_g1.json",
-        "booster_t1": IK_CONFIG_ROOT / "bvh_to_t1.json",
+        "booster_t1_29dof": IK_CONFIG_ROOT / "bvh_to_t1_29dof.json",
         "fourier_n1": IK_CONFIG_ROOT / "bvh_to_n1.json",
         "stanford_toddy": IK_CONFIG_ROOT / "bvh_to_toddy.json",
         "engineai_pm01": IK_CONFIG_ROOT / "bvh_to_pm01.json",
@@ -60,6 +62,7 @@ ROBOT_BASE_DICT = {
     "unitree_g1_with_hands": "pelvis",
     "unitree_h1": "pelvis",
     "booster_t1": "Waist",
+    "booster_t1_29dof": "Waist",
     "stanford_toddy": "waist_link",
     "fourier_n1": "base_link",
     "engineai_pm01": "LINK_BASE",
@@ -76,6 +79,7 @@ VIEWER_CAM_DISTANCE_DICT = {
     "unitree_g1_with_hands": 2.0,
     "unitree_h1": 3.0,
     "booster_t1": 2.0,
+    "booster_t1_29dof": 2.0,
     "stanford_toddy": 1.0,
     "fourier_n1": 2.0,
     "engineai_pm01": 2.0,

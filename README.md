@@ -30,6 +30,7 @@ Key features of GMR:
 This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
+- 2025-08-28: GMR now supports [Booster T1](https://www.boosterobotics.com/) for both 23dof and 29dof.
 - 2025-08-28: GMR now supports using exported offline FBX motion data from [OptiTrack](https://www.optitrack.com/). 
 - 2025-08-27: GMR now supports [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 11th humanoid robot in the repo.
 - 2025-08-24: GMR now supports [Unitree H1](https://www.unitree.com/h1/), the 10th humanoid robot in the repo.
@@ -80,6 +81,8 @@ Demo 6: Unitree H1 doing ChaCha dance
 https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
 
 
+Demo 7: Booster T1 23dof/29dof doing some jumping
+
 
 # Supported Robots and Data Formats
 
@@ -88,19 +91,20 @@ https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
 | 0 | Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
 | 1 | Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
 | 2 | Unitree H1 `unitree_h1` | Leg (2\*5) + Waist (1) + Arm (2\*4) = 19 | ✅ | TBD | TBD |
-| 3 | Booster T1 `booster_t1` | TBD | ✅ |  ✅  | TBD | 
-| 4 | Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
-| 5 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
-| 6 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
-| 7 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
-| 8 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
-| 9 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
-| 10 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
-| 11 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | TBD | ✅ | TBD | TBD |
+| 3 | Booster T1 `booster_t1` | TBD | ✅ |  TBD  | TBD |
+| 4 | Booster T1 29dof `booster_t1_29dof` | TBD | ✅ |  ✅  | TBD | 
+| 5 | Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
+| 6 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
+| 7 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
+| 8 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
+| 9 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
+| 10 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
+| 11 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
+| 12 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | TBD | ✅ | TBD | TBD |
 | More robots coming soon ! |
-| 12 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
-| 13 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
-| 14 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
+| 13 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
+| 14 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
+| 15 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
 
 
 
@@ -204,6 +208,7 @@ Retarget a single motion:
 2. Activate the conda environment where you installed `fbx_sdk`.
 Use the following command to extract motion data from your `.fbx` file:
 ```bash
+cd third_party
 python poselib/fbx_importer.py --input <path_to_fbx_file.fbx> --output <path_to_save_motion_data.pkl> --root-joint <root_joint_name> --fps <fps>
 ```
 3. Then, run the command below to retarget the extracted motion data to your robot:
