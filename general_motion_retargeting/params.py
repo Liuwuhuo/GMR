@@ -63,7 +63,7 @@ ROBOT_BASE_DICT = {
     "kuavo_s45": "base_link",
     "hightorque_hi": "base_link",
     "galaxea_r1pro": "torso_link4",
-    "berkeley_humanoid_lite": "pelvis",
+    "berkeley_humanoid_lite": "imu_2",
     "booster_k1": "Trunk",
     "pnd_adam_lite": "pelvis",
 }

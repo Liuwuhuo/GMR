@@ -31,6 +31,7 @@ This repo is licensed under the [MIT License](LICENSE).
 
 # News & Updates
 
+- 2025-08-27: GMR now supports [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 11th humanoid robot in the repo.
 - 2025-08-24: GMR now supports [Unitree H1](https://www.unitree.com/h1/), the 10th humanoid robot in the repo.
 - 2025-08-24: GMR now supports velocity limits for the robot motors, `use_velocity_limit=True` by default in `GeneralMotionRetargeting` class (and we use 3*pi as the velocity limit by default); we also add printing of robot DoF/Body/Motor names and their IDs by default, and you can access them via `robot_dof_names`, `robot_body_names`, and `robot_motor_names` attributes.
 - 2025-08-10: GMR now supports [Booster K1](https://www.boosterobotics.com/), the 9th robot in the repo.
@@ -95,8 +96,8 @@ https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
 | 8 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
 | 9 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
 | 10 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
+| 11 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | TBD | ✅ | TBD | TBD |
 | More robots coming soon ! |
-| 11 | Berkeley Humanoid Lite `berkeley_humanoid_lite` | TBD | TBD | TBD | TBD |
 | 12 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
 | 13 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
 | 14 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
