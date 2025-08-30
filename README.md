@@ -37,6 +37,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1), the 12th humanoid robot in the repo.
 - 2025-08-28: GMR now supports [Booster T1](https://www.boosterobotics.com/) for both 23dof and 29dof.
 - 2025-08-28: GMR now supports using exported offline FBX motion data from [OptiTrack](https://www.optitrack.com/). 
 - 2025-08-27: GMR now supports [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 11th humanoid robot in the repo.
@@ -99,6 +100,8 @@ https://github.com/user-attachments/assets/2c75a146-e28f-4327-930f-5281bfc2ca9c
 https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d
 
 
+Demo 8: Unitree H1 2 doing some jumping
+
 # Supported Robots and Data Formats
 
 | Assigned ID | Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ([OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
@@ -106,20 +109,21 @@ https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d
 | 0 | Unitree G1 `unitree_g1` | Leg (2\*6) + Waist (3) + Arm (2\*7) = 29 | ✅ | ✅ | ✅ |
 | 1 | Unitree G1 with Hands `unitree_g1_with_hands` | Leg (2\*6) + Waist (3) + Arm (2\*7) + Hand (2\*7) = 43 | ✅ | ✅ | ✅ |
 | 2 | Unitree H1 `unitree_h1` | Leg (2\*5) + Waist (1) + Arm (2\*4) = 19 | ✅ | TBD | TBD |
-| 3 | Booster T1 `booster_t1` | TBD | ✅ |  TBD  | TBD |
-| 4 | Booster T1 29dof `booster_t1_29dof` | TBD | ✅ |  ✅  | TBD | 
-| 5 | Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
-| 6 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
-| 7 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
-| 8 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
-| 9 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
-| 10 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
-| 11 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
-| 12 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | Leg (2\*6) + Arm (2\*5) = 22 | ✅ | TBD | TBD |
+| 3 | Unitree H1 2 `unitree_h1_2` | Leg (2\*6) + Waist (1) + Arm (2\*7) = 27 | ✅ | TBD | TBD |
+| 4 | Booster T1 `booster_t1` | TBD | ✅ |  TBD  | TBD |
+| 5 | Booster T1 29dof `booster_t1_29dof` | TBD | ✅ |  ✅  | TBD | 
+| 6 | Booster K1 `booster_k1` | Neck (2) + Arm (2\*4) + Leg (2\*6) = 22 | ✅ | TBD | TBD |
+| 7 | Stanford ToddlerBot `stanford_toddy` | TBD | ✅ | ✅ | TBD |
+| 8 | Fourier N1 `fourier_n1` | TBD | ✅ | ✅ | TBD |
+| 9 | ENGINEAI PM01 `engineai_pm01` | TBD | ✅ | ✅ | TBD |
+| 10 | HighTorque Hi `hightorque_hi` | Head (2) + Arm (2\*5) + Waist (1) + Leg (2\*6) = 25 | ✅ | TBD | TBD |
+| 11 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
+| 12 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
+| 13 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | Leg (2\*6) + Arm (2\*5) = 22 | ✅ | TBD | TBD |
 | More robots coming soon ! |
-| 13 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
-| 14 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
-| 15 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
+| 14 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
+| 15 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
+| 16 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
 
 
 
