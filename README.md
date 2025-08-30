@@ -106,6 +106,12 @@ Demo 8: Unitree H1 2 doing some jumping
 https://github.com/user-attachments/assets/2382d8ce-7902-432f-ab45-348a11eeb312
 
 
+Demo 9: PND Adam lite
+
+
+https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4
+
+
 # Supported Robots and Data Formats
 
 | Assigned ID | Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH ( [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)) | FBX ([OptiTrack](https://www.optitrack.com/)) | More formats coming soon | 
