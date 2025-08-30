@@ -37,7 +37,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
-- 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1), the 12th humanoid robot in the repo.
+- 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1) and [PND Adam Lite](https://pndbotics.com/), the 12th and 13th humanoid robots in the repo.
 - 2025-08-28: GMR now supports [Booster T1](https://www.boosterobotics.com/) for both 23dof and 29dof.
 - 2025-08-28: GMR now supports using exported offline FBX motion data from [OptiTrack](https://www.optitrack.com/). 
 - 2025-08-27: GMR now supports [Berkeley Humanoid Lite](https://github.com/HybridRobotics/Berkeley-Humanoid-Lite-Assets), the 11th humanoid robot in the repo.
@@ -124,10 +124,10 @@ https://github.com/user-attachments/assets/2382d8ce-7902-432f-ab45-348a11eeb312
 | 11 | Galaxea R1 Pro `galaxea_r1pro` (this is a wheeled robot!) |  Base (6) + Torso (4) + Arm (2*7) = 24 | ✅ | TBD | TBD |
 | 12 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
 | 13 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | Leg (2\*6) + Arm (2\*5) = 22 | ✅ | TBD | TBD |
+| 14 | PND Adam Lite `pnd_adam_lite`  | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | ✅ | TBD | TBD |
 | More robots coming soon ! |
-| 14 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
-| 15 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
-| 16 | PND Adam Lite `pnd_adam_lite` (have bugs in mujoco file loading) | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | TBD | TBD | TBD |
+| 15 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
+| 16 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
 
 
 

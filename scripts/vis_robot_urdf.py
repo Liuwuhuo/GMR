@@ -54,7 +54,8 @@ asset_root = f"../assets/"
 # asset_file = "openloong/AzureLoong.urdf"
 # asset_file = "booster_t1/T1_serial.xml"
 # asset_file = "unitree_h1_2/h1_2.urdf"
-asset_file = "unitree_h1_2/h1_2_handless.urdf"
+# asset_file = "unitree_h1_2/h1_2_handless.urdf"
+asset_file = "pnd_adam_lite/adam_lite.urdf"
 
 # Load asset with default control type of position for all joints
 asset_options = gymapi.AssetOptions()
@@ -67,8 +68,8 @@ asset_options.vhacd_enabled = True
 asset_options.vhacd_params = gymapi.VhacdParams() 
 asset_options.vhacd_params.resolution = 200000 
 
-# asset_options.flip_visual_attachments = True
-asset_options.flip_visual_attachments = False
+asset_options.flip_visual_attachments = True
+# asset_options.flip_visual_attachments = False
 
 print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
 robot_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
