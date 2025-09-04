@@ -33,7 +33,10 @@ Starting from its release, GMR is massively used by the community. See below for
 - [arXiv 2025.08](https://arxiv.org/abs/2508.21043), *HITTER: A HumanoId Table TEnnis Robot via Hierarchical Planning and Learning*
 - [arXiv 2025.08](https://arxiv.org/abs/2508.13444), *Switch4EAI: Leveraging Console Game Platform for Benchmarking Robotic Athletics*
 - [arXiv 2025.05](https://arxiv.org/abs/2505.02833), *TWIST: Teleoperated Whole-Body Imitation System*
- 
+
+ # To Do List
+ - [ ] add doc on ik config offset
+ - [ ] support xsens data
 
 
 # News & Updates
