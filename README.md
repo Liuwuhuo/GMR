@@ -40,6 +40,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-09-12: GMR now supports [Tienkung](https://github.com/Open-X-Humanoid/TienKung-Lab), the 14th humanoid robot in the repo.
 - 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1) and [PND Adam Lite](https://pndbotics.com/), the 12th and 13th humanoid robots in the repo.
 - 2025-08-28: GMR now supports [Booster T1](https://www.boosterobotics.com/) for both 23dof and 29dof.
 - 2025-08-28: GMR now supports using exported offline FBX motion data from [OptiTrack](https://www.optitrack.com/). 
@@ -114,6 +115,11 @@ Demo 9: PND Adam lite
 
 https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4
 
+Demo 10: Tienkung Walking
+
+
+https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
+
 
 # Supported Robots and Data Formats
 
@@ -134,9 +140,10 @@ https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4
 | 12 | Kuavo `kuavo_s45` |  Head (2) + Arm (2\*7) + Leg (2\*6) = 28 | ✅ | TBD | TBD |
 | 13 | Berkeley Humanoid Lite `berkeley_humanoid_lite` (need further tuning) | Leg (2\*6) + Arm (2\*5) = 22 | ✅ | TBD | TBD |
 | 14 | PND Adam Lite `pnd_adam_lite`  | Leg (2\*6) + Waist (3) + Arm (2\*5) = 25 | ✅ | TBD | TBD |
+| 15 | Tienkung `tienkung`  | Leg (2\*6) + Arm (2\*4) = 20 | ✅ | TBD | TBD |
 | More robots coming soon ! |
-| 15 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
-| 16 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
+| 16 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
+| 17 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
 
 
 
