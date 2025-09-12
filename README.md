@@ -115,6 +115,11 @@ Demo 9: PND Adam lite
 
 https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4
 
+Demo 10: Tienkung Walking
+
+
+https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
+
 
 # Supported Robots and Data Formats
 
