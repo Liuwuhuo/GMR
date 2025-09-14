@@ -176,7 +176,7 @@
                 -0.5
             ]
         ],
-        "AL5": [
+        "left_hand_link": [
             "left_wrist",
             0,
             10,
@@ -224,7 +224,7 @@
                 -0.5
             ]
         ],
-        "AR5": [
+        "right_hand_link": [
             "right_wrist",
             0,
             10,
@@ -393,7 +393,7 @@
                 -0.5
             ]
         ],
-        "AL5": [
+        "left_hand_link": [
             "left_wrist",
             10,
             5,
@@ -441,7 +441,7 @@
                 -0.5
             ]
         ],
-        "AR5": [
+        "right_hand_link": [
             "right_wrist",
             10,
             5,

@@ -74,13 +74,16 @@
                             <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AL4" />
                             <body name="AL5" pos="0 0.105 0.00025">
                                 <inertial pos="-3.8402e-05 0.036076 0.0056711" quat="0.763252 0.646101 0 0" mass="0.43402" diaginertia="0.000823 0.000801406 0.000199594" />
+                                <joint name="Left_Wrist_Pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-2.27 2.27" />
                                 <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AL5" />
                                 <body name="AL6" pos="0 0.042 0">
                                     <inertial pos="-0.00072939 0.056578 -0.0056257" quat="0.701498 0.712537 0.00305334 -0.0134832" mass="0.47922" diaginertia="0.00117124 0.00113821 0.000165544" />
+                                    <joint name="Left_Wrist_Yaw" pos="0 0 0" axis="0 0 1" limited="true" range="-2.27 2.27" />
                                     <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AL6" />
                                     <body name="left_hand_link" pos="0.00475 0.07 0.0015">
                                         <inertial pos="-0.0067917 0.06373 0.011867" quat="0.486792 0.512522 -0.512399 0.487649" mass="0.30603" diaginertia="0.00244446 0.002302 0.000301541"/>
                                         <!-- <inertial pos="-0.0067917 0.06373 0.011867" quat="0.441572 0.342654 -0.554142 0.61687" mass="0.24875" diaginertia="0.00165553 0.00156059 0.000219879" /> -->
+                                        <joint name="Left_Hand_Roll" pos="0 0 0" axis="1 0 0" limited="true" range="-2.27 2.27" />
                                         <geom size="0.06 0.075" pos="0 0.1 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0.4 0.4 0.4 0.0" />
                                         <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AL7" />
                                     </body>
@@ -111,13 +114,16 @@
                             <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AR4" />
                             <body name="AR5" pos="0 -0.105 0.00025">
                                 <inertial pos="3.7355e-05 -0.035638 0.0053147" quat="0.648697 0.761046 0 0" mass="0.43402" diaginertia="0.000836 0.000812239 0.000204761" />
+                                <joint name="Right_Wrist_Pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-2.27 2.27" />
                                 <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AR5" />
                                 <body name="AR6" pos="0 -0.042 0">
                                     <inertial pos="-0.0011437 -0.056205 -0.0056621" quat="0.711908 0.702081 0.0164127 -0.000464544" mass="0.47922" diaginertia="0.00123856 0.00121017 0.000181264" />
+                                    <joint name="Right_Wrist_Yaw" pos="0 0 0" axis="0 0 1" limited="true" range="-2.27 2.27" />
                                     <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AR6" />
                                     <body name="right_hand_link" pos="0.00475 -0.07 0.0015">
                                         <inertial pos="-0.0047758 -0.064411 0.011992" quat="0.488328 0.51175 -0.511877 0.487473" mass="0.30603" diaginertia="0.00242288 0.002287 0.000287116"/>
                                         <!-- <inertial pos="-0.0047758 -0.064411 0.011992" quat="0.348921 0.444269 -0.615118 0.550009" mass="0.24612" diaginertia="0.00164385 0.00156207 0.000212082" /> -->
+                                        <joint name="Right_Hand_Roll" pos="0 0 0" axis="1 0 0" limited="true" range="-2.27 2.27" />
                                         <geom size="0.06 0.075" pos="0 -0.1 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0.4 0.4 0.4 0.0" />
                                         <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="AR7" />
                                     </body>
@@ -209,10 +215,16 @@
         <motor name="Left_Shoulder_Roll" joint="Left_Shoulder_Roll" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Left_Elbow_Pitch" joint="Left_Elbow_Pitch" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Left_Elbow_Yaw" joint="Left_Elbow_Yaw" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Left_Wrist_Pitch" joint="Left_Wrist_Pitch" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Left_Wrist_Yaw" joint="Left_Wrist_Yaw" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Left_Hand_Roll" joint="Left_Hand_Roll" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Right_Shoulder_Pitch" joint="Right_Shoulder_Pitch" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Right_Shoulder_Roll" joint="Right_Shoulder_Roll" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Right_Elbow_Pitch" joint="Right_Elbow_Pitch" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Right_Elbow_Yaw" joint="Right_Elbow_Yaw" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Right_Wrist_Pitch" joint="Right_Wrist_Pitch" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Right_Wrist_Yaw" joint="Right_Wrist_Yaw" ctrlrange="-18.0 18.0" ctrllimited="true" />
+        <motor name="Right_Hand_Roll" joint="Right_Hand_Roll" ctrlrange="-18.0 18.0" ctrllimited="true" />
         <motor name="Waist" joint="Waist" ctrlrange="-30.0 30.0" ctrllimited="true" />
         <motor name="Left_Hip_Pitch" joint="Left_Hip_Pitch" ctrlrange="-45.0 45.0" ctrllimited="true" />
         <motor name="Left_Hip_Roll" joint="Left_Hip_Roll" ctrlrange="-45.0 45.0" ctrllimited="true" />
