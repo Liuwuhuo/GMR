@@ -126,7 +126,7 @@ https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
 
 Demo 11: extract human pose from monocular video with GVHMR and retarget with GMR
 
-LINK: 
+[Watch on Bilibili »](https://www.bilibili.com/video/BV1Tnpmz9EaE)
 
 # Supported Robots and Data Formats
 
