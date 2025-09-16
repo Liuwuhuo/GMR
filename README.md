@@ -20,6 +20,8 @@
 
 ![Banner for GMR](./assets/GMR.png)
 
+![GMR](./assets/GMR_pipeline.png)
+
 Key features of GMR:
 - Real-time high-quality retargeting, unlock the potential of real-time whole-body teleoperation, i.e., [TWIST](https://github.com/YanjieZe/TWIST).
 - Carefully tuned for good performance of RL tracking policies.
@@ -40,6 +42,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-09-16: GMR now supports to use [GVHMR](https://github.com/zju3dv/GVHMR) for extracting human pose from **monocular video** and retargeting to robot.
 - 2025-09-12: GMR now supports [Tienkung](https://github.com/Open-X-Humanoid/TienKung-Lab), the 14th humanoid robot in the repo.
 - 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1) and [PND Adam Lite](https://pndbotics.com/), the 12th and 13th humanoid robots in the repo.
 - 2025-08-28: GMR now supports [Booster T1](https://www.boosterobotics.com/) for both 23dof and 29dof.
@@ -120,6 +123,10 @@ Demo 10: Tienkung Walking
 
 https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
 
+
+Demo 11: extract human pose from monocular video with GVHMR and retarget with GMR
+
+LINK: 
 
 # Supported Robots and Data Formats
 
@@ -220,6 +227,25 @@ Retarget a folder of motions:
 python scripts/smplx_to_robot_dataset.py --src_folder <path_to_dir_of_smplx_data> --tgt_folder <path_to_dir_to_save_robot_data> --robot <robot_name>
 ```
 By default there is no visualization for batch retargeting.
+
+
+## Retargeting from GVHMR to Robot
+
+First, install GVHMR by following [their official instructions](https://github.com/zju3dv/GVHMR/blob/main/docs/INSTALL.md).
+
+And run their demo that can extract human pose from monocular video:
+
+```bash
+# in GVHMR repo
+python tools/demo/demo.py --video=docs/example_video/tennis.mp4 -s
+```
+Then you should obtain the saved human pose data in `GVHMR/outputs/demo/tennis/hmr4d_results.pt`.
+
+Then, run the command below to retarget the extracted human pose data to your robot:
+```bash
+python scripts/gvhmr_to_robot.py --gvhmr_pred_file <path_to_hmr4d_results.pt> --robot unitree_g1 --record_video
+```
+
 
 
 ## Retargeting from BVH (LAFAN1) to Robot
