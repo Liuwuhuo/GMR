@@ -16,6 +16,9 @@
   <a href="https://yanjieze.github.io/humanoid-foundation/#GMR">
     <img src="https://img.shields.io/badge/blog-GMR-blue.svg" alt="Blog"/>
   </a>
+    <a href="https://www.bilibili.com/video/BV1p1nazeEzC/?share_source=copy_web&vd_source=c76e3ab14ac3f7219a9006b96b4b0f76">
+    <img src="https://img.shields.io/badge/tutorial-BILIBILI-blue.svg" alt="Blog"/>
+  </a>
 
 
 ![Banner for GMR](./assets/GMR.png)
@@ -42,6 +45,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-09-25: An introduction on GMR is available on [Bilibili](https://www.bilibili.com/video/BV1p1nazeEzC/?share_source=copy_web&vd_source=c76e3ab14ac3f7219a9006b96b4b0f76).
 - 2025-09-16: GMR now supports to use [GVHMR](https://github.com/zju3dv/GVHMR) for extracting human pose from **monocular video** and retargeting to robot.
 - 2025-09-12: GMR now supports [Tienkung](https://github.com/Open-X-Humanoid/TienKung-Lab), the 14th humanoid robot in the repo.
 - 2025-08-30: GMR now supports [Unitree H1 2](https://www.unitree.com/cn/h1) and [PND Adam Lite](https://pndbotics.com/), the 12th and 13th humanoid robots in the repo.
