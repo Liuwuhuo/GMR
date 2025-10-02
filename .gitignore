@@ -106,3 +106,7 @@ tmp/
 motion_data/
 
 GVHMR/
+
+batch_twist1_to_csv.py
+
+yaml_to_flat_csv.py
