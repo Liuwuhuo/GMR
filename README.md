@@ -4,6 +4,10 @@
   <a href="https://arxiv.org/abs/2505.02833">
     <img src="https://img.shields.io/badge/paper-arXiv%3A2505.02833-b31b1b.svg" alt="arXiv Paper"/>
   </a>
+   <a href="https://arxiv.org/abs/2510.02252">
+    <img src="https://img.shields.io/badge/paper-arXiv%3A2510.02252-b31b1b.svg" alt="arXiv Paper"/>
+  </a>
+
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
   </a>
@@ -45,6 +49,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-10-02: Tech report for GMR is now on [arXiv](https://arxiv.org/abs/2510.02252).
 - 2025-10-01: GMR now supports converting GMR pickle files to CSV (for beyondmimic), check `scripts/batch_gmr_pkl_to_csv.py`.
 - 2025-09-25: An introduction on GMR is available on [Bilibili](https://www.bilibili.com/video/BV1p1nazeEzC/?share_source=copy_web&vd_source=c76e3ab14ac3f7219a9006b96b4b0f76).
 - 2025-09-16: GMR now supports to use [GVHMR](https://github.com/zju3dv/GVHMR) for extracting human pose from **monocular video** and retargeting to robot.
