@@ -331,9 +331,16 @@ If you want to record video, add `--record_video` and `--video_path <your_video_
 
 # Citation
 
-If you find our code useful, please consider citing our papers:
+If you find our code useful, please consider citing our related papers:
 
 ```bibtex
+@article{joao2025gmr,
+title={Retargeting Matters: General Motion Retargeting for Humanoid Motion Tracking},
+author= {Joao Pedro Araujo and Yanjie Ze and Pei Xu and Jiajun Wu and C. Karen Liu},
+year= {2025},
+journal= {arXiv preprint arXiv:2510.02252}
+}
+
 @article{ze2025twist,
 title={TWIST: Teleoperated Whole-Body Imitation System},
 author= {Yanjie Ze and Zixuan Chen and João Pedro Araújo and Zi-ang Cao and Xue Bin Peng and Jiajun Wu and C. Karen Liu},
