@@ -49,6 +49,7 @@ Starting from its release, GMR is massively used by the community. See below for
 
 
 # News & Updates
+- 2025-10-09: Check [TWIST](https://github.com/YanjieZe/TWIST) open-sourced code for RL motion tracking.
 - 2025-10-02: Tech report for GMR is now on [arXiv](https://arxiv.org/abs/2510.02252).
 - 2025-10-01: GMR now supports converting GMR pickle files to CSV (for beyondmimic), check `scripts/batch_gmr_pkl_to_csv.py`.
 - 2025-09-25: An introduction on GMR is available on [Bilibili](https://www.bilibili.com/video/BV1p1nazeEzC/?share_source=copy_web&vd_source=c76e3ab14ac3f7219a9006b96b4b0f76).
