@@ -115,8 +115,7 @@ _**Demo 11:** Extracting human pose from monocular video with GVHMR and retarget
 
 _**Demo 10:** PAL Robotics' Talos robot fighting._
 
-https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
-
+https://github.com/user-attachments/assets/3ec0bf80-80c1-4181-a623-dc2b072c2ca2
 
 ## Supported Robots and Data Formats
 
