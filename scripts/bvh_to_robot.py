@@ -65,6 +65,12 @@ if __name__ == "__main__":
         help="Path to save the robot motion.",
     )
     
+    parser.add_argument(
+        "--motion_fps",
+        default=30,
+        type=int,
+    )
+    
     args = parser.parse_args()
     
     if args.save_path is not None:
@@ -85,7 +91,7 @@ if __name__ == "__main__":
         actual_human_height=actual_human_height,
     )
 
-    motion_fps = 50
+    motion_fps = args.motion_fps
     
     robot_motion_viewer = RobotMotionViewer(robot_type=args.robot,
                                             motion_fps=motion_fps,
