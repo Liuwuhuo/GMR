@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--format",
         choices=["lafan1", "nokov"],
-        default="nokov",
+        default="lafan1",
     )
     
     parser.add_argument(
