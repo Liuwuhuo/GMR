@@ -21,7 +21,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--robot", type=str, default="unitree_g1")
                         
-    parser.add_argument("--robot_motion_dir", type=str, required=True)
+    parser.add_argument("--robot_motion_folder", type=str, required=True)
 
     parser.add_argument("--record_video", action="store_true")
     parser.add_argument("--video_path", type=str, 
@@ -30,18 +30,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     robot_type = args.robot
-    robot_motion_dir = args.robot_motion_dir
+    robot_motion_folder = args.robot_motion_folder
     
-    if not os.path.exists(robot_motion_dir):
-        raise FileNotFoundError(f"Motion data dir {robot_motion_dir} does not exist.")
+    if not os.path.exists(robot_motion_folder):
+        raise FileNotFoundError(f"Motion data dir {robot_motion_folder} does not exist.")
     
-    motion_files = [f for f in os.listdir(robot_motion_dir) if f.endswith('.pkl')]
+    motion_files = [f for f in os.listdir(robot_motion_folder) if f.endswith('.pkl')]
     motion_files = sorted(motion_files)
     motion_num = len(motion_files)
-    print(f"Found {motion_num} motion files in {robot_motion_dir}, loading...")
+    print(f"Found {motion_num} motion files in {robot_motion_folder}, loading...")
     motion_dataset = []
     for motion_file in tqdm(motion_files):
-        motion_path = os.path.join(robot_motion_dir, motion_file)
+        motion_path = os.path.join(robot_motion_folder, motion_file)
         motion_data, motion_fps, motion_root_pos, motion_root_rot, motion_dof_pos, motion_local_body_pos, motion_link_body_list = load_robot_motion(motion_path)
         motion_dataset.append({
             "motion_file": motion_file,
