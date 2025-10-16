@@ -307,11 +307,24 @@ You should see the visualization of the retargeted robot motion in a mujoco wind
 
 ### Visualize saved robot motion
 
+Visualize a single motions:
+
 ```bash
 python scripts/vis_robot_motion.py --robot <robot_name> --robot_motion_path <path_to_save_robot_data.pkl>
 ```
 
 If you want to record video, add `--record_video` and `--video_path <your_video_path,mp4>`.
+
+Visualize a folder of motions:
+
+```bash
+python scripts/vis_robot_motion_dataset.py --robot <robot_name> --robot_motion_folder <path_to_save_robot_data_folder>
+```
+
+After launching the MuJoCo visualization window and clicking on it, you can use the following keyboard controls::
+* `[`: play the previous motion
+* `]`: play the next motion
+* `space`: toggle play/pause
 
 ## Speed Benchmark
 
