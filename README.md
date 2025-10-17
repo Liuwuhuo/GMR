@@ -62,59 +62,96 @@ Starting from its release, **GMR** has been massively used by the community. See
 
 ## Demos
 
-_**Demo 1:** Retargeting LAFAN1 dancing motion to 5 different robots (Unitree G1, Booster T1, Stanford ToddlerBot, Fourier N1, and ENGINEAI PM01)._
+<table>
+  <tr>
+    <td align="center" width="20%">
+      <b>Demo 1</b><br>
+      Retargeting LAFAN1 dancing motion to 5 robots.<br>
+      <video src="https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e" width="200" controls></video>
+    </td>
+    <td align="center" width="20%">
+      <b>Demo 2</b><br>
+      Galexea R1 Pro robot (view 1).<br>
+      <video src="https://github.com/user-attachments/assets/903ed0b0-0ac5-4226-8f82-5a88631e9b7c" width="200" controls></video>
+    </td>
+    <td align="center" width="20%">
+      <b>Demo 3</b><br>
+      Galexea R1 Pro robot (view 2).<br>
+      <video src="https://github.com/user-attachments/assets/deea0e64-f1c6-41bc-8661-351682006d5d" width="200" controls></video>
+    </td>
+    <td align="center" width="20%">
+      <b>Demo 4</b><br>
+      Switching robots by changing one argument.<br>
+      <video src="https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e" width="200" controls></video>
+    </td>
+    <td align="center" width="20%">
+      <b>Demo 5</b><br>
+      HighTorque robot doing a twist dance.<br>
+      <video src="https://github.com/user-attachments/assets/1d3e663b-f29e-41b1-8e15-5c0deb6a4a5c" width="200" controls></video>
+    </td>
+  </tr>
 
-https://github.com/user-attachments/assets/23566fa5-6335-46b9-957b-4b26aed11b9e
+  <tr>
+    <td align="center">
+      <b>Demo 6</b><br>
+      Kuavo robot picking up a box.<br>
+      <video src="https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 7</b><br>
+      Unitree H1 robot doing a ChaCha dance.<br>
+      <video src="https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 8</b><br>
+      Booster T1 robot jumping (view 1).<br>
+      <video src="https://github.com/user-attachments/assets/2c75a146-e28f-4327-930f-5281bfc2ca9c" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 9</b><br>
+      Booster T1 robot jumping (view 2).<br>
+      <video src="https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 10</b><br>
+      Unitree H1-2 robot jumping.<br>
+      <video src="https://github.com/user-attachments/assets/2382d8ce-7902-432f-ab45-348a11eeb312" width="200" controls></video>
+    </td>
+  </tr>
 
-_**Demo 2:** Galexea R1 Pro robot, a wheeled humanoid robot, doing human motions._
+  <tr>
+    <td align="center">
+      <b>Demo 11</b><br>
+      PND Adam Lite robot.<br>
+      <video src="https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 12</b><br>
+      Tienkung robot walking.<br>
+      <video src="https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 13</b><br>
+      Extracting human pose (GVHMR + GMR).<br>
+      <a href="https://www.bilibili.com/video/BV1Tnpmz9EaE">▶ Watch on Bilibili</a>
+    </td>
+    <td align="center">
+      <b>Demo 14</b><br>
+      PAL Robotics’ Talos robot fighting.<br>
+      <video src="https://github.com/user-attachments/assets/3ec0bf80-80c1-4181-a623-dc2b072c2ca2" width="200" controls></video>
+    </td>
+    <td align="center">
+      <b>Demo 15</b><br>
+      (Optional placeholder if you add a new one later!)<br>
+      <i>Coming soon...</i>
+    </td>
+  </tr>
+</table>
 
-https://github.com/user-attachments/assets/903ed0b0-0ac5-4226-8f82-5a88631e9b7c
-
-https://github.com/user-attachments/assets/deea0e64-f1c6-41bc-8661-351682006d5d
-
-_**Demo 3:** Screen recording of my own command line usage. Switching robots just by changing an argument._
-
-https://github.com/user-attachments/assets/03f10902-c541-40b1-8104-715a5759fd5e
-
-_**Demo 4:** HighTorque robot doing a twist dance._
-
-https://github.com/user-attachments/assets/1d3e663b-f29e-41b1-8e15-5c0deb6a4a5c
-
-_**Demo 5:** Kuavo robot picking up a box._
-
-https://github.com/user-attachments/assets/02fc8f41-c363-484b-a329-4f4e83ed5b80
-
-_**Demo 6:** Unitree H1 robot doing a ChaCha dance._
-
-https://github.com/user-attachments/assets/28ee6f0f-be30-42bb-8543-cf1152d97724
-
-_**Demo 7:** Booster T1 23dof/29dof robot jumping._
-
-https://github.com/user-attachments/assets/2c75a146-e28f-4327-930f-5281bfc2ca9c
-
-https://github.com/user-attachments/assets/ff10c7ef-4357-4789-9219-23c6db8dba6d
-
-_**Demo 8:** Unitree H1 2 robot jumping._
-
-https://github.com/user-attachments/assets/2382d8ce-7902-432f-ab45-348a11eeb312
-
-_**Demo 9:** PND Adam lite robot._
-
-https://github.com/user-attachments/assets/a8ef1409-88f1-4393-9cd0-d2b14216d2a4
-
-_**Demo 10:** Tienkung robot walking._
-
-https://github.com/user-attachments/assets/7a775ecc-4254-450c-a3eb-49e843b8e331
-
-_**Demo 11:** Extracting human pose from monocular video with GVHMR and retarget with GMR._
-
-[Watch on Bilibili »](https://www.bilibili.com/video/BV1Tnpmz9EaE)
-
-_**Demo 10:** PAL Robotics' Talos robot fighting._
-
-https://github.com/user-attachments/assets/3ec0bf80-80c1-4181-a623-dc2b072c2ca2
 
 ## Supported Robots and Data Formats
+
+
 
 | Assigned ID | Robot/Data Format | Robot DoF | SMPLX ([AMASS](https://amass.is.tue.mpg.de/), [OMOMO](https://github.com/lijiaman/omomo_release)) | BVH [LAFAN1](https://github.com/ubisoft/ubisoft-laforge-animation-dataset)| FBX ([OptiTrack](https://www.optitrack.com/)) |  BVH [Nokov](https://www.nokov.com/) | More formats coming soon | 
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -138,6 +175,9 @@ https://github.com/user-attachments/assets/3ec0bf80-80c1-4181-a623-dc2b072c2ca2
 | More robots coming soon ! |
 | 16 | AgiBot A2 `agibot_a2` | TBD | TBD | TBD | TBD |
 | 17 | OpenLoong `openloong` | TBD | TBD | TBD | TBD |
+
+
+
 
 ## Installation
 
