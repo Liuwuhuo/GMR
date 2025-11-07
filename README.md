@@ -226,7 +226,7 @@ conda install -c conda-forge libstdcxx-ng -y
 
 To better use this library, you can first have an understanding of the human motion data we use and the robot motion data we obtain.
 
-Each frame of **human motion data** is formulated as a dict of (human_body_name, 3d global translation + global rotation).
+Each frame of **human motion data** is formulated as a dict of (human_body_name, 3d global translation + global rotation). The rotation is usually represented as quaternion (with wxyz order by default, to align with mujoco).
 
 Each frame of **robot motion data** can be understood as a tuple of (robot_base_translation, robot_base_rotation, robot_joint_positions).
 
