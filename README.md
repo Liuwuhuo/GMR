@@ -32,6 +32,7 @@ This repo is licensed under the [MIT License](LICENSE).
 
 
 # News & Updates
+- **2025-11-17:** To join our community for discussions, you can add my WeChat contact [QR Code](https://yanjieze.com/TWIST2/images/my_wechat.jpg) with info like "[GMR] [Your Name] [Your Affiliation]".
 - **2025-11-08:** [MimicKit] from Jason Peng now supports GMR format. Check [here](https://github.com/xbpeng/MimicKit/tree/main/tools/gmr_to_mimickit).
 - **2025-10-15:** Now supporting [PAL Robotics' Talos](https://pal-robotics.com/robot/talos/), the 15th humanoid robot.
 - **2025-10-14:** GMR now supports [Nokov](https://www.nokov.com/) BVH data.
