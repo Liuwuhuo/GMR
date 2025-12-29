@@ -68,7 +68,6 @@ class GeneralMotionRetargeting:
         # adjust the human scale table
         for key in ik_config["human_scale_table"].keys():
             ik_config["human_scale_table"][key] = ik_config["human_scale_table"][key] * ratio
-    
 
         # used for retargeting
         self.ik_match_table1 = ik_config["ik_match_table1"]

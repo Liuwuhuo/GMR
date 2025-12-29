@@ -1,0 +1,70 @@
+<mujoco model="PND">
+  <include file="adam_inspire.xml" />
+  <!-- <include file="adam_lite_old.xml" /> -->
+  <statistic center="1 0.7 1.5" extent="3" />
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
+    <rgba haze="0.15 0.25 0.35 1" />
+    <global azimuth="-140" elevation="-30" />
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="flat" rgb1="0 0 0" rgb2="0 0 0" width="512" height="3072" />
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+      rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300" />
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
+      reflectance="0.2" />
+    <material name="ramp_material" rgba="0.4 0.6 0.4 1"/>
+    <material name="obstacle_material" rgba="0.6 0.4 0.4 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" friction="1.5 1 1" solimp="0.98 0.99 0.001" solref="0.01 2"/>
+
+    <body name="slope" pos="5 0 0">
+        <geom name="slope" type="box" size="5 5 0.05" euler="0 -0.1 0" rgba="0.4 0.6 0.4 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat" pos="11.975 0 0.5">
+        <geom name="flat" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.4 0.6 0.4 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope1" pos="13.975 0 0.5">
+        <geom name="slope1" type="box" size="5 5 0.05" euler="0 -0.15 0" rgba="0.4 0.6 0.5 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat1" pos="20.9188 0 1.247">
+        <geom name="flat1" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.4 0.6 0.5 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope2" pos="22.9188 0 1.247">
+        <geom name="slope2" type="box" size="5 5 0.05" euler="0 -0.2 0" rgba="0.4 0.6 0.6 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat2" pos="29.8191 0 2.24">
+        <geom name="flat2" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.4 0.6 0.6 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope3" pos="31.8191 0 2.24">
+        <geom name="slope3" type="box" size="5 5 0.05" euler="0 -0.25 0" rgba="0.4 0.6 0.7 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat3" pos="38.6637 0 3.477">
+        <geom name="flat3" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.4 0.6 0.7 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope4" pos="40.6637 0 3.477">
+        <geom name="slope4" type="box" size="5 5 0.05" euler="0 -0.3 0" rgba="0.4 0.6 0.8 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat4" pos="47.440 0 4.9546">
+        <geom name="flat4" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.4 0.6 0.8 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope5" pos="49.440 0 4.9546">
+        <geom name="slope5" type="box" size="5 5 0.05" euler="0 -0.35 0" rgba="0.5 0.6 0.9 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat5" pos="56.1368 0 6.669">
+        <geom name="flat5" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.5 0.6 0.9 1" friction="1.2 1 1"/>
+    </body>
+    <body name="slope6" pos="58.1368 0 6.669">
+        <geom name="slope6" type="box" size="5 5 0.05" euler="0 -0.4 0" rgba="0.6 0.6 1 1" friction="1.2 1 1"/>
+    </body>
+    <body name="flat6" pos="64.7421 0 8.6161">
+        <geom name="flat6" type="box" size="2 5 0.05" euler="0 0 0" rgba="0.6 0.6 1 1" friction="1.2 1 1"/>
+    </body>
+
+
+  </worldbody>
+  <option timestep="0.001"/>
+</mujoco>
