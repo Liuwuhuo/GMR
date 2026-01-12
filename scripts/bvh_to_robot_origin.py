@@ -23,7 +23,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom"],
+        choices=["lafan1", "nokov"],
         default="lafan1",
     )
     
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp"],
+        choices=["unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "pal_talos", "pnd_adam_lite", "adam_sp_pro", "adam_sp"],
         default="unitree_g1",
     )
     
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--record_video",
         action="store_true",
-        default=False,
+        default=True,
     )
 
     parser.add_argument(
@@ -76,35 +76,20 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
+    if args.save_path is not None:
+        save_dir = os.path.dirname(args.save_path)
+        if save_dir:  # Only create directory if it's not empty
+            os.makedirs(save_dir, exist_ok=True)
+        qpos_list = []
 
-    if args.save_path is None:
-        # 从 BVH 文件名中提取基本名称（不带扩展名）
-        bvh_basename = os.path.splitext(os.path.basename(args.bvh_file))[0]
-        # 创建默认保存路径
-        default_dir = "retarget"
-        datasets_dir = args.format
-        robot_dir = args.robot
-        os.makedirs(default_dir, exist_ok=True)
-        args.save_path = os.path.join(default_dir, robot_dir, datasets_dir, f"{bvh_basename}.pkl")
-        print(f"未指定保存路径，使用默认路径: {args.save_path}")
-
-    save_dir = os.path.dirname(args.save_path)
-    if save_dir:  # Only create directory if it's not empty
-        os.makedirs(save_dir, exist_ok=True)
-    qpos_list = []
-
+    
     # Load SMPLX trajectory
     lafan1_data_frames, actual_human_height = load_bvh_file(args.bvh_file, format=args.format)
 
-    # >>>>> 新增：支持指定起止帧 <<<<<
-
-    # args = parser.parse_args()  # 重新 parse，或把这两行提前到 load_bvh 之前（推荐提前）
-
-    # 截取所需帧段
     start = max(0, args.start_frame)
     end = args.end_frame if args.end_frame is not None else len(lafan1_data_frames)
     lafan1_data_frames = lafan1_data_frames[start:end]
-
+    
     
     # Initialize the retargeting system
     retargeter = GMR(
@@ -140,16 +125,6 @@ if __name__ == "__main__":
 
 
     while True:
-
-        if robot_motion_viewer.paused is False:
-            if args.loop:
-                i = (i + 1) % len(lafan1_data_frames)
-            else:
-                i += 1
-                if i >= len(lafan1_data_frames):
-                    # time.sleep(10000.0)  # 无限期休眠，不占用 CPU
-                    # pass
-                    break
         
         # FPS measurement
         fps_counter += 1
@@ -167,7 +142,8 @@ if __name__ == "__main__":
         smplx_data = lafan1_data_frames[i]
 
         # retarget
-        qpos, qvel = retargeter.retarget(smplx_data)
+        qpos = retargeter.retarget(smplx_data)
+        
 
         # visualize
         robot_motion_viewer.step(
@@ -176,10 +152,16 @@ if __name__ == "__main__":
             dof_pos=qpos[7:],
             human_motion_data=retargeter.scaled_human_data,
             rate_limit=args.rate_limit,
-            follow_camera=False,
+            follow_camera=True,
             # human_pos_offset=np.array([0.0, 0.0, 0.0])
         )
 
+        if args.loop:
+            i = (i + 1) % len(lafan1_data_frames)
+        else:
+            i += 1
+            if i >= len(lafan1_data_frames):
+                break
    
         
         if args.save_path is not None:
@@ -187,49 +169,21 @@ if __name__ == "__main__":
     
     if args.save_path is not None:
         import pickle
-        from scipy.spatial.transform import Rotation as R
-        
         root_pos = np.array([qpos[:3] for qpos in qpos_list])
-        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])  # 从 wxyz 转换为 xyzw
+        # save from wxyz to xyzw
+        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])
         dof_pos = np.array([qpos[7:] for qpos in qpos_list])
+        local_body_pos = None
+        body_names = None
         
-        # 计算帧时长
-        frame_duration = 1.0 / motion_fps
-        
-        # 获取关节名称
-        dof_names = [name for name, index in sorted(retargeter.robot_dof_names.items(), key=lambda x: x[1]) if name != "floating_joint"]
-        
-        # 构建标签列表
-        labels = []
-        labels.extend(["root_pos/x", "root_pos/y", "root_pos/z"])
-        labels.extend(["root_quat/x", "root_quat/y", "root_quat/z", "root_quat/w"])
-        labels.extend([f"dof_pos/{name}" for name in dof_names])
-        
-        # 构建帧数据
-        frames = []
-        for i in range(len(root_pos)):
-            frame_data = []
-            # 添加根位置 (x, y, z)
-            frame_data.extend(root_pos[i].tolist())
-            # 添加根旋转四元数 (x, y, z, w)
-            frame_data.extend(root_rot[i].tolist())
-            # 添加关节位置
-            frame_data.extend(dof_pos[i].tolist())
-            frames.append(frame_data)
-        
-        # 构建最终输出结构
         motion_data = {
-            "LoopMode": "Once",
-            "LoopNum": 1,
-            "FrameDuration": frame_duration,
-            "EnableCycleOffsetPosition": True,
-            "EnableCycleOffsetRotation": True,
-            "MotionWeight": 1.0,
-            "Labels": labels,
-            "Frames": frames
+            "fps": motion_fps,
+            "root_pos": root_pos,
+            "root_rot": root_rot,
+            "dof_pos": dof_pos,
+            "local_body_pos": local_body_pos,
+            "link_body_list": body_names,
         }
-        
-        # 保存为 pickle 文件
         with open(args.save_path, "wb") as f:
             pickle.dump(motion_data, f)
         print(f"Saved to {args.save_path}")

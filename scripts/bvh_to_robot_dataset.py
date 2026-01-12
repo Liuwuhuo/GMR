@@ -1,6 +1,7 @@
 import argparse
 import pathlib
 import os
+import mujoco as mj
 import numpy as np
 from tqdm import tqdm
 import torch
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_inspire"],
+        choices=["unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp"],
         default="unitree_g1",
     )
     

@@ -7,23 +7,21 @@
     "use_ik_match_table2": true,
     "human_scale_table": {
         "Hips": 0.9,
-        "Spine2": 0.9,
+        "Spine1": 0.9,
         "Head": 0.85,
-        "LeftUpLeg": 1.1,
-        "RightUpLeg": 1.1,
-        "LeftLeg": 0.9,
-        "RightLeg": 0.9,
-        "LeftFootMod": 0.9,
-        "RightFootMod": 0.9,
-
+        "LeftUpLeg": 1.2,
+        "RightUpLeg": 1.2,
+        "LeftLeg": 1.0,
+        "RightLeg": 1.0,
+        "LeftFootMod": 1.1,
+        "RightFootMod": 1.1,
         "LeftArm": 0.9,
         "RightArm": 0.9,
         "LeftForeArm": 1.0,
         "RightForeArm": 1.0,
-        "LeftHand": 1.1,
-        "RightHand": 1.1
+        "LeftHand": 1.0,
+        "RightHand": 1.0
     },
-
     "ik_match_table1": {
         "pelvis": [
             "Hips",
@@ -73,7 +71,7 @@
                 -0.5
             ]
         ],
-        "toeLeft": [
+        "foot_bottom_left": [
             "LeftFootMod",
             50,
             10,
@@ -121,7 +119,7 @@
                 -0.5
             ]
         ],
-        "toeRight": [
+        "foot_bottom_right": [
             "RightFootMod",
             50,
             10,
@@ -138,7 +136,7 @@
             ]
         ],
         "torso": [
-            "Spine2",
+            "Spine1",
             0,
             100,
             [
@@ -285,8 +283,8 @@
         ],
         "thighLeft": [
             "LeftUpLeg",
+            0,
             10,
-            5,
             [
                 0.0,
                 0.0,
@@ -315,7 +313,7 @@
                 -0.5
             ]
         ],
-        "toeLeft": [
+        "foot_bottom_left": [
             "LeftFootMod",
             50,
             10,
@@ -333,8 +331,8 @@
         ],
         "thighRight": [
             "RightUpLeg",
+            0,
             10,
-            5,
             [
                 0.0,
                 0.0,
@@ -363,7 +361,7 @@
                 -0.5
             ]
         ],
-        "toeRight": [
+        "foot_bottom_right": [
             "RightFootMod",
             50,
             10,
@@ -380,23 +378,7 @@
             ]
         ],
         "torso": [
-            "Spine2",
-            0,
-            10,
-            [
-                0.0,
-                0.0,
-                0.0
-            ],
-            [
-                0.5,
-                0.5,
-                0.5,
-                0.5
-            ]
-        ],
-        "head": [
-            "Head",
+            "Spine1",
             0,
             100,
             [

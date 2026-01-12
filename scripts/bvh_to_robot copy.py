@@ -23,7 +23,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom"],
+        choices=["lafan1", "nokov", "sfu"],
         default="lafan1",
     )
     
@@ -167,7 +167,8 @@ if __name__ == "__main__":
         smplx_data = lafan1_data_frames[i]
 
         # retarget
-        qpos, qvel = retargeter.retarget(smplx_data)
+        qpos = retargeter.retarget(smplx_data)
+        
 
         # visualize
         robot_motion_viewer.step(

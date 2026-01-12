@@ -1,15 +1,13 @@
 import argparse
 import pathlib
-import os
 import time
-
-import numpy as np
-
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
-from general_motion_retargeting.utils.smpl import load_gvhmr_pred_file, get_gvhmr_data_offline_fast
-
+from general_motion_retargeting.utils.bvh_noitom import load_lafan1_file, load_noitom_file
 from rich import print
+from tqdm import tqdm
+import os
+import numpy as np
 
 if __name__ == "__main__":
     
@@ -17,102 +15,90 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--gvhmr_pred_file",
-        help="SMPLX motion file to load.",
+        "--bvh_file",
+        help="BVH motion file to load.",
+        required=True,
         type=str,
-        # required=True,
-        default="/home/yanjieze/projects/g1_wbc/GMR/GVHMR/outputs/demo/tennis/hmr4d_results.pt",
     )
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "unitree_g1_with_hands", "unitree_h1", "unitree_h1_2",
-                 "booster_t1", "booster_t1_29dof","stanford_toddy", "fourier_n1", 
-                "engineai_pm01", "kuavo_s45", "hightorque_hi", "galaxea_r1pro", "berkeley_humanoid_lite", "booster_k1",
-                "pnd_adam_lite", "adam_sp", "openloong", "tienkung"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "adam_sp_pro"],
         default="unitree_g1",
     )
-    
+        
+    parser.add_argument(
+        "--record_video",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--video_path",
+        type=str,
+        default="videos/example.mp4",
+    )
+
+    parser.add_argument(
+        "--rate_limit",
+        action="store_true",
+        default=False,
+    )
+
     parser.add_argument(
         "--save_path",
         default=None,
         help="Path to save the robot motion.",
     )
     
-    parser.add_argument(
-        "--loop",
-        default=False,
-        action="store_true",
-        help="Loop the motion.",
-    )
-
-    parser.add_argument(
-        "--record_video",
-        default=False,
-        action="store_true",
-        help="Record the video.",
-    )
-
-    parser.add_argument(
-        "--rate_limit",
-        default=False,
-        action="store_true",
-        help="Limit the rate of the retargeted robot motion to keep the same as the human motion.",
-    )
-
+    
     args = parser.parse_args()
-
-
-    SMPLX_FOLDER = HERE / ".." / "assets" / "body_models"
-    
-    
-    # Load SMPLX trajectory
-    smplx_data, body_model, smplx_output, actual_human_height = load_gvhmr_pred_file(
-        args.gvhmr_pred_file, SMPLX_FOLDER
-    )
-    
-    # align fps
-    tgt_fps = 30
-    smplx_data_frames, aligned_fps = get_gvhmr_data_offline_fast(smplx_data, body_model, smplx_output, tgt_fps=tgt_fps)
-    
-    
-   
-    # Initialize the retargeting system
-    retarget = GMR(
-        actual_human_height=actual_human_height,
-        src_human="smplx",
-        tgt_robot=args.robot,
-    )
-    
-    robot_motion_viewer = RobotMotionViewer(robot_type=args.robot,
-                                            motion_fps=aligned_fps,
-                                            transparent_robot=0,
-                                            record_video=args.record_video,
-                                            video_path=f"videos/{args.robot}_{args.gvhmr_pred_file.split('/')[-1].split('.')[0]}.mp4",)
     
 
-    curr_frame = 0
-    # FPS measurement variables
-    fps_counter = 0
-    fps_start_time = time.time()
-    fps_display_interval = 2.0  # Display FPS every 2 seconds
-    
     if args.save_path is not None:
         save_dir = os.path.dirname(args.save_path)
         if save_dir:  # Only create directory if it's not empty
             os.makedirs(save_dir, exist_ok=True)
         qpos_list = []
+
+    
+    # Load SMPLX trajectory
+    lafan1_data_frames, actual_human_height = load_lafan1_file(args.bvh_file)
+    # lafan1_data_frames, actual_human_height = load_noitom_file(args.bvh_file)
+    
+    
+    # Initialize the retargeting system
+    retargeter = GMR(
+        src_human="bvh_noitom",
+        tgt_robot=args.robot,
+        actual_human_height=actual_human_height,
+    )
+
+    motion_fps = 30
+    
+    robot_motion_viewer = RobotMotionViewer(robot_type=args.robot,
+                                            motion_fps=motion_fps,
+                                            transparent_robot=0,
+                                            record_video=args.record_video,
+                                            video_path=args.video_path,
+                                            # video_width=2080,
+                                            # video_height=1170
+                                            )
+    
+    # FPS measurement variables
+    fps_counter = 0
+    fps_start_time = time.time()
+    fps_display_interval = 2.0  # Display FPS every 2 seconds
+    
+    print(f"mocap_frame_rate: {motion_fps}")
+    
+    # Create tqdm progress bar for the total number of frames
+    pbar = tqdm(total=len(lafan1_data_frames), desc="Retargeting")
     
     # Start the viewer
     i = 0
 
-    while True:
-        if args.loop:
-            i = (i + 1) % len(smplx_data_frames)
-        else:
-            i += 1
-            if i >= len(smplx_data_frames):
-                break
+    while i < len(lafan1_data_frames):
         
         # FPS measurement
         fps_counter += 1
@@ -122,27 +108,35 @@ if __name__ == "__main__":
             print(f"Actual rendering FPS: {actual_fps:.2f}")
             fps_counter = 0
             fps_start_time = current_time
-        
+            
+        # Update progress bar
+        pbar.update(1)
+
         # Update task targets.
-        smplx_data = smplx_data_frames[i]
+        smplx_data = lafan1_data_frames[i]
 
         # retarget
-        qpos = retarget.retarget(smplx_data)
+        cur = time.time()
+        qpos = retargeter.retarget(smplx_data)
+        print(f"Retargeting time: {time.time() - cur:.4f} seconds")
 
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],
             root_rot=qpos[3:7],
             dof_pos=qpos[7:],
-            human_motion_data=retarget.scaled_human_data,
-            # human_motion_data=smplx_data,
-            human_pos_offset=np.array([0.0, 0.0, 0.0]),
-            show_human_body_name=False,
+            human_motion_data=retargeter.scaled_human_data,
             rate_limit=args.rate_limit,
+            # human_pos_offset=np.array([0.0, 0.0, 0.0])
         )
+
+        i += 1
+        # time.sleep(1.0 / motion_fps / 2)  # Simulate frame rate
+        # time.sleep(30)
+
         if args.save_path is not None:
             qpos_list.append(qpos)
-            
+    
     if args.save_path is not None:
         import pickle
         root_pos = np.array([qpos[:3] for qpos in qpos_list])
@@ -153,7 +147,7 @@ if __name__ == "__main__":
         body_names = None
         
         motion_data = {
-            "fps": aligned_fps,
+            "fps": motion_fps,
             "root_pos": root_pos,
             "root_rot": root_rot,
             "dof_pos": dof_pos,
@@ -163,7 +157,9 @@ if __name__ == "__main__":
         with open(args.save_path, "wb") as f:
             pickle.dump(motion_data, f)
         print(f"Saved to {args.save_path}")
-            
-      
+
+    # Close progress bar
+    pbar.close()
     
     robot_motion_viewer.close()
+       

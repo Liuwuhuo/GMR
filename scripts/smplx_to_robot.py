@@ -8,6 +8,7 @@ import numpy as np
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
 from general_motion_retargeting.utils.smpl import load_smplx_file, get_smplx_data_offline_fast
+import time
 
 from rich import print
 
@@ -33,7 +34,7 @@ if __name__ == "__main__":
         choices=["unitree_g1", "unitree_g1_with_hands", "unitree_h1", "unitree_h1_2",
                  "booster_t1", "booster_t1_29dof","stanford_toddy", "fourier_n1", 
                 "engineai_pm01", "kuavo_s45", "hightorque_hi", "galaxea_r1pro", "berkeley_humanoid_lite", "booster_k1",
-                "pnd_adam_lite", "adam_inspire", "openloong", "tienkung"],
+                "pnd_adam_lite", "adam_sp", "openloong", "tienkung"],
         default="unitree_g1",
     )
     
@@ -110,12 +111,15 @@ if __name__ == "__main__":
     i = 0
 
     while True:
-        if args.loop:
-            i = (i + 1) % len(smplx_data_frames)
-        else:
-            i += 1
-            if i >= len(smplx_data_frames):
-                break
+        if robot_motion_viewer.paused is False:
+            if args.loop:
+                i = (i + 1) % len(smplx_data_frames)
+            else:
+                i += 1
+                if i >= len(smplx_data_frames):
+                    # time.sleep(10000.0)  # 无限期休眠，不占用 CPU
+                    # pass
+                    break
         
         # FPS measurement
         fps_counter += 1
@@ -125,12 +129,14 @@ if __name__ == "__main__":
             print(f"Actual rendering FPS: {actual_fps:.2f}")
             fps_counter = 0
             fps_start_time = current_time
+            # time.sleep(0.1)
         
         # Update task targets.
         smplx_data = smplx_data_frames[i]
 
+        offset_to_ground = False
         # retarget
-        qpos = retarget.retarget(smplx_data)
+        qvel, qpos = retarget.retarget(smplx_data, offset_to_ground)
 
         # visualize
         robot_motion_viewer.step(
@@ -143,6 +149,7 @@ if __name__ == "__main__":
             show_human_body_name=False,
             rate_limit=args.rate_limit,
         )
+        
         if args.save_path is not None:
             qpos_list.append(qpos)
             

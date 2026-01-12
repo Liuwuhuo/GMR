@@ -18,7 +18,7 @@ class GeneralMotionRetargeting:
         solver: str="daqp", # change from "quadprog" to "daqp".
         damping: float=5e-1, # change from 1e-1 to 1e-2.
         verbose: bool=True,
-        use_velocity_limit: bool=False,
+        use_velocity_limit: bool=True,
     ) -> None:
 
         # load the robot model
@@ -152,6 +152,7 @@ class GeneralMotionRetargeting:
         human_data = self.scale_human_data(human_data, self.human_root_name, self.human_scale_table)
         human_data = self.offset_human_data(human_data, self.pos_offsets1, self.rot_offsets1)
         human_data = self.apply_ground_offset(human_data)
+        # self.ground_offset = self.calculate_foot_bottom_offset()
         if offset_to_ground:
             human_data = self.offset_human_data_to_ground(human_data)
         self.scaled_human_data = human_data
@@ -169,7 +170,7 @@ class GeneralMotionRetargeting:
                 task.set_target(mink.SE3.from_rotation_and_translation(mink.SO3(rot), pos))
             
             
-    def retarget(self, human_data, offset_to_ground=False):
+    def retarget(self, human_data, offset_to_ground=True):
         # Update the task targets
         self.update_targets(human_data, offset_to_ground)
 
@@ -215,7 +216,7 @@ class GeneralMotionRetargeting:
                 num_iter += 1
                 
             
-        return self.configuration.data.qpos.copy()
+        return self.configuration.data.qpos.copy(), self.configuration.data.qvel.copy()
 
 
     def error1(self):
@@ -299,7 +300,7 @@ class GeneralMotionRetargeting:
         for body_name in human_data.keys():
             pos, quat = human_data[body_name]
             offset_human_data[body_name] = [pos, quat]
-            offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos]) + np.array([0, 0, ground_offset])
+            offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
         return offset_human_data
 
     def set_ground_offset(self, ground_offset):
@@ -308,5 +309,42 @@ class GeneralMotionRetargeting:
     def apply_ground_offset(self, human_data):
         for body_name in human_data.keys():
             pos, quat = human_data[body_name]
-            human_data[body_name][0] = pos - np.array([0, 0, self.ground_offset])
+            human_data[body_name][0] = pos - np.array([0, 0, 0.0])
         return human_data
+    
+    def calculate_foot_bottom_offset(self):
+        """计算foot_bottom相对于toe body的固定偏移，取最小值"""
+        data = mj.MjData(self.model)
+        mj.mj_resetData(self.model, data)
+        mj.mj_forward(self.model, data)
+        
+        offsets = []
+        
+        # 左脚的偏移
+        toe_left_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, "toeLeft")
+        bottom_left_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, "foot_bottom_left")
+        
+        if toe_left_id != -1 and bottom_left_id != -1:
+            offset_z = data.xpos[bottom_left_id][2] - data.xpos[toe_left_id][2]
+            if offset_z < 0:  # 确保为负
+                offsets.append(offset_z)
+                print(f"[INFO] Left foot offset: {offset_z:.6f}m")
+        
+        # 右脚的偏移  
+        toe_right_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, "toeRight")
+        bottom_right_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, "foot_bottom_right")
+        
+        if toe_right_id != -1 and bottom_right_id != -1:
+            offset_z = data.xpos[bottom_right_id][2] - data.xpos[toe_right_id][2]
+            if offset_z < 0:  # 确保为负
+                offsets.append(offset_z)
+                print(f"[INFO] Right foot offset: {offset_z:.6f}m")
+        
+        if offsets:
+            # 取最小的偏移值（最接近地面的）
+            min_offset = min(offsets)
+            print(f"[INFO] Using minimum offset: {min_offset:.6f}m")
+            return min_offset
+        
+        print("[INFO] Using default offset: -0.065m")
+        return -0.065

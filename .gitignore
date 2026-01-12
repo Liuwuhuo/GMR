@@ -6,5 +6,6 @@ htmlcov/
 *.pyc
 datasets/
 retarget/
+videos/
 
 *.zip

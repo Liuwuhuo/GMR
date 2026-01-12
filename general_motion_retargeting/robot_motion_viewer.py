@@ -31,7 +31,7 @@ def draw_frame(
             rgba=rgba_list[i],
         )
         if joint_name is not None:
-            geom.label = joint_name  # 这里赋名字
+            geom.label = joint_name
         fix = orientation_correction.as_matrix()
         mj.mjv_connector(
             v.user_scn.geoms[v.user_scn.ngeom],
@@ -41,6 +41,7 @@ def draw_frame(
             to=pos + pos_offset + size * (mat @ fix)[:, i],
         )
         v.user_scn.ngeom += 1
+
 
 class RobotMotionViewer:
     def __init__(self,
@@ -69,14 +70,28 @@ class RobotMotionViewer:
         self.camera_follow = camera_follow
         self.record_video = record_video
 
+        # Internal pause state (launch_passive doesn't auto-pause main loop)
+        self.paused = False
+        self.pause_key = ord(' ')  # spacebar
+
+        # Wrap keyboard callback to support pause toggle
+        def wrapped_key_callback(keycode):
+            # First: handle pause toggle
+            if keycode == self.pause_key:
+                self.paused = not self.paused
+                status = "⏸️ Paused" if self.paused else "▶️ Resumed"
+                print(f"[bold green]{status} (Space pressed)[/bold green]")
+            # Then: forward to user callback
+            if keyboard_callback is not None:
+                keyboard_callback(keycode)
 
         self.viewer = mjv.launch_passive(
             model=self.model,
             data=self.data,
             show_left_ui=False,
             show_right_ui=False, 
-            key_callback=keyboard_callback
-            )      
+            key_callback=wrapped_key_callback
+        )      
 
         self.viewer.opt.flags[mj.mjtVisFlag.mjVIS_TRANSPARENT] = transparent_robot
         
@@ -108,17 +123,38 @@ class RobotMotionViewer:
             follow_camera=True,
             ):
         """
-        by default visualize robot motion.
-        also support visualize human motion by providing human_motion_data, to compare with robot motion.
-        
-        human_motion_data is a dict of {"human body name": (3d global translation, 3d global rotation)}.
-
-        if rate_limit is True, the motion will be visualized at the same rate as the motion data.
-        else, the motion will be visualized as fast as possible.
+        Visualize one frame. If paused, only refresh rendering (no physics update).
         """
-        
+        if self.paused:
+            # ── PAUSED MODE: keep UI alive, but freeze robot state ──
+            if follow_camera:
+                self.viewer.cam.lookat = self.data.xpos[self.model.body(self.robot_base).id]
+                self.viewer.cam.distance = self.viewer_cam_distance
+                self.viewer.cam.elevation = -10
+
+            # Redraw human frames (e.g. static target pose)
+            if human_motion_data is not None:
+                self.viewer.user_scn.ngeom = 0
+                for human_body_name, (pos, rot) in human_motion_data.items():
+                    draw_frame(
+                        pos,
+                        R.from_quat(rot, scalar_first=True).as_matrix(),
+                        self.viewer,
+                        human_point_scale,
+                        pos_offset=human_pos_offset,
+                        joint_name=human_body_name if show_human_body_name else None
+                    )
+
+            self.viewer.sync()
+            if rate_limit:
+                self.rate_limiter.sleep()
+            return  # ⬅️ early return, skip physics & recording
+
+        # ── NORMAL MODE ──
         self.data.qpos[:3] = root_pos
-        self.data.qpos[3:7] = root_rot # quat need to be scalar first! for mujoco
+        self.data.qpos[3:7] = root_rot  # quat: scalar-first for MuJoCo
+        print("dof_pos.shape:", dof_pos.shape)
+        print("self.data.qpos:", self.data.qpos.shape)
         self.data.qpos[7:] = dof_pos
         
         mj.mj_forward(self.model, self.data)
@@ -144,7 +180,7 @@ class RobotMotionViewer:
                     )
 
         self.viewer.sync()
-        if rate_limit is True:
+        if rate_limit:
             self.rate_limiter.sleep()
 
         if self.record_video:

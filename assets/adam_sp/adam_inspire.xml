@@ -133,6 +133,8 @@
 			<geom mesh="pelvis_1" class="visual" />
 			<geom mesh="pelvis_2" class="visual" />
 			<geom size="0.11 0.03" quat="0.707388 0.706825 0 0" type="capsule" class="collision" />
+			<site name="site_pelvis" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+			
 			<body name="hipPitchLeft" pos="0 0.096192 -0.033241" quat="0.953716 -0.300708 0 0">
 				<inertial pos="-0.0581819 0.0588948 -0.00031205" quat="0.254193 0.376686 0.60653 0.652391" mass="2.15125" diaginertia="0.00511936 0.00508028 0.00314942" />
 				<joint name="hipPitch_Left" pos="0 0 0" axis="0 1 0" range="-2.09 2.09" actuatorfrcrange="-230 230" />
@@ -141,6 +143,7 @@
 				<geom mesh="hipPitchLeft_2" material="black" class="visual" />
 				<geom mesh="hipPitchLeft_3" material="black" class="visual" />
 				<body name="hipRollLeft" pos="-0.0255 0.069 0" quat="0.953716 0.300708 0 0">
+					<site name="site_hipRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 					<inertial pos="0.0399541 -0.00011618 -0.011021" quat="-0.106213 0.535564 0.044112 0.836627" mass="1.29422" diaginertia="0.001475 0.001371 0.00131215" />
 					<joint name="hipRoll_Left" pos="0 0 0" axis="1 0 0" range="-0.78 1.57" actuatorfrcrange="-160 160" />
 					<geom mesh="hipRollLeft_0" class="visual" />
@@ -153,6 +156,7 @@
 						<geom mesh="thighLeft_0" material="pnd_logo" class="visual" />
 						<geom mesh="thighLeft_1" class="visual" />
 						<geom mesh="thighLeft_2" material="black" class="visual" />
+						<site name="site_thighLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 						<geom size="0.09 0.068 0.15" quat="0.9990482 -0.0436194 0 0" pos="0 -0.01 -0.13" type="ellipsoid" class="collision" />
 						<body name="shinLeft" pos="0 -0.0355 -0.369">
 							<inertial pos="-0.00080913 0.00097265 -0.145408" quat="0.6612 -0.003018 -0.00584383 0.75018" mass="2.19866" diaginertia="0.0194116 0.0193296 0.00136517" />
@@ -162,18 +166,28 @@
 							<geom mesh="shinLeft_2" material="pnd_logo" class="visual" />
 							<geom mesh="shinLeft_3" material="black" class="visual" />
 							<geom size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
+							<site name="site_shinLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 							<body name="anklePitchLeft" pos="0 0 -0.37">
 								<inertial pos="0 0 0" mass="0.031" diaginertia="3.23e-06 3.23e-06 2.1e-06" />
 								<joint name="anklePitch_Left" pos="0 0 0" axis="0 1 0" range="-1 0.35" actuatorfrcrange="-40 40" armature="0.001" />
 								<geom mesh="anklePitchLeft" class="visual" />
 								<body name="toeLeft">
 									<inertial pos="0.0370066 -2.063e-05 -0.0419868" quat="0.00469469 0.673963 -0.00294814 0.738744" mass="0.4758" diaginertia="0.00159292 0.00152195 0.000273726" />
+									<site name="site_toeLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<joint name="ankleRoll_Left" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
 									<geom mesh="toeLeft_0" material="pnd_logo" class="visual" />
 									<geom mesh="toeLeft_1" class="visual" />
 									<geom mesh="toeLeft_2" material="pnd_logo" class="visual" />
 									<geom mesh="toeLeft_3" class="visual" />
 									<geom name="toe1_left" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
+									<body name="foot_bottom_left" pos="0.047 0.0 -0.065">
+										<!-- 为了不影响物理，使用非常小的惯性 -->
+										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
+										<!-- 可视化标记（可选） -->
+										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+										<!-- 添加一个site用于调试 -->
+										<site name="site_foot_bottom_left" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
 								</body>
 							</body>
 						</body>
@@ -188,6 +202,7 @@
 				<geom mesh="hipPitchRight_2" material="black" class="visual" />
 				<geom mesh="hipPitchRight_3" material="black" class="visual" />
 				<body name="hipRollRight" pos="-0.0255 -0.069 0" quat="0.953716 -0.300708 0 0">
+					<site name="site_hipRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 					<inertial pos="0.0398817 0.00011594 -0.0110209" quat="0.102657 0.530738 -0.0414919 0.840272" mass="1.29423" diaginertia="0.00147637 0.00137013 0.00131019" />
 					<joint name="hipRoll_Right" pos="0 0 0" axis="1 0 0" range="-1.57 0.78" actuatorfrcrange="-160 160" />
 					<geom mesh="hipRollRight_0" material="black" class="visual" />
@@ -195,6 +210,7 @@
 					<geom mesh="hipRollRight_2" material="sliver" class="visual" />
 					<geom mesh="hipRollRight_3" material="black" class="visual" />
 					<body name="thighRight" pos="0.044 0 -0.0525">
+						<site name="site_thighRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 						<inertial pos="0.00332701 0.0111027 -0.13529" quat="0.734268 -0.0285841 0.0502267 0.676395" mass="6.64755" diaginertia="0.0630598 0.0571586 0.0145332" />
 						<joint name="hipYaw_Right" pos="0 0 0" axis="0 0 1" range="-0.78 0.78" actuatorfrcrange="-105 105" />
 						<geom mesh="thighRight_0" material="pnd_logo" class="visual" />
@@ -202,6 +218,7 @@
 						<geom mesh="thighRight_2" material="black" class="visual" />
 						<geom size="0.09 0.068 0.15" quat="0.9990482 0.0436194 0 0" pos="0 0.01 -0.13" type="ellipsoid" class="collision" />
 						<body name="shinRight" pos="0 0.0355 -0.369">
+							<site name="site_shinRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 							<inertial pos="-0.00079979 -0.00097288 -0.146351" quat="0.750551 -0.00574198 -0.00281104 0.660781" mass="2.20809" diaginertia="0.0198783 0.0197996 0.00136891" />
 							<joint name="kneePitch_Right" pos="0 0 0" axis="0 1 0" range="-0.09 2.4" actuatorfrcrange="-230 230" />
 							<geom mesh="shinRight_0" material="pnd_logo" class="visual" />
@@ -214,6 +231,7 @@
 								<joint name="anklePitch_Right" pos="0 0 0" axis="0 1 0" range="-1 0.35" actuatorfrcrange="-40 40" armature="0.001" />
 								<geom mesh="anklePitchRight" class="visual" />
 								<body name="toeRight" >
+									<site name="site_toeRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<inertial pos="0.037003 2.151e-05 -0.0419756" quat="-0.00470409 0.67392 0.00290833 0.738784" mass="0.4758" diaginertia="0.00159272 0.00152205 0.000274003" />
 									<joint name="ankleRoll_Right" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
 									<geom mesh="toeRight_0" material="pnd_logo" class="visual" />
@@ -221,6 +239,14 @@
 									<geom mesh="toeRight_2" class="visual" />
 									<geom mesh="toeRight_3" material="pnd_logo" class="visual" />
 									<geom name="toe_right" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
+									<body name="foot_bottom_right" pos="0.047 0.0 -0.065">
+										<!-- 为了不影响物理，使用非常小的惯性 -->
+										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
+										<!-- 可视化标记（可选） -->
+										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+										<!-- 添加一个site用于调试 -->
+										<site name="site_foot_bottom_right" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
 								</body>
 							</body>
 						</body>
@@ -247,6 +273,11 @@
 						<geom mesh="torso_3" class="visual" />
 						<geom mesh="torso_4" material="black" class="visual" />
 						<geom size="0.13" pos="0 0 0.15" class="collision" />
+						<site name="site_torso" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+						<body name="head" pos="0 0 0.42">
+							<geom name="head" type="sphere" size=".0001" density="0"/>
+							<site name="site_head" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+						</body>
 						<body name="shoulderPitchLeft" pos="0 0.16011 0.25742" quat="0.984807 0.17365 0 0">
 							<inertial pos="-0.00150404 0.0268884 0.00010848" quat="-0.0108407 0.705644 0.0165332 0.70829" mass="0.2031" diaginertia="0.000343856 0.000289125 0.000170019" />
 							<joint name="shoulderPitch_Left" pos="0 0 0" axis="0 1 0" range="-2.7 1" actuatorfrcrange="-65 65" />
@@ -266,7 +297,9 @@
 									<geom mesh="shoulderYawLeft_0" class="visual" />
 									<geom mesh="shoulderYawLeft_1" material="black" class="visual" />
 									<geom size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
+									<site name="site_shoulderYawLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<body name="elbowLeft" pos="0 -0.0285 -0.20415">
+										<site name="site_elbowLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 										<inertial pos="-0.0216442 0.0277621 -0.0446964" quat="0.897923 0.0631943 -0.210786 -0.381195" mass="0.854" diaginertia="0.000828975 0.000780354 0.000400291" />
 										<joint name="elbow_Left" pos="0 0 0" axis="0 1 0" range="-2 0" actuatorfrcrange="-30 30" />
 										<geom mesh="elbowLeft_0" class="visual" />
@@ -282,6 +315,7 @@
 												<joint name="wristPitch_Left" pos="0 0 0" axis="0 1 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 												<geom mesh="wristPitchLeft" class="visual"/>
 												<body name="wristRollLeft">
+													<site name="site_wristRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 													<inertial pos="-0.00235135 -0.00073844 -0.0722581" quat="0.722486 -0.00407675 0.0275848 0.690823" mass="0.489473" diaginertia="0.000634725 0.000443015 0.00028423" />
 													<joint name="wristRoll_Left" pos="0 0 0" axis="1 0 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 													<geom mesh="inspire_Left_0" material="black" class="visual" />
@@ -371,12 +405,14 @@
 								<geom mesh="shoulderRollRight_4" class="visual" />
 								<geom size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
 								<body name="shoulderYawRight" pos="-0.0335 -0.034 -0.0585">
+									<site name="site_shoulderYawRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<inertial pos="-0.00089274 -0.00096643 -0.0698052" quat="0.999767 0.0172729 -0.0100354 0.00814411" mass="0.6963" diaginertia="0.00304741 0.00298071 0.000413386" />
 									<joint name="shoulderYaw_Right" pos="0 0 0" axis="0 0 1" range="-1.6 1.6" actuatorfrcrange="-65 65" />
 									<geom mesh="shoulderYawRight_0" material="black" class="visual" />
 									<geom mesh="shoulderYawRight_1" class="visual" />
 									<geom size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
 									<body name="elbowRight" pos="0 0.0285 -0.20415">
+										<site name="site_elbowRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 										<inertial pos="-0.0121233 -0.0262957 -0.026584" quat="0.913189 -0.0537938 -0.213066 0.343213" mass="0.854" diaginertia="0.00116315 0.00108042 0.000405614" />
 										<joint name="elbow_Right" pos="0 0 0" axis="0 1 0" range="-2 0" actuatorfrcrange="-30 30" />
 										<geom mesh="elbowRight_0" class="visual" />
@@ -392,6 +428,7 @@
 												<joint name="wristPitch_Right" pos="0 0 0" axis="0 1 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 												<geom mesh="wristPitchRight" class="visual"/>
 												<body name="wristRollRight">
+													<site name="site_wristRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 													<inertial pos="-0.00235219 0.00073858 -0.0722581" quat="0.690823 0.027586 -0.00407646 0.722486" mass="0.489472" diaginertia="0.000634715 0.000443005 0.00028423" />
 													<joint name="wristRoll_Right" pos="0 0 0" axis="1 0 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 													<geom mesh="inspire_Right_0" material="black" class="visual" />

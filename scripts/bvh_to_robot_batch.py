@@ -113,7 +113,7 @@ def main():
         "--robot",
         choices=[
             "unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy",
-            "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_inspire"
+            "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp"
         ],
         default="unitree_g1",
     )
