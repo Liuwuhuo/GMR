@@ -16,9 +16,10 @@ class GeneralMotionRetargeting:
         tgt_robot: str,
         actual_human_height: float = None,
         solver: str="daqp", # change from "quadprog" to "daqp".
-        damping: float=5e-1, # change from 1e-1 to 1e-2.
+        damping: float=1e-5, # change from 1e-1 to 1e-2.
         verbose: bool=True,
         use_velocity_limit: bool=True,
+        use_collision_limit: bool=True,
     ) -> None:
 
         # load the robot model
@@ -83,6 +84,7 @@ class GeneralMotionRetargeting:
 
         self.solver = solver
         self.damping = damping
+        self.use_collision_limit = use_collision_limit
 
         self.human_body_to_task1 = {}
         self.human_body_to_task2 = {}
@@ -96,12 +98,16 @@ class GeneralMotionRetargeting:
 
         self.ik_limits = [mink.ConfigurationLimit(self.model)]
         if use_velocity_limit:
-            VELOCITY_LIMITS = {k: 3*np.pi for k in self.robot_motor_names.keys()}
+            VELOCITY_LIMITS = {k: np.pi for k in self.robot_motor_names.keys()}
             self.ik_limits.append(mink.VelocityLimit(self.model, VELOCITY_LIMITS)) 
+
+
             
         self.setup_retarget_configuration()
         
         self.ground_offset = 0.0
+
+        self.last_human_data = None
 
     def setup_retarget_configuration(self):
         self.configuration = mink.Configuration(self.model)
@@ -147,6 +153,18 @@ class GeneralMotionRetargeting:
 
   
     def update_targets(self, human_data, offset_to_ground=False):
+        # === 帧四元数符号对齐 ===
+        if self.last_human_data is not None:
+            aligned_human_data = {}
+            for body_name in human_data:
+                pos, quat = human_data[body_name]
+                last_quat = self.last_human_data[body_name][1]
+                if np.dot(last_quat, quat) < 0:
+                    quat = -quat
+                aligned_human_data[body_name] = [pos, quat]
+            human_data = aligned_human_data
+        self.last_human_data = human_data  # 缓存当前帧
+        # ==========================
         # scale human data in local frame
         human_data = self.to_numpy(human_data)
         human_data = self.scale_human_data(human_data, self.human_root_name, self.human_scale_table)
@@ -173,6 +191,21 @@ class GeneralMotionRetargeting:
     def retarget(self, human_data, offset_to_ground=True):
         # Update the task targets
         self.update_targets(human_data, offset_to_ground)
+
+        if self.use_collision_limit:
+            collision_pairs = [
+                (["thighLeft_collision", "thighRight_collision", "shinLeft_collision", "shinRight_collision", "wristRollLeft_collision", "wristRollRight_collision"], ["floor_collision"]),
+                (["wristRollLeft_collision"], ["thighLeft_collision"]),
+                (["wristRollRight_collision"], ["thighRight_collision"]),
+                (["wristRollLeft_collision"], ["wristRollRight_collision"]),
+            ]
+            collision_avoidance_limit = mink.CollisionAvoidanceLimit(
+                model=self.model,
+                geom_pairs=collision_pairs,  # type: ignore
+                minimum_distance_from_collisions=0.005,
+                collision_detection_distance=0.15,
+            )
+            self.ik_limits.append(collision_avoidance_limit)
 
         if self.use_ik_match_table1:
             # Solve the IK problem

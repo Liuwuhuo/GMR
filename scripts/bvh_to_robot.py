@@ -1,8 +1,10 @@
 import argparse
 import pathlib
 import time
+import torch
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
+from general_motion_retargeting.kinematics_model import KinematicsModel
 from general_motion_retargeting.utils.lafan1 import load_bvh_file
 from rich import print
 from tqdm import tqdm
@@ -98,7 +100,7 @@ if __name__ == "__main__":
 
     # >>>>> 新增：支持指定起止帧 <<<<<
 
-    # args = parser.parse_args()  # 重新 parse，或把这两行提前到 load_bvh 之前（推荐提前）
+    # args = parser.parse_args()  # 重新 parse，或把这两行提前到 load_bvh 之前
 
     # 截取所需帧段
     start = max(0, args.start_frame)
@@ -112,6 +114,8 @@ if __name__ == "__main__":
         tgt_robot=args.robot,
         actual_human_height=actual_human_height,
     )
+
+
 
     motion_fps = args.motion_fps
     
@@ -169,6 +173,48 @@ if __name__ == "__main__":
         # retarget
         qpos, qvel = retargeter.retarget(smplx_data)
 
+        # qpos_list = np.array(qpos_list)
+
+        root_pos = np.array([qpos[:3] for qpos in qpos_list])
+        # save from wxyz to xyzw
+        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])
+        dof_pos = np.array([qpos[7:] for qpos in qpos_list])
+
+        # num_frames = root_pos.shape[0]
+
+        # device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        # xml_file = "/home/liuhongji/RL/GMR/assets/adam_sp/adam_inspire.xml"
+        # kinematics_model = KinematicsModel(xml_file, device=device)
+        
+        # # obtain local body pos
+        # identity_root_pos = torch.zeros((num_frames, 3), device=device)
+        # identity_root_rot = torch.zeros((num_frames, 4), device=device)
+        # identity_root_rot[:, -1] = 1.0
+        # local_body_pos, _ = kinematics_model.forward_kinematics(
+        #     identity_root_pos, 
+        #     identity_root_rot, 
+        #     torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
+        # )
+        # body_names = kinematics_model.body_names
+
+        # HEIGHT_ADJUST = False
+        # PERFRAME_ADJUST = False
+        # if HEIGHT_ADJUST:
+        #     body_pos, _ = kinematics_model.forward_kinematics(
+        #         torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
+        #         torch.from_numpy(root_rot).to(device=device, dtype=torch.float),
+        #         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
+        #     )
+        #     ground_offset = 0.00
+        #     if not PERFRAME_ADJUST:
+        #         lowest_height = torch.min(body_pos[..., 2]).item()
+        #         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
+        #     else:
+        #         for i in range(root_pos.shape[0]):
+        #             lowest_body_part = torch.min(body_pos[i, :, 2])
+        #             root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
+
+        
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],
@@ -180,56 +226,24 @@ if __name__ == "__main__":
             # human_pos_offset=np.array([0.0, 0.0, 0.0])
         )
 
-   
         
         if args.save_path is not None:
             qpos_list.append(qpos)
     
     if args.save_path is not None:
         import pickle
-        from scipy.spatial.transform import Rotation as R
+
+        local_body_pos = None
+        body_names = None
         
-        root_pos = np.array([qpos[:3] for qpos in qpos_list])
-        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])  # 从 wxyz 转换为 xyzw
-        dof_pos = np.array([qpos[7:] for qpos in qpos_list])
-        
-        # 计算帧时长
-        frame_duration = 1.0 / motion_fps
-        
-        # 获取关节名称
-        dof_names = [name for name, index in sorted(retargeter.robot_dof_names.items(), key=lambda x: x[1]) if name != "floating_joint"]
-        
-        # 构建标签列表
-        labels = []
-        labels.extend(["root_pos/x", "root_pos/y", "root_pos/z"])
-        labels.extend(["root_quat/x", "root_quat/y", "root_quat/z", "root_quat/w"])
-        labels.extend([f"dof_pos/{name}" for name in dof_names])
-        
-        # 构建帧数据
-        frames = []
-        for i in range(len(root_pos)):
-            frame_data = []
-            # 添加根位置 (x, y, z)
-            frame_data.extend(root_pos[i].tolist())
-            # 添加根旋转四元数 (x, y, z, w)
-            frame_data.extend(root_rot[i].tolist())
-            # 添加关节位置
-            frame_data.extend(dof_pos[i].tolist())
-            frames.append(frame_data)
-        
-        # 构建最终输出结构
         motion_data = {
-            "LoopMode": "Once",
-            "LoopNum": 1,
-            "FrameDuration": frame_duration,
-            "EnableCycleOffsetPosition": True,
-            "EnableCycleOffsetRotation": True,
-            "MotionWeight": 1.0,
-            "Labels": labels,
-            "Frames": frames
+            "fps": motion_fps,
+            "root_pos": root_pos,
+            "root_rot": root_rot,
+            "dof_pos": dof_pos,
+            "local_body_pos": local_body_pos,
+            "link_body_list": body_names,
         }
-        
-        # 保存为 pickle 文件
         with open(args.save_path, "wb") as f:
             pickle.dump(motion_data, f)
         print(f"Saved to {args.save_path}")

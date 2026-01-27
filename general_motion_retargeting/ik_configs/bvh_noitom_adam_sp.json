@@ -8,22 +8,19 @@
     "human_scale_table": {
         "Hips": 0.9,
         "Spine2": 0.9,
-
         "LeftUpLeg": 1.3,
         "RightUpLeg": 1.3,
         "LeftLeg": 1.0,
         "RightLeg": 1.0,
         "LeftFootMod": 1.1,
         "RightFootMod": 1.1,
-
         "LeftArm": 1.1,
         "RightArm": 1.1,
         "LeftForeArm": 1.1,
         "RightForeArm": 1.1,
-        "LeftHand": 1.2,
-        "RightHand": 1.2
+        "LeftHand": 1.1,
+        "RightHand": 1.1
     },
-
     "ik_match_table1": {
         "pelvis": [
             "Hips",
@@ -48,7 +45,7 @@
             [
                 0.0,
                 0.0,
-                0.0
+                -0.0
             ],
             [
                 -0.5,
@@ -96,7 +93,7 @@
             [
                 0.0,
                 0.0,
-                0.0
+                -0.0
             ],
             [
                 -0.5,
@@ -112,7 +109,7 @@
             [
                 0.0,
                 0.0,
-                0.0
+                -0.0
             ],
             [
                 -0.5,
@@ -274,7 +271,7 @@
             [
                 0.0,
                 0.0,
-                0.0
+                -0.0
             ],
             [
                 -0.5,
@@ -322,7 +319,7 @@
             [
                 0.0,
                 0.0,
-                0.0
+                -0.0
             ],
             [
                 -0.5,

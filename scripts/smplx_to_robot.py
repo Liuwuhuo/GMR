@@ -134,9 +134,9 @@ if __name__ == "__main__":
         # Update task targets.
         smplx_data = smplx_data_frames[i]
 
-        offset_to_ground = False
+        offset_to_ground = True
         # retarget
-        qvel, qpos = retarget.retarget(smplx_data, offset_to_ground)
+        qpos, qvel = retarget.retarget(smplx_data, offset_to_ground)
 
         # visualize
         robot_motion_viewer.step(
@@ -148,6 +148,7 @@ if __name__ == "__main__":
             human_pos_offset=np.array([0.0, 0.0, 0.0]),
             show_human_body_name=False,
             rate_limit=args.rate_limit,
+            follow_camera=False,
         )
         
         if args.save_path is not None:

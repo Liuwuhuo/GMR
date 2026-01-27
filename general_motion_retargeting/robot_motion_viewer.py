@@ -153,8 +153,6 @@ class RobotMotionViewer:
         # ── NORMAL MODE ──
         self.data.qpos[:3] = root_pos
         self.data.qpos[3:7] = root_rot  # quat: scalar-first for MuJoCo
-        print("dof_pos.shape:", dof_pos.shape)
-        print("self.data.qpos:", self.data.qpos.shape)
         self.data.qpos[7:] = dof_pos
         
         mj.mj_forward(self.model, self.data)

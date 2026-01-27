@@ -6,7 +6,7 @@
 				<geom material="sliver" type="mesh" contype="0" conaffinity="0" group="1" density="0" />
 			</default>
 			<default class="collision">
-				<geom rgba="1 0 0 0" />
+				<geom group="3" rgba="1 0 0 0" type="mesh" />
 			</default>
 		</default>
 	</default>
@@ -132,7 +132,7 @@
 			<geom mesh="pelvis_0" material="black" class="visual" />
 			<geom mesh="pelvis_1" class="visual" />
 			<geom mesh="pelvis_2" class="visual" />
-			<geom size="0.11 0.03" quat="0.707388 0.706825 0 0" type="capsule" class="collision" />
+			<geom name="pelvis_collision" size="0.11 0.03" quat="0.707388 0.706825 0 0" type="capsule" class="collision" />
 			<site name="site_pelvis" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 			
 			<body name="hipPitchLeft" pos="0 0.096192 -0.033241" quat="0.953716 -0.300708 0 0">
@@ -156,8 +156,8 @@
 						<geom mesh="thighLeft_0" material="pnd_logo" class="visual" />
 						<geom mesh="thighLeft_1" class="visual" />
 						<geom mesh="thighLeft_2" material="black" class="visual" />
-						<site name="site_thighLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
-						<geom size="0.09 0.068 0.15" quat="0.9990482 -0.0436194 0 0" pos="0 -0.01 -0.13" type="ellipsoid" class="collision" />
+						<!-- <site name="site_thighLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
+						<geom name="thighLeft_collision" conaffinity="1" size="0.09 0.068 0.15" quat="0.9990482 -0.0436194 0 0" pos="0 -0.01 -0.13" type="ellipsoid" class="collision" />
 						<body name="shinLeft" pos="0 -0.0355 -0.369">
 							<inertial pos="-0.00080913 0.00097265 -0.145408" quat="0.6612 -0.003018 -0.00584383 0.75018" mass="2.19866" diaginertia="0.0194116 0.0193296 0.00136517" />
 							<joint name="kneePitch_Left" pos="0 0 0" axis="0 1 0" range="-0.09 2.4" actuatorfrcrange="-230 230" />
@@ -165,7 +165,7 @@
 							<geom mesh="shinLeft_1" material="black" class="visual" />
 							<geom mesh="shinLeft_2" material="pnd_logo" class="visual" />
 							<geom mesh="shinLeft_3" material="black" class="visual" />
-							<geom size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
+							<geom name="shinLeft_collision" conaffinity="1" size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
 							<site name="site_shinLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 							<body name="anklePitchLeft" pos="0 0 -0.37">
 								<inertial pos="0 0 0" mass="0.031" diaginertia="3.23e-06 3.23e-06 2.1e-06" />
@@ -179,7 +179,7 @@
 									<geom mesh="toeLeft_1" class="visual" />
 									<geom mesh="toeLeft_2" material="pnd_logo" class="visual" />
 									<geom mesh="toeLeft_3" class="visual" />
-									<geom name="toe1_left" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
+									<geom name="toe_left" conaffinity="1" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
 									<body name="foot_bottom_left" pos="0.047 0.0 -0.065">
 										<!-- 为了不影响物理，使用非常小的惯性 -->
 										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
@@ -187,6 +187,46 @@
 										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
 										<!-- 添加一个site用于调试 -->
 										<site name="site_foot_bottom_left" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
+									<!-- sphere_3 -->
+									<body name="left_ankle_roll_sphere_3_link" pos="0.135 0.039 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_3_link" type="sphere" size="0.005"/>
+									</body>
+
+									<!-- sphere_4 -->
+									<body name="left_ankle_roll_sphere_4_link" pos="0.135 -0.042 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_4_link" type="sphere" size="0.005"/>
+									</body>
+
+									<!-- sphere_5 -->
+									<body name="left_ankle_roll_sphere_5_link" pos="0.166 0 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_5_link" type="sphere" size="0.005"/>
+									</body>
+
+									<!-- sphere_1 -->
+									<body name="left_ankle_roll_sphere_1_link" pos="-0.05 0.035 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_1_link" type="sphere" size="0.005"/>
+									</body>
+
+									<!-- sphere_2 -->
+									<body name="left_ankle_roll_sphere_2_link" pos="-0.05 -0.04 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_2_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="left_ankle_roll_sphere_6_link" pos="-0.07 0.0 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="left_ankle_roll_sphere_6_link" type="sphere" size="0.005"/>
 									</body>
 								</body>
 							</body>
@@ -210,13 +250,13 @@
 					<geom mesh="hipRollRight_2" material="sliver" class="visual" />
 					<geom mesh="hipRollRight_3" material="black" class="visual" />
 					<body name="thighRight" pos="0.044 0 -0.0525">
-						<site name="site_thighRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+						<!-- <site name="site_thighRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 						<inertial pos="0.00332701 0.0111027 -0.13529" quat="0.734268 -0.0285841 0.0502267 0.676395" mass="6.64755" diaginertia="0.0630598 0.0571586 0.0145332" />
 						<joint name="hipYaw_Right" pos="0 0 0" axis="0 0 1" range="-0.78 0.78" actuatorfrcrange="-105 105" />
 						<geom mesh="thighRight_0" material="pnd_logo" class="visual" />
 						<geom mesh="thighRight_1" class="visual" />
 						<geom mesh="thighRight_2" material="black" class="visual" />
-						<geom size="0.09 0.068 0.15" quat="0.9990482 0.0436194 0 0" pos="0 0.01 -0.13" type="ellipsoid" class="collision" />
+						<geom name="thighRight_collision" conaffinity="1" size="0.09 0.068 0.15" quat="0.9990482 0.0436194 0 0" pos="0 0.01 -0.13" type="ellipsoid" class="collision" />
 						<body name="shinRight" pos="0 0.0355 -0.369">
 							<site name="site_shinRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 							<inertial pos="-0.00079979 -0.00097288 -0.146351" quat="0.750551 -0.00574198 -0.00281104 0.660781" mass="2.20809" diaginertia="0.0198783 0.0197996 0.00136891" />
@@ -225,7 +265,7 @@
 							<geom mesh="shinRight_1" class="visual" />
 							<geom mesh="shinRight_2" material="black" class="visual" />
 							<geom mesh="shinRight_3" material="black" class="visual" />
-							<geom size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
+							<geom name="shinRight_collision" conaffinity="1" size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
 							<body name="anklePitchRight" pos="0 0 -0.37">
 								<inertial pos="0 0 0" mass="0.031" diaginertia="3.23e-06 3.23e-06 2.1e-06" />
 								<joint name="anklePitch_Right" pos="0 0 0" axis="0 1 0" range="-1 0.35" actuatorfrcrange="-40 40" armature="0.001" />
@@ -238,7 +278,7 @@
 									<geom mesh="toeRight_1" material="pnd_logo" class="visual" />
 									<geom mesh="toeRight_2" class="visual" />
 									<geom mesh="toeRight_3" material="pnd_logo" class="visual" />
-									<geom name="toe_right" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
+									<geom name="toe_right" conaffinity="1" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
 									<body name="foot_bottom_right" pos="0.047 0.0 -0.065">
 										<!-- 为了不影响物理，使用非常小的惯性 -->
 										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
@@ -246,6 +286,41 @@
 										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
 										<!-- 添加一个site用于调试 -->
 										<site name="site_foot_bottom_right" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
+									<body name="right_ankle_roll_sphere_3_link" pos="0.135 0.042 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_3_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="right_ankle_roll_sphere_4_link" pos="0.135 -0.039 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_4_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="right_ankle_roll_sphere_5_link" pos="0.167 0 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_5_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="right_ankle_roll_sphere_1_link" pos="-0.05 0.04 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_1_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="right_ankle_roll_sphere_2_link" pos="-0.05 -0.035 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_2_link" type="sphere" size="0.005"/>
+									</body>
+
+									<body name="right_ankle_roll_sphere_6_link" pos="-0.07 0.0 -0.059">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7"/>
+										<geom type="sphere" size="0.005" rgba="0.2 0.2 0.2 1" contype="0" conaffinity="0" density="0" group="1"/>
+										<geom name="right_ankle_roll_sphere_6_link" type="sphere" size="0.005"/>
 									</body>
 								</body>
 							</body>
@@ -272,7 +347,7 @@
 						<geom mesh="torso_2" class="visual" />
 						<geom mesh="torso_3" class="visual" />
 						<geom mesh="torso_4" material="black" class="visual" />
-						<geom size="0.13" pos="0 0 0.15" class="collision" />
+						<!-- <geom name="torso_collision" size="0.13" pos="0 0 0.15" class="collision" /> -->
 						<site name="site_torso" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 						<body name="head" pos="0 0 0.42">
 							<geom name="head" type="sphere" size=".0001" density="0"/>
@@ -290,14 +365,15 @@
 								<geom mesh="shoulderRollLeft_2" material="black" class="visual" />
 								<geom mesh="shoulderRollLeft_3" class="visual" />
 								<geom mesh="shoulderRollLeft_4" class="visual" />
-								<geom size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
+								<geom name="shoulderRollLeft_collision" size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
+								<site name="site_shoulderRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 								<body name="shoulderYawLeft" pos="-0.0335 0.034 -0.0585">
 									<inertial pos="-0.00069813 0.00102049 -0.0684231" quat="0.999758 -0.0173498 -0.010067 -0.00907623" mass="0.6963" diaginertia="0.00317999 0.00310761 0.000390118" />
 									<joint name="shoulderYaw_Left" pos="0 0 0" axis="0 0 1" range="-1.6 1.6" actuatorfrcrange="-65 65" />
 									<geom mesh="shoulderYawLeft_0" class="visual" />
 									<geom mesh="shoulderYawLeft_1" material="black" class="visual" />
-									<geom size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
-									<site name="site_shoulderYawLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+									<geom name="shoulderYawLeft_collision" size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
+									<!-- <site name="site_shoulderYawLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 									<body name="elbowLeft" pos="0 -0.0285 -0.20415">
 										<site name="site_elbowLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 										<inertial pos="-0.0216442 0.0277621 -0.0446964" quat="0.897923 0.0631943 -0.210786 -0.381195" mass="0.854" diaginertia="0.000828975 0.000780354 0.000400291" />
@@ -309,7 +385,7 @@
 											<joint name="wristYaw_Left" pos="0 0 0" axis="0 0 1" range="-1.7977 2.234" actuatorfrcrange="-6.4 6.4" damping = "100" />
 											<geom mesh="wristYawLeft_0"  material="black" class="visual" />
 											<geom mesh="wristYawLeft_1" class="visual" />
-											<geom size="0.04 0.08" pos="0 0 -0.10" type="capsule" class="collision" />
+											<geom name="wristYawLeft_collision" size="0.04 0.08" pos="0 0 -0.10" type="capsule" class="collision" />
 											<body name="wristPitchLeft" pos="0 0 -0.2017">
 												<inertial pos="-0.00017582 0.00166098 -2.773e-05" quat="0.498275 0.501712 -0.500227 0.499779" mass="0.119635" diaginertia="3.97702e-05 3.35901e-05 2.68997e-05" />
 												<joint name="wristPitch_Left" pos="0 0 0" axis="0 1 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
@@ -320,7 +396,8 @@
 													<joint name="wristRoll_Left" pos="0 0 0" axis="1 0 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 													<geom mesh="inspire_Left_0" material="black" class="visual" />
 													<geom mesh="inspire_Left_1" rgba="1 1 1 1" class="visual" />
-													<geom size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
+													<geom name="wristRollLeft_collision" conaffinity="1" size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
+													<geom name="left_hand_collision" class="collision" type="capsule" size="0.05" fromto="0.05 0 0 0.18 0 0" rgba=".2 .6 .2 .2" group="3"/>
 													<body name="L_thumb_proximal_base" pos="0.0204501 -0.0169555 -0.0452024" quat="0.0598167 -0.059817 -0.704573 0.704571">
 														<inertial pos="-0.0048772 0.00668 -0.00044071" quat="0.107679 0.764233 -0.0756348 0.631373" mass="0.0018869" diaginertia="8.66029e-08 6.87331e-08 4.942e-08" />
 														<geom quat="0.988771 0 0.149438 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_thumb_proximal_base" />
@@ -403,14 +480,15 @@
 								<geom mesh="shoulderRollRight_2" class="visual" />
 								<geom mesh="shoulderRollRight_3" class="visual" />
 								<geom mesh="shoulderRollRight_4" class="visual" />
-								<geom size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
+								<geom name="shoulderRollRight_collision" size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
+								<site name="site_shoulderRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 								<body name="shoulderYawRight" pos="-0.0335 -0.034 -0.0585">
-									<site name="site_shoulderYawRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+									<!-- <site name="site_shoulderYawRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 									<inertial pos="-0.00089274 -0.00096643 -0.0698052" quat="0.999767 0.0172729 -0.0100354 0.00814411" mass="0.6963" diaginertia="0.00304741 0.00298071 0.000413386" />
 									<joint name="shoulderYaw_Right" pos="0 0 0" axis="0 0 1" range="-1.6 1.6" actuatorfrcrange="-65 65" />
 									<geom mesh="shoulderYawRight_0" material="black" class="visual" />
 									<geom mesh="shoulderYawRight_1" class="visual" />
-									<geom size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
+									<geom name="shoulderYawRight_collision" size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
 									<body name="elbowRight" pos="0 0.0285 -0.20415">
 										<site name="site_elbowRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 										<inertial pos="-0.0121233 -0.0262957 -0.026584" quat="0.913189 -0.0537938 -0.213066 0.343213" mass="0.854" diaginertia="0.00116315 0.00108042 0.000405614" />
@@ -422,7 +500,7 @@
 											<joint name="wristYaw_Right" pos="0 0 0" axis="0 0 1" range="-2.234 1.7977" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 											<geom mesh="wristYawRight_0" class="visual" />
 											<geom mesh="wristYawRight_1" material="black" class="visual" />
-											<geom size="0.04 0.08" pos="0 0 -0.10" type="capsule" class="collision" />
+											<geom name="wristYawRight_collision" size="0.04 0.08" pos="0 0 -0.10" type="capsule" class="collision" />
 											<body name="wristPitchRight" pos="0 0 -0.2017">
 												<inertial pos="-0.0001758 0.00166098 -2.773e-05" quat="0.498275 0.501712 -0.500227 0.499779" mass="0.119635" diaginertia="3.97702e-05 3.35901e-05 2.68997e-05" />
 												<joint name="wristPitch_Right" pos="0 0 0" axis="0 1 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
@@ -433,7 +511,7 @@
 													<joint name="wristRoll_Right" pos="0 0 0" axis="1 0 0" range="-1.22173 1.22173" actuatorfrcrange="-6.4 6.4" damping = "100"/>
 													<geom mesh="inspire_Right_0" material="black" class="visual" />
 													<geom mesh="inspire_Right_1" rgba="1 1 1 1" class="visual" />
-													<geom size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
+													<geom name="wristRollRight_collision" conaffinity="1" size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
 													<body name="R_thumb_proximal_base" pos="0.0204501 0.0169555 -0.0616936" quat="0.16269 -0.162689 0.688133 -0.688141">
 														<inertial pos="-0.0048772 -0.010163 0.00044069" quat="0.075637 0.631378 -0.107678 0.764229" mass="0.0018869" diaginertia="8.66028e-08 6.87321e-08 4.94192e-08" />
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_proximal_base" />

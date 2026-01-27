@@ -7,5 +7,7 @@ htmlcov/
 datasets/
 retarget/
 videos/
+assets/body_model/
+assets/
 
 *.zip

@@ -8,12 +8,12 @@
     "human_scale_table": {
         "Hips": 0.9,
         "Spine2": 0.9,
-        "LeftUpLeg": 1.3,
-        "RightUpLeg": 1.3,
-        "LeftLeg": 1.0,
-        "RightLeg": 1.0,
-        "LeftFootMod": 1.1,
-        "RightFootMod": 1.1,
+        "LeftUpLeg": 1.1,
+        "RightUpLeg": 1.1,
+        "LeftLeg": 0.9,
+        "RightLeg": 0.9,
+        "LeftFootMod": 0.9,
+        "RightFootMod": 0.9,
         "LeftArm": 1.1,
         "RightArm": 1.1,
         "LeftForeArm": 1.1,
@@ -70,7 +70,7 @@
                 0.5
             ]
         ],
-        "foot_bottom_left": [
+        "toeLeft": [
             "LeftFootMod",
             50,
             10,
@@ -118,7 +118,7 @@
                 0.5
             ]
         ],
-        "foot_bottom_right": [
+        "toeRight": [
             "RightFootMod",
             50,
             10,
@@ -296,7 +296,7 @@
                 0.5
             ]
         ],
-        "foot_bottom_left": [
+        "toeLeft": [
             "LeftFootMod",
             50,
             10,
@@ -344,7 +344,7 @@
                 0.5
             ]
         ],
-        "foot_bottom_right": [
+        "toeRight": [
             "RightFootMod",
             50,
             10,

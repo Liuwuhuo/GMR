@@ -1,8 +1,8 @@
 {
     "robot_root_name": "pelvis",
     "human_root_name": "pelvis",
-    "ground_height": -0.06,
-    "human_height_assumption": 1.65,
+    "ground_height": -0.0,
+    "human_height_assumption": 1.8,
     "use_ik_match_table1": true,
     "use_ik_match_table2": true,
     "human_scale_table": {
@@ -27,7 +27,7 @@
             [
                 0.0,
                 0.0,
-                -0.15
+                -0.0
             ],
             [
                 0.5,

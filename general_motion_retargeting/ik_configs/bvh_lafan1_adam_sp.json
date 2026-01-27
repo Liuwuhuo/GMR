@@ -7,7 +7,7 @@
     "use_ik_match_table2": true,
     "human_scale_table": {
         "Hips": 0.9,
-        "Spine1": 0.9,
+        "Spine2": 0.9,
         "Head": 0.85,
         "LeftUpLeg": 1.2,
         "RightUpLeg": 1.2,
@@ -26,7 +26,7 @@
         "pelvis": [
             "Hips",
             0,
-            10,
+            50,
             [
                 0.0,
                 0.0,
@@ -42,7 +42,7 @@
         "thighLeft": [
             "LeftUpLeg",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -58,7 +58,7 @@
         "shinLeft": [
             "LeftLeg",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -90,7 +90,7 @@
         "thighRight": [
             "RightUpLeg",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -106,7 +106,7 @@
         "shinRight": [
             "RightLeg",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -136,7 +136,7 @@
             ]
         ],
         "torso": [
-            "Spine1",
+            "Spine2",
             0,
             100,
             [
@@ -154,7 +154,7 @@
         "head": [
             "Head",
             0,
-            100,
+            50,
             [
                 0.0,
                 0.0,
@@ -170,7 +170,7 @@
         "shoulderYawLeft": [
             "LeftArm",
             0,
-            100,
+            20,
             [
                 0.0,
                 0.0,
@@ -186,7 +186,7 @@
         "elbowLeft": [
             "LeftForeArm",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -202,7 +202,7 @@
         "wristRollLeft": [
             "LeftHand",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -218,7 +218,7 @@
         "shoulderYawRight": [
             "RightArm",
             0,
-            100,
+            20,
             [
                 0.0,
                 0.0,
@@ -234,7 +234,7 @@
         "elbowRight": [
             "RightForeArm",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -250,7 +250,7 @@
         "wristRollRight": [
             "RightHand",
             0,
-            10,
+            20,
             [
                 0.0,
                 0.0,
@@ -283,8 +283,8 @@
         ],
         "thighLeft": [
             "LeftUpLeg",
-            0,
             10,
+            5,
             [
                 0.0,
                 0.0,
@@ -331,8 +331,8 @@
         ],
         "thighRight": [
             "RightUpLeg",
-            0,
             10,
+            5,
             [
                 0.0,
                 0.0,
@@ -378,9 +378,9 @@
             ]
         ],
         "torso": [
-            "Spine1",
+            "Spine2",
             0,
-            100,
+            50,
             [
                 0.0,
                 0.0,
@@ -396,7 +396,7 @@
         "shoulderYawLeft": [
             "LeftArm",
             5,
-            100,
+            30,
             [
                 0.0,
                 0.0,
@@ -444,7 +444,7 @@
         "shoulderYawRight": [
             "RightArm",
             5,
-            100,
+            30,
             [
                 0.0,
                 0.0,

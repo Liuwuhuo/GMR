@@ -29,7 +29,7 @@ if __name__ == "__main__":
         choices=["unitree_g1", "unitree_g1_with_hands", "unitree_h1", "unitree_h1_2",
                  "booster_t1", "booster_t1_29dof","stanford_toddy", "fourier_n1", 
                 "engineai_pm01", "kuavo_s45", "hightorque_hi", "galaxea_r1pro", "berkeley_humanoid_lite", "booster_k1",
-                "pnd_adam_lite", "adam_sp", "openloong", "tienkung"],
+                "pnd_adam_lite", "adam_sp", "openloong", "tienkung", "adam_sp"],
         default="unitree_g1",
     )
     
@@ -107,12 +107,13 @@ if __name__ == "__main__":
     i = 0
 
     while True:
-        if args.loop:
-            i = (i + 1) % len(smplx_data_frames)
-        else:
-            i += 1
-            if i >= len(smplx_data_frames):
-                break
+        if robot_motion_viewer.paused is False:
+            if args.loop:
+                i = (i + 1) % len(smplx_data_frames)
+            else:
+                i += 1
+                if i >= len(smplx_data_frames):
+                    break
         
         # FPS measurement
         fps_counter += 1
@@ -127,7 +128,7 @@ if __name__ == "__main__":
         smplx_data = smplx_data_frames[i]
 
         # retarget
-        qpos = retarget.retarget(smplx_data)
+        qpos, qvel = retarget.retarget(smplx_data)
 
         # visualize
         robot_motion_viewer.step(
@@ -139,6 +140,7 @@ if __name__ == "__main__":
             human_pos_offset=np.array([0.0, 0.0, 0.0]),
             show_human_body_name=False,
             rate_limit=args.rate_limit,
+            follow_camera = False,
         )
         if args.save_path is not None:
             qpos_list.append(qpos)

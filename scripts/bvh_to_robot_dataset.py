@@ -27,7 +27,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--tgt_folder",
         help="Folder to save the retargeted motion files.",
-        default="../../motion_data/LAFAN1_g1_gmr"
+        # default="../../motion_data/LAFAN1_g1_gmr"
     )
     
     parser.add_argument(
@@ -57,119 +57,120 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
+    if args.tgt_folder is None:
+        default_dir = "retarget"
+        datasets_dir = args.format
+        robot_dir = args.robot
+        os.makedirs(default_dir, exist_ok=True)
+        tgt_folder = os.path.join(default_dir, robot_dir, datasets_dir)
+        print(f"未指定保存路径，使用默认路径: {tgt_folder}")
     
     src_folder = args.src_folder
-    tgt_folder = args.tgt_folder
-    target_fps = args.target_fps
+    # tgt_folder = args.tgt_folder
 
-    # Walk over all files in src_folder
+   
+   
+        
+    # walk over all files in src_folder
     for dirpath, _, filenames in os.walk(src_folder):
         for filename in tqdm(sorted(filenames), desc="Retargeting files"):
             if not filename.endswith(".bvh"):
                 continue
                 
-            # Get paths
+            # get the bvh file path
             bvh_file_path = os.path.join(dirpath, filename)
-            rel_path = os.path.relpath(bvh_file_path, src_folder)
-            tgt_file_path = os.path.join(tgt_folder, os.path.splitext(rel_path)[0] + ".pkl")
+            
+            # get the target file path
+            tgt_file_path = bvh_file_path.replace(src_folder, tgt_folder).replace(".bvh", ".pkl")
 
             if os.path.exists(tgt_file_path) and not args.override:
                 print(f"Skipping {bvh_file_path} because {tgt_file_path} exists")
                 continue
             
-            # Load BVH
+            # Load LAFAN1 trajectory
             try:
-                lafan1_data_frames, actual_human_height = load_bvh_file(bvh_file_path, format=args.format)
+                lafan1_data_frames, actual_human_height = load_bvh_file(bvh_file_path)
+                src_fps = 30  # LAFAN1 data is typically 30 FPS
             except Exception as e:
                 print(f"Error loading {bvh_file_path}: {e}")
                 continue
 
-            # Initialize retargeter
+            
+            # Initialize the retargeting system
             retarget = GMR(
                 src_human=f"bvh_{args.format}",
                 tgt_robot=args.robot,
                 actual_human_height=actual_human_height,
             )
+            model = mj.MjModel.from_xml_path(retarget.xml_file)
+            data = mj.MjData(model)
 
-            # Retarget all frames
+            
+
+            # retarget to get all qpos
             qpos_list = []
             for curr_frame in range(len(lafan1_data_frames)):
                 smplx_data = lafan1_data_frames[curr_frame]
-                qpos = retarget.retarget(smplx_data)
+                
+                # Retarget till convergence
+                qpos, qvel = retarget.retarget(smplx_data)
+                
                 qpos_list.append(qpos.copy())
+            
             qpos_list = np.array(qpos_list)
 
-            # Extract components
-            root_pos = qpos_list[:, :3]  # (N, 3)
-            # MuJoCo uses [w, x, y, z]; convert to [x, y, z, w] for output
-            root_rot_wxyz = qpos_list[:, 3:7]
-            root_rot_xyzw = root_rot_wxyz[:, [1, 2, 3, 0]]  # wxyz → xyzw
-            dof_pos = qpos_list[:, 7:]  # (N, D)
+            # Initialize the forward kinematics
+            # device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            # kinematics_model = KinematicsModel(retarget.xml_file, device=device)
+            
+            root_pos = qpos_list[:, :3]
+            root_rot = qpos_list[:, 3:7]
+            root_rot[:, [0, 1, 2, 3]] = root_rot[:, [1, 2, 3, 0]]
+            root_rot_xyzw = root_rot[:, [1, 2, 3, 0]]
+            dof_pos = qpos_list[:, 7:]
+            num_frames = root_pos.shape[0]
+            
+            # obtain local body pos
+            # identity_root_pos = torch.zeros((num_frames, 3), device=device)
+            # identity_root_rot = torch.zeros((num_frames, 4), device=device)
+            # identity_root_rot[:, -1] = 1.0
+            # local_body_pos, _ = kinematics_model.forward_kinematics(
+            #     identity_root_pos, 
+            #     identity_root_rot, 
+            #     torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
+            # )
+            # body_names = kinematics_model.body_names
 
-            num_frames = len(qpos_list)
+            # HEIGHT_ADJUST = False
+            # PERFRAME_ADJUST = False
+            # if HEIGHT_ADJUST:
+            #     body_pos, _ = kinematics_model.forward_kinematics(
+            #         torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
+            #         torch.from_numpy(root_rot_xyzw).to(device=device, dtype=torch.float),
+            #         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
+            #     )
+            #     ground_offset = 0.00
+            #     if not PERFRAME_ADJUST:
+            #         lowest_height = torch.min(body_pos[..., 2]).item()
+            #         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
+            #     else:
+            #         for i in range(root_pos.shape[0]):
+            #             lowest_body_part = torch.min(body_pos[i, :, 2])
+            #             root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
 
-            # === Optional: Height adjustment via FK ===
-            try:
-                device = "cuda:0" if torch.cuda.is_available() else "cpu"
-                kinematics_model = KinematicsModel(retarget.xml_file, device=device)
-
-                # Forward kinematics for height adjustment
-                body_pos, _ = kinematics_model.forward_kinematics(
-                    torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
-                    torch.from_numpy(root_rot_xyzw).to(device=device, dtype=torch.float),
-                    torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-                )
-
-                HEIGHT_ADJUST = True
-                PERFRAME_ADJUST = False
-                ground_offset = 0.00
-                if HEIGHT_ADJUST:
-                    if not PERFRAME_ADJUST:
-                        lowest_height = torch.min(body_pos[..., 2]).item()
-                        root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
-                    else:
-                        for i in range(root_pos.shape[0]):
-                            lowest_body_part = torch.min(body_pos[i, :, 2])
-                            root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
-            except Exception as e:
-                print(f"[Warning] Height adjustment failed for {filename}: {e}. Skipping adjustment.")
-
-            # === Build standard output format (identical to single-file script) ===
-            # Get joint DOF names (skip floating joint)
-            dof_names = [name for name, idx in sorted(retarget.robot_dof_names.items(), key=lambda x: x[1])
-                         if name != "floating_joint"]
-
-            # Build labels
-            labels = []
-            labels.extend(["root_pos/x", "root_pos/y", "root_pos/z"])
-            labels.extend(["root_quat/x", "root_quat/y", "root_quat/z", "root_quat/w"])
-            labels.extend([f"dof_pos/{name}" for name in dof_names])
-
-            # Build frames: each is [px, py, pz, qx, qy, qz, qw, j1, j2, ...]
-            frames = []
-            for i in range(num_frames):
-                frame_data = []
-                frame_data.extend(root_pos[i].tolist())        # 3
-                frame_data.extend(root_rot_xyzw[i].tolist())   # 4
-                frame_data.extend(dof_pos[i].tolist())         # D
-                frames.append(frame_data)
-
-            # Meta info
-            frame_duration = 1.0 / target_fps
             motion_data = {
-                "LoopMode": "Once",
-                "LoopNum": 1,
-                "FrameDuration": frame_duration,
-                "EnableCycleOffsetPosition": True,
-                "EnableCycleOffsetRotation": True,
-                "MotionWeight": 1.0,
-                "Labels": labels,
-                "Frames": frames,
+                "root_pos": root_pos,
+                "root_rot": root_rot,
+                "dof_pos": dof_pos,
+                "local_body_pos": None,  # local_body_pos.cpu().numpy(),
+                "fps": src_fps,
+                "link_body_list": None,
             }
+            
 
-            # Save
             os.makedirs(os.path.dirname(tgt_file_path), exist_ok=True)
             with open(tgt_file_path, "wb") as f:
                 pickle.dump(motion_data, f)
 
-    print(f"✅ Done. All motions saved to: {tgt_folder}")
+    print("Done. saved to ", tgt_folder)

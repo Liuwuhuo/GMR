@@ -23,7 +23,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "adam_sp_pro"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "adam_sp_pro", "adam_sp"],
         default="unitree_g1",
     )
         
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
         # retarget
         cur = time.time()
-        qpos = retargeter.retarget(smplx_data)
+        qpos, qvel = retargeter.retarget(smplx_data)
         print(f"Retargeting time: {time.time() - cur:.4f} seconds")
 
         # visualize
