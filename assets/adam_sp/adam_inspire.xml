@@ -6,7 +6,7 @@
 				<geom material="sliver" type="mesh" contype="0" conaffinity="0" group="1" density="0" />
 			</default>
 			<default class="collision">
-				<geom group="3" rgba="1 0 0 0" type="mesh" />
+				<geom contype="1" conaffinity="1" group="3" rgba="1 0 0 1"/>
 			</default>
 		</default>
 	</default>
@@ -25,8 +25,8 @@
 		<mesh file="hipRollLeft_0.obj" />
 		<mesh file="hipRollLeft_1.obj" />
 		<mesh file="hipRollLeft_2.obj" />
-		<mesh file="hipRollLeft_3.obj" inertia="shell"/>
-		<mesh file="thighLeft_0.obj" inertia="shell"/>
+		<mesh file="hipRollLeft_3.obj"/>
+		<mesh file="thighLeft_0.obj"/>
 		<mesh file="thighLeft_1.obj" />
 		<mesh file="thighLeft_2.obj" />
 		<mesh file="shinLeft_0.obj" />
@@ -43,10 +43,10 @@
 		<mesh file="hipPitchRight_2.obj" />
 		<mesh file="hipPitchRight_3.obj" />
 		<mesh file="hipRollRight_0.obj" />
-		<mesh file="hipRollRight_1.obj" inertia="shell"/>
+		<mesh file="hipRollRight_1.obj"/>
 		<mesh file="hipRollRight_2.obj" />
 		<mesh file="hipRollRight_3.obj" />
-		<mesh file="thighRight_0.obj" inertia="shell"/>
+		<mesh file="thighRight_0.obj"/>
 		<mesh file="thighRight_1.obj" />
 		<mesh file="thighRight_2.obj" />
 		<mesh file="shinRight_0.obj" />
@@ -136,6 +136,7 @@
 			<site name="site_pelvis" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 			
 			<body name="hipPitchLeft" pos="0 0.096192 -0.033241" quat="0.953716 -0.300708 0 0">
+				<site name="site_hipPitchLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 				<inertial pos="-0.0581819 0.0588948 -0.00031205" quat="0.254193 0.376686 0.60653 0.652391" mass="2.15125" diaginertia="0.00511936 0.00508028 0.00314942" />
 				<joint name="hipPitch_Left" pos="0 0 0" axis="0 1 0" range="-2.09 2.09" actuatorfrcrange="-230 230" />
 				<geom mesh="hipPitchLeft_0" material="pnd_logo" class="visual" />
@@ -143,7 +144,7 @@
 				<geom mesh="hipPitchLeft_2" material="black" class="visual" />
 				<geom mesh="hipPitchLeft_3" material="black" class="visual" />
 				<body name="hipRollLeft" pos="-0.0255 0.069 0" quat="0.953716 0.300708 0 0">
-					<site name="site_hipRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+					<!-- <site name="site_hipRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 					<inertial pos="0.0399541 -0.00011618 -0.011021" quat="-0.106213 0.535564 0.044112 0.836627" mass="1.29422" diaginertia="0.001475 0.001371 0.00131215" />
 					<joint name="hipRoll_Left" pos="0 0 0" axis="1 0 0" range="-0.78 1.57" actuatorfrcrange="-160 160" />
 					<geom mesh="hipRollLeft_0" class="visual" />
@@ -235,6 +236,7 @@
 				</body>
 			</body>
 			<body name="hipPitchRight" pos="0 -0.096192 -0.033241" quat="0.953716 0.300708 0 0">
+				<site name="site_hipPitchRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 				<inertial pos="-0.0581816 -0.0588696 -0.00032981" quat="0.648631 0.611936 0.367995 0.263425" mass="2.15124" diaginertia="0.0051141 0.0050828 0.00314994" />
 				<joint name="hipPitch_Right" pos="0 0 0" axis="0 1 0" range="-2.09 2.09" actuatorfrcrange="-230 230" />
 				<geom mesh="hipPitchRight_0" material="pnd_logo" class="visual" />
@@ -242,7 +244,7 @@
 				<geom mesh="hipPitchRight_2" material="black" class="visual" />
 				<geom mesh="hipPitchRight_3" material="black" class="visual" />
 				<body name="hipRollRight" pos="-0.0255 -0.069 0" quat="0.953716 -0.300708 0 0">
-					<site name="site_hipRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+					<!-- <site name="site_hipRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 					<inertial pos="0.0398817 0.00011594 -0.0110209" quat="0.102657 0.530738 -0.0414919 0.840272" mass="1.29423" diaginertia="0.00147637 0.00137013 0.00131019" />
 					<joint name="hipRoll_Right" pos="0 0 0" axis="1 0 0" range="-1.57 0.78" actuatorfrcrange="-160 160" />
 					<geom mesh="hipRollRight_0" material="black" class="visual" />
@@ -512,6 +514,7 @@
 													<geom mesh="inspire_Right_0" material="black" class="visual" />
 													<geom mesh="inspire_Right_1" rgba="1 1 1 1" class="visual" />
 													<geom name="wristRollRight_collision" conaffinity="1" size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
+													<geom name="right_hand_collision" class="collision" type="capsule" size="0.05" fromto="0.05 0 0 0.18 0 0" rgba=".2 .6 .2 .2" group="3"/>
 													<body name="R_thumb_proximal_base" pos="0.0204501 0.0169555 -0.0616936" quat="0.16269 -0.162689 0.688133 -0.688141">
 														<inertial pos="-0.0048772 -0.010163 0.00044069" quat="0.075637 0.631378 -0.107678 0.764229" mass="0.0018869" diaginertia="8.66028e-08 6.87321e-08 4.94192e-08" />
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_proximal_base" />
