@@ -6,7 +6,7 @@
 				<geom material="sliver" type="mesh" contype="0" conaffinity="0" group="1" density="0" />
 			</default>
 			<default class="collision">
-				<geom rgba="1 0 0 0" />
+				<geom rgba="1 0 0 1" />
 			</default>
 		</default>
 	</default>
@@ -25,8 +25,8 @@
 		<mesh file="hipRollLeft_0.obj" />
 		<mesh file="hipRollLeft_1.obj" />
 		<mesh file="hipRollLeft_2.obj" />
-		<mesh file="hipRollLeft_3.obj" inertia="shell"/>
-		<mesh file="thighLeft_0.obj" inertia="shell"/>
+		<mesh file="hipRollLeft_3.obj" />
+		<mesh file="thighLeft_0.obj" />
 		<mesh file="thighLeft_1.obj" />
 		<mesh file="thighLeft_2.obj" />
 		<mesh file="shinLeft_0.obj" />
@@ -43,10 +43,10 @@
 		<mesh file="hipPitchRight_2.obj" />
 		<mesh file="hipPitchRight_3.obj" />
 		<mesh file="hipRollRight_0.obj" />
-		<mesh file="hipRollRight_1.obj" inertia="shell"/>
+		<mesh file="hipRollRight_1.obj" />
 		<mesh file="hipRollRight_2.obj" />
 		<mesh file="hipRollRight_3.obj" />
-		<mesh file="thighRight_0.obj" inertia="shell"/>
+		<mesh file="thighRight_0.obj" />
 		<mesh file="thighRight_1.obj" />
 		<mesh file="thighRight_2.obj" />
 		<mesh file="shinRight_0.obj" />
@@ -128,7 +128,6 @@
 		<body name="pelvis" pos="0 0 0.95">
 			<inertial pos="-0.00120269 -1.18988e-06 -0.00802076" quat="0.498488 0.49834 -0.501669 0.501494" mass="10.1883" diaginertia="0.0752974 0.0684951 0.0376324" />
 			<joint name="floating_joint" type="free" limited="false" actuatorfrclimited="false" />
-			<!-- <freejoint name="pelvis"/> -->
 			<geom mesh="pelvis_0" material="black" class="visual" />
 			<geom mesh="pelvis_1" class="visual" />
 			<geom mesh="pelvis_2" class="visual" />
@@ -161,21 +160,19 @@
 							<geom mesh="shinLeft_1" material="black" class="visual" />
 							<geom mesh="shinLeft_2" material="pnd_logo" class="visual" />
 							<geom mesh="shinLeft_3" material="black" class="visual" />
-							<geom size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
+							<geom name="shinleft_coll" size="0.04 0.11" pos="0 0 -0.2" type="capsule" class="collision" />
 							<body name="anklePitchLeft" pos="0 0 -0.37">
 								<inertial pos="0 0 0" mass="0.031" diaginertia="3.23e-06 3.23e-06 2.1e-06" />
 								<joint name="anklePitch_Left" pos="0 0 0" axis="0 1 0" range="-1 0.35" actuatorfrcrange="-40 40" armature="0.001" />
 								<geom mesh="anklePitchLeft" class="visual" />
-								<body name="ankleRollLeft">
+								<body name="toeLeft">
 									<inertial pos="0.0370066 -2.063e-05 -0.0419868" quat="0.00469469 0.673963 -0.00294814 0.738744" mass="0.4758" diaginertia="0.00159292 0.00152195 0.000273726" />
 									<joint name="ankleRoll_Left" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
-									<body name="toeLeft" pos="0 0 -0.065">
-										<geom mesh="toeLeft_0" material="pnd_logo" class="visual" />
-										<geom mesh="toeLeft_1" class="visual" />
-										<geom mesh="toeLeft_2" material="pnd_logo" class="visual" />
-										<geom mesh="toeLeft_3" class="visual" />
-										<geom name="toe1_left" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
-									</body>
+									<geom mesh="toeLeft_0" material="pnd_logo" class="visual" />
+									<geom mesh="toeLeft_1" class="visual" />
+									<geom mesh="toeLeft_2" material="pnd_logo" class="visual" />
+									<geom mesh="toeLeft_3" class="visual" />
+									<geom name="toe1_left" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
 								</body>
 							</body>
 						</body>
@@ -215,16 +212,14 @@
 								<inertial pos="0 0 0" mass="0.031" diaginertia="3.23e-06 3.23e-06 2.1e-06" />
 								<joint name="anklePitch_Right" pos="0 0 0" axis="0 1 0" range="-1 0.35" actuatorfrcrange="-40 40" armature="0.001" />
 								<geom mesh="anklePitchRight" class="visual" />
-								<body name="ankleRollRight">
+								<body name="toeRight">
 									<inertial pos="0.037003 2.151e-05 -0.0419756" quat="-0.00470409 0.67392 0.00290833 0.738784" mass="0.4758" diaginertia="0.00159272 0.00152205 0.000274003" />
 									<joint name="ankleRoll_Right" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
-									<body name="toeRight" pos="0 0 -0.065">
-										<geom mesh="toeRight_0" material="pnd_logo" class="visual" />
-										<geom mesh="toeRight_1" material="pnd_logo" class="visual" />
-										<geom mesh="toeRight_2" class="visual" />
-										<geom mesh="toeRight_3" material="pnd_logo" class="visual" />
-										<geom name="toe_right" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
-									</body>
+									<geom mesh="toeRight_0" material="pnd_logo" class="visual" />
+									<geom mesh="toeRight_1" material="pnd_logo" class="visual" />
+									<geom mesh="toeRight_2" class="visual" />
+									<geom mesh="toeRight_3" material="pnd_logo" class="visual" />
+									<geom name="toe_right" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" class="collision" />
 								</body>
 							</body>
 						</body>
@@ -293,18 +288,22 @@
 													<geom size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
 													<body name="L_thumb_proximal_base" pos="0.0204501 -0.0169555 -0.0452024" quat="0.0598167 -0.059817 -0.704573 0.704571">
 														<inertial pos="-0.0048772 0.00668 -0.00044071" quat="0.107679 0.764233 -0.0756348 0.631373" mass="0.0018869" diaginertia="8.66029e-08 6.87331e-08 4.942e-08" />
+														<joint name="L_thumb_MCP_joint1" pos="0 0 0" axis="0 1 0" range="0 1.1" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom quat="0.988771 0 0.149438 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_thumb_proximal_base" />
 														<geom quat="0.988771 0 0.149438 0" type="mesh" rgba="1 1 1 1" mesh="L_thumb_proximal_base" />
 														<body name="L_thumb_proximal" pos="-0.0115 0.005 0.0034" quat="0.769503 0.235846 -0.567446 0.173917">
 															<inertial pos="-3.8578e-05 0.025335 0.0016982" quat="0.754084 0.656775 -0.00128576 0.0014545" mass="0.0066101" diaginertia="2.78701e-06 2.44019e-06 8.64653e-07" />
+															<joint name="L_thumb_MCP_joint2" pos="0 0 0" axis="-1 0 0" range="0 0.5" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_thumb_proximal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="L_thumb_proximal" />
 															<body name="L_thumb_intermediate" pos="0 0.055863 -0.0039241" quat="0.999817 0.0191483 0 0">
 																<inertial pos="-1.7401e-07 0.0072516 0.0064286" quat="0.81744 0.576014 6.61106e-05 -9.38198e-05" mass="0.0037844" diaginertia="4.6532e-07 4.48115e-07 2.45645e-07" />
+																<joint name="L_thumb_PIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1" actuatorfrcrange="-1 1" damping = "100"/>
 																<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_thumb_intermediate" />
 																<geom type="mesh" rgba="1 1 1 1" mesh="L_thumb_intermediate" />
 																<body name="L_thumb_distal" pos="0 0.022558 0.0020717" quat="0.999983 0.00582097 0 0">
 																	<inertial pos="-3.3076e-06 0.010511 0.00057861" quat="0.781092 0.624411 -0.00196986 0.00144874" mass="0.003344" diaginertia="2.0026e-07 1.95251e-07 8.15962e-08" />
+																	<joint name="L_thumb_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.2" actuatorfrcrange="-1 1" damping = "100"/>
 																	<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_thumb_distal" />
 																	<geom type="mesh" rgba="1 1 1 1" mesh="L_thumb_distal" />
 																</body>
@@ -313,43 +312,48 @@
 													</body>
 													<body name="L_index_proximal" pos="0.0182311 0.000284483 -0.127012" quat="0.789627 -0.613339 -0.0137831 -0.010706">
 														<inertial pos="0.0080456 0.011884 -0.0016957" quat="0.777057 0.62943 1.19165e-05 9.6526e-06" mass="0.0042405" diaginertia="6.9402e-07 6.62906e-07 2.10924e-07" />
+														<joint name="L_index_MCP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100" />
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_index_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="L_index_proximal" />
 														<body name="L_index_distal" pos="0.0016538 0.030445 -0.010275" quat="0.999803 -0.0198727 0 0">
 															<inertial pos="0.0063917 0.01959 -0.0019564" quat="0.813238 0.581931 0 0" mass="0.0045682" diaginertia="7.8176e-07 7.72431e-07 8.47188e-08" />
+															<joint name="L_index_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_index_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="L_index_distal" />
 														</body>
 													</body>
 													<body name="L_middle_proximal" pos="-0.00111489 0.000284483 -0.127012" quat="0.789747 -0.613433 0 0">
 														<inertial pos="0.0080653 0.011884 -0.0016957" quat="0.777057 0.62943 1.16794e-05 9.46051e-06" mass="0.0042405" diaginertia="6.9402e-07 6.62906e-07 2.10924e-07" />
+														<joint name="L_middle_MCP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_middle_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="L_middle_proximal" />
 														<body name="L_middle_distal" pos="0.0016698 0.030445 -0.010275" quat="0.999363 -0.0356989 0 0">
 															<inertial pos="0.0063955 0.020807 -0.0018039" quat="0.807684 0.589615 7.8918e-05 -0.000111289" mass="0.0050397" diaginertia="9.8385e-07 9.73291e-07 9.13995e-08" />
+															<joint name="L_middle_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_middle_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="L_middle_distal" />
 														</body>
 													</body>
 													<body name="L_ring_proximal" pos="-0.0230849 0.000284483 -0.126032" quat="0.789476 -0.613223 0.0206732 0.0160578">
 														<inertial pos="0.010821 0.011884 -0.0016957" quat="0.777057 0.62943 1.13816e-05 9.21931e-06" mass="0.0042405" diaginertia="6.9402e-07 6.62906e-07 2.10924e-07" />
+														<joint name="L_ring_MCP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_ring_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="L_ring_proximal" />
 														<body name="L_ring_distal" pos="0.0015355 0.030445 -0.010275" quat="0.999803 -0.0198727 0 0">
 															<inertial pos="0.009285 0.019591 -0.0019565" quat="0.813238 0.581931 0 0" mass="0.0045682" diaginertia="7.8176e-07 7.72431e-07 8.47188e-08" />
-															<!-- <joint name="L_ring_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/> -->
+															<joint name="L_ring_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_ring_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="L_ring_distal" />
 														</body>
 													</body>
 													<body name="L_pinky_proximal" pos="-0.0449269 0.000284483 -0.123672" quat="0.788665 -0.612592 0.0413323 0.0321047">
 														<inertial pos="0.013546 0.011884 -0.0016957" quat="0.777057 0.62943 1.15068e-05 9.32075e-06" mass="0.0042405" diaginertia="6.9402e-07 6.62906e-07 2.10924e-07" />
-														<!-- <joint name="L_pinky_MCP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100"/> -->
+														<joint name="L_pinky_MCP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_pinky_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="L_pinky_proximal" />
 														<body name="L_pinky_distal" pos="0 0.030445 -0.010275" quat="0.999822 0.0188444 0 0">
 															<inertial pos="0.013546 0.016245 -0.0022219" quat="0.832929 0.553379 -3.53e-06 -2.34525e-06" mass="0.0036036" diaginertia="4.4881e-07 4.43813e-07 6.57372e-08" />
-															<!-- <joint name="L_pinky_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/> -->
+															<joint name="L_pinky_DIP_joint" pos="0 0 0" axis="-1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="L_pinky_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="L_pinky_distal" />
 														</body>
@@ -403,18 +407,22 @@
 													<geom size="0.04 0.025 0.05" pos="0 0 -0.08" type="ellipsoid" class="collision" />
 													<body name="R_thumb_proximal_base" pos="0.0204501 0.0169555 -0.0616936" quat="0.16269 -0.162689 0.688133 -0.688141">
 														<inertial pos="-0.0048772 -0.010163 0.00044069" quat="0.075637 0.631378 -0.107678 0.764229" mass="0.0018869" diaginertia="8.66028e-08 6.87321e-08 4.94192e-08" />
+														<joint name="R_thumb_MCP_joint1" pos="0 0 0" axis="0 -1 0" range="0 1.1" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_proximal_base" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="R_thumb_proximal_base" />
 														<body name="R_thumb_proximal" pos="-0.0115 -0.011843 0" quat="-0.660498 0.252468 -0.660501 -0.252469">
 															<inertial pos="-3.8592e-05 0.02533 -0.0017007" quat="0.656826 0.754039 0.00146914 -0.00128614" mass="0.0066075" diaginertia="2.78601e-06 2.43932e-06 8.64597e-07" />
+															<joint name="R_thumb_MCP_joint2" pos="0 0 0" axis="1 0 0" range="0 0.5" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_proximal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="R_thumb_proximal" />
 															<body name="R_thumb_intermediate" pos="0 0.055863 0.0039241" quat="0.999817 -0.0191483 0 0">
 																<inertial pos="2.8437e-07 0.0072526 -0.0064293" quat="0.575988 0.817458 -0.000107087 6.96147e-05" mass="0.0037847" diaginertia="4.6531e-07 4.48088e-07 2.45662e-07" />
+																<joint name="R_thumb_PIP_joint" pos="0 0 0" axis="1 0 0" range="0 1" actuatorfrcrange="-1 1" damping = "100"/>
 																<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_intermediate" />
 																<geom type="mesh" rgba="1 1 1 1" mesh="R_thumb_intermediate" />
 																<body name="R_thumb_distal" pos="0 0.022558 -0.0020717" quat="0.999983 -0.00582097 0 0">
 																	<inertial pos="-3.3054e-06 0.010511 -0.00057863" quat="0.624404 0.781098 0.00147531 -0.00199963" mass="0.0033441" diaginertia="2.0026e-07 1.95252e-07 8.15973e-08" />
+																	<joint name="R_thumb_DIP_joint" pos="0 0 0" axis="1 0 0" range="0 1.2" actuatorfrcrange="-1 1" damping = "100" />
 																	<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_thumb_distal" />
 																	<geom type="mesh" rgba="1 1 1 1" mesh="R_thumb_distal" />
 																</body>
@@ -423,40 +431,48 @@
 													</body>
 													<body name="R_index_proximal" pos="0.0163761 -0.000284483 -0.127083" quat="-0.615708 0.787781 0.0107474 0.0137509">
 														<inertial pos="0.0099008 0.011884 0.0016958" quat="0.629448 0.777042 2.20645e-05 -2.45535e-05" mass="0.0042403" diaginertia="6.9398e-07 6.62877e-07 2.10913e-07" />
+														<joint name="R_index_MCP_joint" pos="0 0 0" axis="1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_index_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="R_index_proximal" />
 														<body name="R_index_distal" pos="0.001575 0.030445 0.010275" quat="0.999755 0.0221422 0 0">
 															<inertial pos="0.0083258 0.019591 0.0019565" quat="0.581929 0.813239 4.32051e-07 6.03786e-07" mass="0.0045683" diaginertia="7.8179e-07 7.72465e-07 8.47248e-08" />
+															<joint name="R_index_DIP_joint" pos="0 0 0" axis="1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_index_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="R_index_distal" />
 														</body>
 													</body>
 													<body name="R_middle_proximal" pos="-0.00111489 -0.000284483 -0.1271" quat="-0.613436 0.789745 0 0">
 														<inertial pos="0.008065 0.011884 0.0016958" quat="0.629448 0.777042 2.15784e-05 -2.62734e-05" mass="0.0042403" diaginertia="6.9397e-07 6.62866e-07 2.10914e-07" />
+														<joint name="R_middle_MCP_joint" pos="0 0 0" axis="1 0 0" range="0 1.7" actuatorfrcrange="-1 1"  damping = "100"/>
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_middle_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="R_middle_proximal" />
 														<body name="R_middle_distal" pos="0.0016673 0.030445 0.010275" quat="0.999363 0.0356989 0 0">
 															<inertial pos="0.0063978 0.020807 0.0018039" quat="0.589614 0.807685 -6.23875e-05 4.98373e-05" mass="0.0050396" diaginertia="9.8384e-07 9.73281e-07 9.13985e-08" />
+															<joint name="R_middle_DIP_joint" pos="0 0 0" axis="1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100" />
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_middle_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="R_middle_distal" />
 														</body>
 													</body>
 													<body name="R_ring_proximal" pos="-0.0202889 -0.000284483 -0.126177" quat="-0.613225 0.789474 -0.0160579 -0.0206732">
 														<inertial pos="0.0080207 0.011884 0.0016959" quat="0.629449 0.777042 1.88154e-05 -2.40552e-05" mass="0.0042403" diaginertia="6.9397e-07 6.62866e-07 2.10914e-07" />
+														<joint name="R_ring_MCP_joint" pos="0 0 0" axis="1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100" />
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_ring_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="R_ring_proximal" />
 														<body name="R_ring_distal" pos="0 0.030445 0.010275" quat="0.999803 0.0198727 0 0">
 															<inertial pos="0.0080209 0.019591 0.0019565" quat="0.581926 0.813242 0 0" mass="0.0045683" diaginertia="7.8177e-07 7.72447e-07 8.47227e-08" />
+															<joint name="R_ring_DIP_joint" pos="0 0 0" axis="1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_ring_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="R_ring_distal" />
 														</body>
 													</body>
 													<body name="R_pinky_proximal" pos="-0.0393009 -2.8483e-05 -0.124263" quat="-0.612595 0.788662 -0.0321048 -0.0413321">
 														<inertial pos="0.0078887 0.011884 0.0016959" quat="0.629449 0.777042 2.01737e-05 -2.54775e-05" mass="0.0042403" diaginertia="6.9397e-07 6.62866e-07 2.10914e-07" />
+														<joint name="R_pinky_MCP_joint" pos="0 0 0" axis="1 0 0" range="0 1.7" actuatorfrcrange="-1 1" damping = "100" />
 														<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_pinky_proximal" />
 														<geom type="mesh" rgba="1 1 1 1" mesh="R_pinky_proximal" />
 														<body name="R_pinky_distal" pos="0 0.030445 0.010275" quat="0.999822 -0.0188444 0 0">
 															<inertial pos="0.0078857 0.016239 0.0022243" quat="0.553304 0.832968 0.0036878 -0.00236477" mass="0.0035996" diaginertia="4.4867e-07 4.43716e-07 6.56536e-08" />
+															<joint name="R_pinky_DIP_joint" pos="0 0 0" axis="1 0 0" range="0 1.6" actuatorfrcrange="-1 1" damping = "100"/>
 															<geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="R_pinky_distal" />
 															<geom type="mesh" rgba="1 1 1 1" mesh="R_pinky_distal" />
 														</body>
@@ -495,15 +511,39 @@
 		<motor gear="1" joint="shoulderYaw_Left" name="shoulderYaw_Left" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor gear="1" joint="elbow_Left" name="elbow_Left" ctrllimited="true" ctrlrange="-30.0 30.0" />
 		<motor gear="1" joint="wristYaw_Left" name="wristYaw_Left" ctrllimited="true" ctrlrange="-6.4 6.4" />
-		<motor gear="1" joint="wristPitch_Left" name="wristPitch_Left" ctrllimited="true" ctrlrange="-6.4 6.4" />
-		<motor gear="1" joint="wristRoll_Left" name="wristRoll_Left" ctrllimited="true" ctrlrange="-6.4 6.4" />
+		<!-- <motor gear="1" joint="wristPitch_Left" name="wristPitch_Left" ctrllimited="true" ctrlrange="-6.4 6.4" /> -->
+		<!-- <motor gear="1" joint="wristRoll_Left" name="wristRoll_Left" ctrllimited="true" ctrlrange="-6.4 6.4" />
+		<motor gear="1" joint="L_thumb_MCP_joint1" name="L_thumb_MCP_joint1" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_thumb_MCP_joint2" name="L_thumb_MCP_joint2" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_thumb_PIP_joint" name="L_thumb_PIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_thumb_DIP_joint" name="L_thumb_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_index_MCP_joint" name="L_index_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_index_DIP_joint" name="L_index_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_middle_MCP_joint" name="L_middle_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_middle_DIP_joint" name="L_middle_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_ring_MCP_joint" name="L_ring_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_ring_DIP_joint" name="L_ring_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_pinky_MCP_joint" name="L_pinky_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="L_pinky_DIP_joint" name="L_pinky_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" /> -->
 		<motor gear="1" joint="shoulderPitch_Right" name="shoulderPitch_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor gear="1" joint="shoulderRoll_Right" name="shoulderRoll_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor gear="1" joint="shoulderYaw_Right" name="shoulderYaw_Right" ctrllimited="true" ctrlrange="-65.0 65.0" />
 		<motor gear="1" joint="elbow_Right" name="elbow_Right" ctrllimited="true" ctrlrange="-30.0 30.0" />
 		<motor gear="1" joint="wristYaw_Right" name="wristYaw_Right" ctrllimited="true" ctrlrange="-6.4 6.4" />
-		<motor gear="1" joint="wristPitch_Right" name="wristPitch_Right" ctrllimited="true" ctrlrange="-6.4 6.4" />
-		<motor gear="1" joint="wristRoll_Right" name="wristRoll_Right" ctrllimited="true" ctrlrange="-6.4 6.4" />
+		<!-- <motor gear="1" joint="wristPitch_Right" name="wristPitch_Right" ctrllimited="true" ctrlrange="-6.4 6.4" /> -->
+		<!-- <motor gear="1" joint="wristRoll_Right" name="wristRoll_Right" ctrllimited="true" ctrlrange="-6.4 6.4" />
+		<motor gear="1" joint="R_thumb_MCP_joint1" name="R_thumb_MCP_joint1" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_thumb_MCP_joint2" name="R_thumb_MCP_joint2" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_thumb_PIP_joint" name="R_thumb_PIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_thumb_DIP_joint" name="R_thumb_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_index_MCP_joint" name="R_index_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_index_DIP_joint" name="R_index_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_middle_MCP_joint" name="R_middle_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_middle_DIP_joint" name="R_middle_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_ring_MCP_joint" name="R_ring_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_ring_DIP_joint" name="R_ring_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_pinky_MCP_joint" name="R_pinky_MCP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" />
+		<motor gear="1" joint="R_pinky_DIP_joint" name="R_pinky_DIP_joint" ctrllimited="true" ctrlrange="-1.0 1.0" /> -->
 	</actuator>
 	<sensor>
 		<jointpos name="pos_hipPitch_Left" joint="hipPitch_Left" />
@@ -526,15 +566,11 @@
 		<jointpos name="pos_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointpos name="pos_elbow_Left" joint="elbow_Left" />
 		<jointpos name="pos_wristYaw_Left" joint="wristYaw_Left" />
-		<jointpos name="pos_wristPitch_Left" joint="wristPitch_Left" />
-		<jointpos name="pos_wristRoll_Left" joint="wristRoll_Left" />
 		<jointpos name="pos_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointpos name="pos_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointpos name="pos_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointpos name="pos_elbow_Right" joint="elbow_Right" />
 		<jointpos name="pos_wristYaw_Right" joint="wristYaw_Right" />
-		<jointpos name="pos_wristPitch_Right" joint="wristPitch_Right" />
-		<jointpos name="pos_wristRoll_Right" joint="wristRoll_Right" />
 		<jointvel name="vel_hipPitch_Left" joint="hipPitch_Left" />
 		<jointvel name="vel_hipRoll_Left" joint="hipRoll_Left" />
 		<jointvel name="vel_hipYaw_Left" joint="hipYaw_Left" />
@@ -555,15 +591,11 @@
 		<jointvel name="vel_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointvel name="vel_elbow_Left" joint="elbow_Left" />
 		<jointvel name="vel_wristYaw_Left" joint="wristYaw_Left" />
-		<jointvel name="vel_wristPitch_Left" joint="wristPitch_Left" />
-		<jointvel name="vel_wristRoll_Left" joint="wristRoll_Left" />
 		<jointvel name="vel_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointvel name="vel_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointvel name="vel_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointvel name="vel_elbow_Right" joint="elbow_Right" />
 		<jointvel name="vel_wristYaw_Right" joint="wristYaw_Right" />
-		<jointvel name="vel_wristPitch_Right" joint="wristPitch_Right" />
-		<jointvel name="vel_wristRoll_Right" joint="wristRoll_Right" />
 		<jointactuatorfrc name="force_hipPitch_Left" joint="hipPitch_Left" />
 		<jointactuatorfrc name="force_hipRoll_Left" joint="hipRoll_Left" />
 		<jointactuatorfrc name="force_hipYaw_Left" joint="hipYaw_Left" />
@@ -584,15 +616,11 @@
 		<jointactuatorfrc name="force_shoulderYaw_Left" joint="shoulderYaw_Left" />
 		<jointactuatorfrc name="force_elbow_Left" joint="elbow_Left" />
 		<jointactuatorfrc name="force_wristYaw_Left" joint="wristYaw_Left" />
-		<jointactuatorfrc name="force_wristPitch_Left" joint="wristPitch_Left" />
-		<jointactuatorfrc name="force_wristRoll_Left" joint="wristRoll_Left" />
 		<jointactuatorfrc name="force_shoulderPitch_Right" joint="shoulderPitch_Right" />
 		<jointactuatorfrc name="force_shoulderRoll_Right" joint="shoulderRoll_Right" />
 		<jointactuatorfrc name="force_shoulderYaw_Right" joint="shoulderYaw_Right" />
 		<jointactuatorfrc name="force_elbow_Right" joint="elbow_Right" />
 		<jointactuatorfrc name="force_wristYaw_Right" joint="wristYaw_Right" />
-		<jointactuatorfrc name="force_wristPitch_Right" joint="wristPitch_Right" />
-		<jointactuatorfrc name="force_wristRoll_Right" joint="wristRoll_Right" />
 		<accelerometer name="BodyAcc" site="imu" />
 		<gyro name="BodyGyro" site="imu" />
 		<framepos name="BodyPos" objtype="site" objname="imu" />

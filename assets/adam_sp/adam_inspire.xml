@@ -6,7 +6,7 @@
 				<geom material="sliver" type="mesh" contype="0" conaffinity="0" group="1" density="0" />
 			</default>
 			<default class="collision">
-				<geom contype="1" conaffinity="1" group="3" rgba="1 0 0 1"/>
+				<geom rgba="1 0 0 0" />
 			</default>
 		</default>
 	</default>
@@ -25,8 +25,8 @@
 		<mesh file="hipRollLeft_0.obj" />
 		<mesh file="hipRollLeft_1.obj" />
 		<mesh file="hipRollLeft_2.obj" />
-		<mesh file="hipRollLeft_3.obj"/>
-		<mesh file="thighLeft_0.obj"/>
+		<mesh file="hipRollLeft_3.obj" inertia="shell"/>
+		<mesh file="thighLeft_0.obj" inertia="shell"/>
 		<mesh file="thighLeft_1.obj" />
 		<mesh file="thighLeft_2.obj" />
 		<mesh file="shinLeft_0.obj" />
@@ -43,10 +43,10 @@
 		<mesh file="hipPitchRight_2.obj" />
 		<mesh file="hipPitchRight_3.obj" />
 		<mesh file="hipRollRight_0.obj" />
-		<mesh file="hipRollRight_1.obj"/>
+		<mesh file="hipRollRight_1.obj" inertia="shell"/>
 		<mesh file="hipRollRight_2.obj" />
 		<mesh file="hipRollRight_3.obj" />
-		<mesh file="thighRight_0.obj"/>
+		<mesh file="thighRight_0.obj" inertia="shell"/>
 		<mesh file="thighRight_1.obj" />
 		<mesh file="thighRight_2.obj" />
 		<mesh file="shinRight_0.obj" />

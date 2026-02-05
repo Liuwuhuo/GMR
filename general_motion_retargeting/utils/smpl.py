@@ -11,6 +11,64 @@ def load_smpl_file(smpl_file):
     smpl_data = np.load(smpl_file, allow_pickle=True)
     return smpl_data
 
+def load_smplx_from_pkl(pkl_path, smplx_body_model_path, clip_key=None):
+    """Load SMPL-X compatible motion from a .pkl file (e.g. AMASS/OMOMO style).
+    pkl may be: (1) single motion with pose_body/root_orient/trans/betas, or
+    (2) dict of clips {clip_name: {poses|pose_body, trans, ...}}. Use clip_key to select or first key.
+    Returns (smplx_data, body_model, smplx_output, human_height) like load_smplx_file.
+    """
+    import pickle
+    with open(pkl_path, "rb") as f:
+        data = pickle.load(f)
+    # Unwrap if multiple clips
+    if isinstance(data, dict) and "pose_body" not in data and "poses" not in data:
+        candidates = [k for k in data.keys() if isinstance(data[k], dict) and ("pose_body" in data[k] or "poses" in data[k])]
+        if candidates:
+            key = clip_key if clip_key in data else candidates[0]
+            data = data[key]
+    # Normalize to smplx_data format
+    if "poses" in data and "pose_body" not in data:
+        poses = np.asarray(data["poses"])
+        if poses.shape[1] > 72:
+            poses = poses[:, :72]
+        data = dict(data)
+        data["root_orient"] = poses[:, :3]
+        data["pose_body"] = poses[:, 3:66]
+        del data["poses"]
+    smplx_data = {}
+    for k in ["pose_body", "root_orient", "trans", "betas", "gender", "mocap_frame_rate"]:
+        if k in data:
+            v = data[k]
+            smplx_data[k] = np.asarray(v) if not isinstance(v, np.ndarray) else v
+    if "mocap_framerate" in data and "mocap_frame_rate" not in smplx_data:
+        smplx_data["mocap_frame_rate"] = np.array(float(data["mocap_framerate"]))
+    if "mocap_frame_rate" not in smplx_data:
+        smplx_data["mocap_frame_rate"] = np.array(30.0)
+    betas = np.asarray(smplx_data["betas"]).flatten()
+    if len(betas) < 16:
+        betas = np.concatenate([betas, np.zeros(16 - len(betas), dtype=betas.dtype)])
+    smplx_data["betas"] = betas[:16]
+    if "gender" not in smplx_data:
+        smplx_data["gender"] = np.array("neutral")
+    gender = str(smplx_data["gender"]) if isinstance(smplx_data["gender"], np.ndarray) else str(smplx_data["gender"])
+    body_model = smplx.create(smplx_body_model_path, "smplx", gender=gender, use_pca=False)
+    num_frames = smplx_data["pose_body"].shape[0]
+    smplx_output = body_model(
+        betas=torch.tensor(smplx_data["betas"]).float().view(1, -1),
+        global_orient=torch.tensor(smplx_data["root_orient"]).float(),
+        body_pose=torch.tensor(smplx_data["pose_body"]).float(),
+        transl=torch.tensor(smplx_data["trans"]).float(),
+        left_hand_pose=torch.zeros(num_frames, 45).float(),
+        right_hand_pose=torch.zeros(num_frames, 45).float(),
+        jaw_pose=torch.zeros(num_frames, 3).float(),
+        leye_pose=torch.zeros(num_frames, 3).float(),
+        reye_pose=torch.zeros(num_frames, 3).float(),
+        return_full_pose=True,
+    )
+    human_height = 1.66 + 0.1 * float(smplx_data["betas"][0])
+    return smplx_data, body_model, smplx_output, human_height
+
+
 def load_smplx_file(smplx_file, smplx_body_model_path):
     smplx_data = np.load(smplx_file, allow_pickle=True)
     body_model = smplx.create(

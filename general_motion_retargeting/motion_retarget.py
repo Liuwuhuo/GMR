@@ -16,10 +16,11 @@ class GeneralMotionRetargeting:
         tgt_robot: str,
         actual_human_height: float = None,
         solver: str="daqp", # change from "quadprog" to "daqp".
-        damping: float=1e-5, # change from 1e-1 to 1e-2.
+        damping: float=1e-1, # change from 1e-1 to 1e-2.
         verbose: bool=True,
         use_velocity_limit: bool=True,
         use_collision_limit: bool=True,
+        base_height_offset: float = 0.0,
     ) -> None:
 
         # load the robot model
@@ -101,11 +102,29 @@ class GeneralMotionRetargeting:
             VELOCITY_LIMITS = {k: np.pi for k in self.robot_motor_names.keys()}
             self.ik_limits.append(mink.VelocityLimit(self.model, VELOCITY_LIMITS)) 
 
+        # if self.use_collision_limit:
+        #     collision_pairs = [
+        #         (["thighLeft_collision", "thighRight_collision", "shinLeft_collision", "shinRight_collision", "wristRollLeft_collision", "wristRollRight_collision"], ["floor"]),
+        #         (["wristRollLeft_collision"], ["thighLeft_collision"]),
+        #         (["wristRollRight_collision"], ["thighRight_collision"]),
+        #         (["wristRollLeft_collision"], ["wristRollRight_collision"]),
+        #     ]
+        #     self.collision_avoidance_limit = mink.CollisionAvoidanceLimit(
+        #         model=self.model,
+        #         geom_pairs=collision_pairs,  # type: ignore
+        #         minimum_distance_from_collisions=0.01,
+        #         # gain=0.3,
+        #         collision_detection_distance=0.3,
+        #     )
+        #     self.ik_limits.append(self.collision_avoidance_limit)
+        #     print(f"Collision avoidance limit初始化完成，共 {len(self.collision_avoidance_limit.geom_id_pairs)} 个geom对")
+
 
             
         self.setup_retarget_configuration()
         
         self.ground_offset = 0.0
+        self.base_height_offset = base_height_offset
 
         self.last_human_data = None
 
@@ -192,25 +211,14 @@ class GeneralMotionRetargeting:
         # Update the task targets
         self.update_targets(human_data, offset_to_ground)
 
-        if self.use_collision_limit:
-            collision_pairs = [
-                (["thighLeft_collision", "thighRight_collision", "shinLeft_collision", "shinRight_collision", "wristRollLeft_collision", "wristRollRight_collision"], ["floor_collision"]),
-                (["wristRollLeft_collision"], ["thighLeft_collision"]),
-                (["wristRollRight_collision"], ["thighRight_collision"]),
-                (["wristRollLeft_collision"], ["wristRollRight_collision"]),
-            ]
-            collision_avoidance_limit = mink.CollisionAvoidanceLimit(
-                model=self.model,
-                geom_pairs=collision_pairs,  # type: ignore
-                minimum_distance_from_collisions=0.005,
-                collision_detection_distance=0.15,
-            )
-            self.ik_limits.append(collision_avoidance_limit)
-
         if self.use_ik_match_table1:
             # Solve the IK problem
             curr_error = self.error1()
             dt = self.configuration.model.opt.timestep
+
+            # if self.use_collision_limit:
+            #     self._print_collision_constraints(dt)
+
             vel1 = mink.solve_ik(
                 self.configuration, self.tasks1, dt, self.solver, self.damping, self.ik_limits
             )
@@ -220,6 +228,8 @@ class GeneralMotionRetargeting:
             while curr_error - next_error > 0.001 and num_iter < self.max_iter:
                 curr_error = next_error
                 dt = self.configuration.model.opt.timestep
+                # if self.use_collision_limit:
+                #     self._print_collision_constraints(dt, num_iter)
                 vel1 = mink.solve_ik(
                     self.configuration, self.tasks1, dt, self.solver, self.damping, self.ik_limits
                 )
@@ -315,25 +325,47 @@ class GeneralMotionRetargeting:
             offset_human_data[body_name][0] = pos + global_pos_offset
            
         return offset_human_data
+    # def offset_human_data_to_ground(self, human_data):
+    #     """find the lowest point of the human data and offset the human data to the ground"""
+    #     offset_human_data = {}
+    #     ground_offset = 0.1
+    #     lowest_pos = np.inf
+
+    #     for body_name in human_data.keys():
+    #         # only consider the foot/Foot
+    #         if "Foot" not in body_name and "foot" not in body_name:
+    #             continue
+    #         pos, quat = human_data[body_name]
+    #         if pos[2] < lowest_pos:
+    #             lowest_pos = pos[2]
+    #             lowest_body_name = body_name
+    #     for body_name in human_data.keys():
+    #         pos, quat = human_data[body_name]
+    #         offset_human_data[body_name] = [pos, quat]
+    #         offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
+    #     return offset_human_data
             
     def offset_human_data_to_ground(self, human_data):
-        """find the lowest point of the human data and offset the human data to the ground"""
-        offset_human_data = {}
-        ground_offset = 0.1
-        lowest_pos = np.inf
+        """
+        将人体整体沿 z 方向平移，使「最低点」落在 z=0。
+        注意：
+            - 为避免跳跃动作被强制“粘在地面”，最低点只在**第一次调用**时计算一次，
+              之后整个序列都复用这次的 offset。
+        """
+        # 只在第一次调用时，根据当前帧计算最低高度；之后不再更新，避免跳跃被压回地面
+        if not hasattr(self, "_human_ground_lowest_z"):
+            lowest_pos = min(pos[2] for pos, quat in human_data.values())
+            self._human_ground_lowest_z = lowest_pos
+        lowest_pos = self._human_ground_lowest_z
 
-        for body_name in human_data.keys():
-            # only consider the foot/Foot
-            if "Foot" not in body_name and "foot" not in body_name:
-                continue
-            pos, quat = human_data[body_name]
-            if pos[2] < lowest_pos:
-                lowest_pos = pos[2]
-                lowest_body_name = body_name
+        offset_human_data = {}
         for body_name in human_data.keys():
             pos, quat = human_data[body_name]
             offset_human_data[body_name] = [pos, quat]
-            offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
+            # 将全身整体下移 lowest_pos，再上移 base_height_offset（对齐机器人站立高度）
+            offset_human_data[body_name][0] = (
+                pos - np.array([0, 0, lowest_pos]) + np.array([0, 0, self.base_height_offset])
+            )
         return offset_human_data
 
     def set_ground_offset(self, ground_offset):
@@ -381,3 +413,38 @@ class GeneralMotionRetargeting:
         
         print("[INFO] Using default offset: -0.065m")
         return -0.065
+    
+    def _print_collision_constraints(self, dt, iteration=None):
+        """打印碰撞约束信息"""
+        G, h = self.collision_avoidance_limit.compute_qp_inequalities(self.configuration, dt)
+        
+        if G is not None:
+            active_indices = np.where(h < 1e-3)[0]
+            
+            if iteration is not None:
+                print(f"\n迭代 {iteration}:")
+            
+            print(f"总碰撞约束数量: {G.shape[0]}, 活跃约束数量: {len(active_indices)}")
+            
+            if len(active_indices) > 0:
+                print(f"{'索引':<5} {'h值':<12} {'距离(m)':<12} {'Geom1':<30} {'Geom2':<30}")
+                print("-" * 95)
+                
+                for idx, (geom1_id, geom2_id) in enumerate(self.collision_avoidance_limit.geom_id_pairs):
+                    if idx < len(h) and h[idx] < 1e-3:
+                        geom1_name = self.model.geom(geom1_id).name
+                        geom2_name = self.model.geom(geom2_id).name
+                        
+                        fromto = np.empty(6)
+                        dist = mj.mj_geomDistance(
+                            self.model,
+                            self.configuration.data,
+                            geom1_id,
+                            geom2_id,
+                            self.collision_avoidance_limit.collision_detection_distance,
+                            fromto,
+                        )
+                        
+                        print(f"{idx:<5} {h[idx]:<12.6f} {dist:<12.6f} {geom1_name:<30} {geom2_name:<30}")
+        else:
+            print("没有碰撞约束")

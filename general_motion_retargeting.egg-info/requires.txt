@@ -9,7 +9,7 @@ tqdm
 opencv-python
 natsort
 psutil
-smplx@ git+https://github.com/vchoutas/smplx
+smplx @ git+https://github.com/vchoutas/smplx
 protobuf
 redis[hiredis]
 imageio[ffmpeg]

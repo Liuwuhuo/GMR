@@ -20,7 +20,7 @@ Requires-Dist: tqdm
 Requires-Dist: opencv-python
 Requires-Dist: natsort
 Requires-Dist: psutil
-Requires-Dist: smplx@ git+https://github.com/vchoutas/smplx
+Requires-Dist: smplx @ git+https://github.com/vchoutas/smplx
 Requires-Dist: protobuf
 Requires-Dist: redis[hiredis]
 Requires-Dist: imageio[ffmpeg]

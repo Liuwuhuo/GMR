@@ -8,6 +8,8 @@ import numpy as np
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
 from general_motion_retargeting.utils.smpl import load_gvhmr_pred_file, get_gvhmr_data_offline_fast
+from general_motion_retargeting.rot_utils import quatToEuler
+from scipy.spatial.transform import Rotation as R
 
 from rich import print
 
@@ -102,6 +104,7 @@ if __name__ == "__main__":
         if save_dir:  # Only create directory if it's not empty
             os.makedirs(save_dir, exist_ok=True)
         qpos_list = []
+        qvel_list = []
     
     # Start the viewer
     i = 0
@@ -129,6 +132,9 @@ if __name__ == "__main__":
 
         # retarget
         qpos, qvel = retarget.retarget(smplx_data)
+        qpos[11] = qpos[17]
+        # qpos[11] = -(qpos[7] + qpos[10])
+        # qpos[17] = -(qpos[13] + qpos[16])
 
         # visualize
         robot_motion_viewer.step(
@@ -144,13 +150,15 @@ if __name__ == "__main__":
         )
         if args.save_path is not None:
             qpos_list.append(qpos)
+            qvel_list.append(qvel)
             
     if args.save_path is not None:
         import pickle
         root_pos = np.array([qpos[:3] for qpos in qpos_list])
         # save from wxyz to xyzw
-        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])
+        root_rot = np.array([qpos[3:7] for qpos in qpos_list])
         dof_pos = np.array([qpos[7:] for qpos in qpos_list])
+        dof_vel = np.array([qvel[6:] for qvel in qvel_list])
         local_body_pos = None
         body_names = None
         
@@ -159,8 +167,7 @@ if __name__ == "__main__":
             "root_pos": root_pos,
             "root_rot": root_rot,
             "dof_pos": dof_pos,
-            "local_body_pos": local_body_pos,
-            "link_body_list": body_names,
+            "dof_vel": dof_vel,
         }
         with open(args.save_path, "wb") as f:
             pickle.dump(motion_data, f)

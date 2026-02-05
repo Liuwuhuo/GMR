@@ -17,6 +17,12 @@ def load_motion_data(motion_file):
         # 尝试不同的数据键名
         if 'qpos' in data:
             qpos = data['qpos']
+            # qpos[:, 26] *= 2
+            # qpos[:, 27] *= 2
+            # qpos[:, 28] *= 2
+            # qpos[:, 33] *= 2
+            # qpos[:, 34] *= 2
+            # qpos[:, 35] *= 2
             print(f"使用 qpos 数据，形状: {qpos.shape}")
         elif 'pos' in data:
             qpos = data['pos']
@@ -239,7 +245,7 @@ def main():
             viewer.sync()
             
             # 避免CPU占用过高
-            time.sleep(0.033)
+            time.sleep(0.02)
         
         pbar.close()
         print(f"\n播放完成！总帧数: {len(qpos_seq)}")

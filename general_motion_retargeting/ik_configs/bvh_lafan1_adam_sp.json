@@ -1,7 +1,7 @@
 {
     "robot_root_name": "pelvis",
     "human_root_name": "Hips",
-    "ground_height": -0.0,
+    "ground_height": 0.0,
     "human_height_assumption": 1.8,
     "use_ik_match_table1": true,
     "use_ik_match_table2": true,
@@ -201,7 +201,7 @@
         ],
         "wristRollLeft": [
             "LeftHand",
-            0,
+            100,
             20,
             [
                 0.0,
@@ -249,7 +249,7 @@
         ],
         "wristRollRight": [
             "RightHand",
-            0,
+            100,
             20,
             [
                 0.0,
@@ -411,7 +411,7 @@
         ],
         "elbowLeft": [
             "LeftForeArm",
-            10,
+            20,
             5,
             [
                 0.0,
@@ -427,7 +427,7 @@
         ],
         "wristRollLeft": [
             "LeftHand",
-            10,
+            100,
             5,
             [
                 0.0,
@@ -459,7 +459,7 @@
         ],
         "elbowRight": [
             "RightForeArm",
-            10,
+            20,
             5,
             [
                 0.0,
@@ -475,7 +475,7 @@
         ],
         "wristRollRight": [
             "RightHand",
-            10,
+            100,
             5,
             [
                 0.0,

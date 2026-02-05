@@ -93,6 +93,13 @@ def main():
     if qpos_seq[0, 2] < 0.3:
         height_diff = 0.95 - qpos_seq[0, 2]
         qpos_seq[:, 2] += height_diff
+
+    qpos_seq[:, 26] *= 2
+    qpos_seq[:, 27] *= 2
+    qpos_seq[:, 28] *= 2
+    qpos_seq[:, 33] *= 2
+    qpos_seq[:, 34] *= 2
+    qpos_seq[:, 35] *= 2
     
     print(f"模型nq: {model.nq}, 数据nq: {qpos_seq.shape[1]}")
     

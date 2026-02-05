@@ -98,8 +98,8 @@ def process_single_gvhmr_file(gvhmr_file_path, output_dir, robot_type, args):
             actual_human_height=actual_human_height,
             src_human="smplx",
             tgt_robot=robot_type,
-            use_velocity_limit=args.joint_vel_limit,
-            use_collision_avoidance=args.collision_avoid,
+            # use_velocity_limit=args.joint_vel_limit,
+            # use_collision_avoidance=args.collision_avoid,
         )
 
         # Initialize robot motion viewer
@@ -118,7 +118,7 @@ def process_single_gvhmr_file(gvhmr_file_path, output_dir, robot_type, args):
             smplx_data = smplx_data_frames[i]
             
             # retarget
-            qpos, qvel = retarget.retarget(smplx_data, args.offset_ground)
+            qpos, qvel = retarget.retarget(smplx_data)
             qpos_list.append(qpos)
             qvel_list.append(qvel)
             
@@ -223,7 +223,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--joint_vel_limit",
-        default=False,
+        default=True,
         action="store_true",
         help="Give joint velocity limit filtering"
     )
@@ -237,7 +237,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--collision_avoid",
-        default=False,
+        default=True,
         action="store_true",
         help="Give collision avoidance"
     )
