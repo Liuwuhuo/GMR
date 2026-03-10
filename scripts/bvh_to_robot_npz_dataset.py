@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov","noitom", "sfu"],
+        choices=["lafan1", "nokov", "noitom", "sfu", "mocap"],
         default="lafan1",
         help="BVH format type.",
     )

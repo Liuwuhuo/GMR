@@ -99,7 +99,7 @@ class GeneralMotionRetargeting:
 
         self.ik_limits = [mink.ConfigurationLimit(self.model)]
         if use_velocity_limit:
-            VELOCITY_LIMITS = {k: np.pi for k in self.robot_motor_names.keys()}
+            VELOCITY_LIMITS = {k: 3 * np.pi for k in self.robot_motor_names.keys()}
             self.ik_limits.append(mink.VelocityLimit(self.model, VELOCITY_LIMITS)) 
 
         # if self.use_collision_limit:
@@ -171,7 +171,7 @@ class GeneralMotionRetargeting:
                 self.task_errors2[task] = []
 
   
-    def update_targets(self, human_data, offset_to_ground=False):
+    def update_targets(self, human_data, offset_to_ground=False, no_fly = False):
         # === 帧四元数符号对齐 ===
         if self.last_human_data is not None:
             aligned_human_data = {}
@@ -190,8 +190,11 @@ class GeneralMotionRetargeting:
         human_data = self.offset_human_data(human_data, self.pos_offsets1, self.rot_offsets1)
         human_data = self.apply_ground_offset(human_data)
         # self.ground_offset = self.calculate_foot_bottom_offset()
-        if offset_to_ground:
+        if offset_to_ground and no_fly:
             human_data = self.offset_human_data_to_ground(human_data)
+        else:
+            human_data = self.offset_human_data_to_ground_fly(human_data)
+            
         self.scaled_human_data = human_data
 
         if self.use_ik_match_table1:
@@ -207,9 +210,9 @@ class GeneralMotionRetargeting:
                 task.set_target(mink.SE3.from_rotation_and_translation(mink.SO3(rot), pos))
             
             
-    def retarget(self, human_data, offset_to_ground=True):
+    def retarget(self, human_data, offset_to_ground=True, no_fly = False):
         # Update the task targets
-        self.update_targets(human_data, offset_to_ground)
+        self.update_targets(human_data, offset_to_ground, no_fly)
 
         if self.use_ik_match_table1:
             # Solve the IK problem
@@ -259,6 +262,8 @@ class GeneralMotionRetargeting:
                 num_iter += 1
                 
             
+        # qpos 由 IK 积分得到；qvel 未按轨迹更新，通常为 0 或最后一轮 IK 速度，不能当作运动速度。
+        # 若需要沿轨迹的速度，调用方应用 qpos 序列做中心差分（见 qvel_from_qpos_central）。
         return self.configuration.data.qpos.copy(), self.configuration.data.qvel.copy()
 
 
@@ -325,27 +330,28 @@ class GeneralMotionRetargeting:
             offset_human_data[body_name][0] = pos + global_pos_offset
            
         return offset_human_data
-    # def offset_human_data_to_ground(self, human_data):
-    #     """find the lowest point of the human data and offset the human data to the ground"""
-    #     offset_human_data = {}
-    #     ground_offset = 0.1
-    #     lowest_pos = np.inf
 
-    #     for body_name in human_data.keys():
-    #         # only consider the foot/Foot
-    #         if "Foot" not in body_name and "foot" not in body_name:
-    #             continue
-    #         pos, quat = human_data[body_name]
-    #         if pos[2] < lowest_pos:
-    #             lowest_pos = pos[2]
-    #             lowest_body_name = body_name
-    #     for body_name in human_data.keys():
-    #         pos, quat = human_data[body_name]
-    #         offset_human_data[body_name] = [pos, quat]
-    #         offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
-    #     return offset_human_data
-            
     def offset_human_data_to_ground(self, human_data):
+        """find the lowest point of the human data and offset the human data to the ground"""
+        offset_human_data = {}
+        ground_offset = 0.1
+        lowest_pos = np.inf
+
+        for body_name in human_data.keys():
+            # only consider the foot/Foot
+            if "Foot" not in body_name and "foot" not in body_name:
+                continue
+            pos, quat = human_data[body_name]
+            if pos[2] < lowest_pos:
+                lowest_pos = pos[2]
+                lowest_body_name = body_name
+        for body_name in human_data.keys():
+            pos, quat = human_data[body_name]
+            offset_human_data[body_name] = [pos, quat]
+            offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
+        return offset_human_data
+            
+    def offset_human_data_to_ground_fly(self, human_data):
         """
         将人体整体沿 z 方向平移，使「最低点」落在 z=0。
         注意：
@@ -448,3 +454,55 @@ class GeneralMotionRetargeting:
                         print(f"{idx:<5} {h[idx]:<12.6f} {dist:<12.6f} {geom1_name:<30} {geom2_name:<30}")
         else:
             print("没有碰撞约束")
+
+
+def qvel_from_qpos_central(qpos_arr, fps):
+    """从 qpos 序列 (T, 7+n_dof) 用中心差分得到 qvel (T, 6+n_dof)，用于替代 IK 返回的无意义 qvel。
+    dt = 1/fps；qpos: [pos(3), quat_wxyz(4), joint(ndof)]；qvel: [lin_vel(3), ang_vel(3), joint_vel(ndof)]。
+    """
+    qpos_arr = np.asarray(qpos_arr, dtype=np.float64)
+    dt = 1.0 / fps if fps > 0 else 1.0 / 30.0
+    T, nq = qpos_arr.shape
+    n_dof = nq - 7
+    nv = 6 + n_dof
+    qvel = np.zeros((T, nv), dtype=np.float64)
+
+    if T <= 1:
+        return qvel.astype(np.float32)
+
+    # 线速度
+    pos = qpos_arr[:, :3]
+    qvel[0, :3] = (pos[1] - pos[0]) / dt
+    qvel[-1, :3] = (pos[-1] - pos[-2]) / dt
+    if T > 2:
+        qvel[1:-1, :3] = (pos[2:] - pos[:-2]) / (2.0 * dt)
+
+    # 角速度：四元数 wxyz -> 转成 scipy 的 xyzw 后算 rotvec/dt
+    quat_wxyz = qpos_arr[:, 3:7]
+    def _wxyz_to_xyzw(q):
+        return [q[1], q[2], q[3], q[0]]
+    for i in range(T):
+        if i == 0:
+            r_cur = R.from_quat(_wxyz_to_xyzw(quat_wxyz[0]))
+            r_next = R.from_quat(_wxyz_to_xyzw(quat_wxyz[1]))
+            delta = r_next * r_cur.inv()
+            qvel[i, 3:6] = delta.as_rotvec() / dt
+        elif i == T - 1:
+            r_cur = R.from_quat(_wxyz_to_xyzw(quat_wxyz[i]))
+            r_prev = R.from_quat(_wxyz_to_xyzw(quat_wxyz[i - 1]))
+            delta = r_cur * r_prev.inv()
+            qvel[i, 3:6] = delta.as_rotvec() / dt
+        else:
+            r_prev = R.from_quat(_wxyz_to_xyzw(quat_wxyz[i - 1]))
+            r_next = R.from_quat(_wxyz_to_xyzw(quat_wxyz[i + 1]))
+            delta = r_next * r_prev.inv()
+            qvel[i, 3:6] = delta.as_rotvec() / (2.0 * dt)
+
+    # 关节速度
+    joint = qpos_arr[:, 7:]
+    qvel[0, 6:] = (joint[1] - joint[0]) / dt
+    qvel[-1, 6:] = (joint[-1] - joint[-2]) / dt
+    if T > 2:
+        qvel[1:-1, 6:] = (joint[2:] - joint[:-2]) / (2.0 * dt)
+
+    return qvel.astype(np.float32)

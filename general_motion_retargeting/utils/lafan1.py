@@ -41,6 +41,10 @@ def load_bvh_file(bvh_file, format="lafan1"):
         elif format == "noitom":
             result["LeftFootMod"] = [result["LeftFoot"][0], result["LeftFoot"][1]]
             result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
+        elif format == "mocap":
+            # FBX-like foot handling: foot position + foot orientation.
+            result["LeftFootMod"] = [result["LeftFoot"][0], result["LeftFoot"][1]]
+            result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
         else:
             raise ValueError(f"Invalid format: {format}")
             

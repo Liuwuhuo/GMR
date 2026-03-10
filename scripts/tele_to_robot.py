@@ -10,24 +10,6 @@ from rich import print
 from tqdm import tqdm
 import os
 import numpy as np
-import re
-
-
-def infer_fps_from_bvh_frame_time(bvh_file):
-    frame_time = None
-    with open(bvh_file, "r", encoding="utf-8", errors="ignore") as f:
-        for line in f:
-            match = re.match(r"\s*Frame Time:\s+([\d\.eE+-]+)", line)
-            if match:
-                frame_time = float(match.group(1))
-                break
-
-    if frame_time is None:
-        raise ValueError(f"Cannot find 'Frame Time' in BVH file: {bvh_file}")
-    if frame_time <= 0:
-        raise ValueError(f"Invalid Frame Time ({frame_time}) in BVH file: {bvh_file}")
-
-    return int(round(1.0 / frame_time))
 
 if __name__ == "__main__":
     
@@ -87,9 +69,23 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--motion_fps",
+        default=30,
+        type=int,
+        help="Input motion FPS used for timestamping saved output.",
+    )
+
+    parser.add_argument(
+        "--play_fps",
         default=None,
         type=float,
-        help="Output motion FPS. If omitted, infer from BVH Frame Time and round.",
+        help="Viewer playback FPS. Defaults to motion_fps.",
+    )
+
+    parser.add_argument(
+        "--downsample_to_fps",
+        default=None,
+        type=float,
+        help="Downsample input frames before retargeting to this FPS.",
     )
 
     parser.add_argument("--start_frame", type=int, default=0, help="Start frame index (inclusive)")
@@ -117,15 +113,33 @@ if __name__ == "__main__":
     # Load SMPLX trajectory
     lafan1_data_frames, actual_human_height = load_bvh_file(args.bvh_file, format=args.format)
 
-    # >>>>> 新增：支持指定起止帧 <<<<<
-
-    # args = parser.parse_args()  # 重新 parse，或把这两行提前到 load_bvh 之前
-
     # 截取所需帧段
     start = max(0, args.start_frame)
     end = args.end_frame if args.end_frame is not None else len(lafan1_data_frames)
     lafan1_data_frames = lafan1_data_frames[start:end]
 
+    input_motion_fps = float(args.motion_fps)
+    play_fps = float(args.play_fps) if args.play_fps is not None else input_motion_fps
+    output_motion_fps = input_motion_fps
+
+    if args.downsample_to_fps is not None:
+        target_fps = float(args.downsample_to_fps)
+        if target_fps <= 0:
+            raise ValueError("--downsample_to_fps must be positive")
+        if target_fps < input_motion_fps:
+            frame_stride = max(1, int(round(input_motion_fps / target_fps)))
+            lafan1_data_frames = lafan1_data_frames[::frame_stride]
+            output_motion_fps = input_motion_fps / frame_stride
+            print(
+                f"Downsample before retarget: input_fps={input_motion_fps:.2f}, "
+                f"target_fps={target_fps:.2f}, stride={frame_stride}, "
+                f"effective_fps={output_motion_fps:.2f}, frames={len(lafan1_data_frames)}"
+            )
+        else:
+            print(
+                f"Skip downsample: target_fps={target_fps:.2f} >= input_fps={input_motion_fps:.2f}"
+            )
+    
     
     # Initialize the retargeting system
     retargeter = GMR(
@@ -136,14 +150,10 @@ if __name__ == "__main__":
 
 
 
-    if args.motion_fps is None:
-        motion_fps = infer_fps_from_bvh_frame_time(args.bvh_file)
-        print(f"Auto motion_fps from Frame Time: {motion_fps}")
-    else:
-        motion_fps = int(round(args.motion_fps))
+    motion_fps = output_motion_fps
     
     robot_motion_viewer = RobotMotionViewer(robot_type=args.robot,
-                                            motion_fps=motion_fps,
+                                            motion_fps=play_fps,
                                             transparent_robot=0,
                                             record_video=args.record_video,
                                             video_path=args.video_path,
@@ -156,7 +166,8 @@ if __name__ == "__main__":
     fps_start_time = time.time()
     fps_display_interval = 2.0  # Display FPS every 2 seconds
     
-    print(f"mocap_frame_rate: {motion_fps}")
+    print(f"mocap_frame_rate (output): {motion_fps:.2f}")
+    print(f"viewer_play_fps: {play_fps:.2f}")
     
     # Create tqdm progress bar for the total number of frames
     pbar = tqdm(total=len(lafan1_data_frames), desc="Retargeting")
@@ -196,48 +207,6 @@ if __name__ == "__main__":
         # retarget
         qpos, qvel = retargeter.retarget(smplx_data, no_fly=True)
 
-        # qpos_list = np.array(qpos_list)
-
-        root_pos = np.array([qpos[:3] for qpos in qpos_list])
-        # save from wxyz to xyzw
-        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])
-        dof_pos = np.array([qpos[7:] for qpos in qpos_list])
-
-        # num_frames = root_pos.shape[0]
-
-        # device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        # xml_file = "/home/liuhongji/RL/GMR/assets/adam_sp/adam_inspire.xml"
-        # kinematics_model = KinematicsModel(xml_file, device=device)
-        
-        # # obtain local body pos
-        # identity_root_pos = torch.zeros((num_frames, 3), device=device)
-        # identity_root_rot = torch.zeros((num_frames, 4), device=device)
-        # identity_root_rot[:, -1] = 1.0
-        # local_body_pos, _ = kinematics_model.forward_kinematics(
-        #     identity_root_pos, 
-        #     identity_root_rot, 
-        #     torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-        # )
-        # body_names = kinematics_model.body_names
-
-        # HEIGHT_ADJUST = False
-        # PERFRAME_ADJUST = False
-        # if HEIGHT_ADJUST:
-        #     body_pos, _ = kinematics_model.forward_kinematics(
-        #         torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
-        #         torch.from_numpy(root_rot).to(device=device, dtype=torch.float),
-        #         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-        #     )
-        #     ground_offset = 0.00
-        #     if not PERFRAME_ADJUST:
-        #         lowest_height = torch.min(body_pos[..., 2]).item()
-        #         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
-        #     else:
-        #         for i in range(root_pos.shape[0]):
-        #             lowest_body_part = torch.min(body_pos[i, :, 2])
-        #             root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
-
-        
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],
@@ -255,6 +224,12 @@ if __name__ == "__main__":
     
     if args.save_path is not None:
         import pickle
+
+        qpos_array = np.asarray(qpos_list)
+        root_pos = qpos_array[:, :3]
+        # save from wxyz to xyzw
+        root_rot = qpos_array[:, 3:7][:, [1, 2, 3, 0]]
+        dof_pos = qpos_array[:, 7:]
 
         local_body_pos = None
         body_names = None

@@ -27,16 +27,46 @@ WAIST_ROLL_IDX, WAIST_PITCH_IDX = 13, 14
 NUM_LINK_BODIES = 17
 # unitree_g1 用于 link 的 17 个 body 名（按常见顺序）
 G1_LINK_BODY_NAMES = [
-    "pelvis", "left_hip_pitch_link", "left_hip_roll_link", "left_hip_yaw_link",
-    "left_knee_link", "left_ankle_pitch_link", "left_ankle_roll_link",
-    "right_hip_pitch_link", "right_hip_roll_link", "right_hip_yaw_link",
-    "right_knee_link", "right_ankle_pitch_link", "right_ankle_roll_link",
-    "waist_yaw_link", "waist_roll_link", "waist_pitch_link", "torso_link",
+    # 下半身（lower keyframes）
+    "keyframe_pelvis_link",        # 0
+    "keyframe_left_hip_link",      # 1
+    "keyframe_left_knee_link",     # 2
+    "keyframe_left_ankle_link",    # 3
+    "keyframe_right_hip_link",     # 4
+    "keyframe_right_knee_link",    # 5
+    "keyframe_right_ankle_link",   # 6
+    # 上半身
+    "keyframe_head_link",          # 7
+    "keyframe_torso_link",         # 8
+    "keyframe_left_collar_link",   # 9
+    "keyframe_left_shoulder_link", # 10
+    "keyframe_left_elbow_link",    # 11
+    "keyframe_left_wrist_link",    # 12
+    "keyframe_right_collar_link",  # 13
+    "keyframe_right_shoulder_link",# 14
+    "keyframe_right_elbow_link",   # 15
+    "keyframe_right_wrist_link",   # 16
 ]
 ADAM_LINK_BODY_NAMES = [
-    "pelvis", "hipPitchLeft", "hipRollLeft", "thighLeft", "shinLeft", "anklePitchLeft", "toeLeft",
-    "hipPitchRight", "hipRollRight", "thighRight", "shinRight", "anklePitchRight", "toeRight",
-    "waistRoll", "waistPitch", "waistYaw", "torso",
+    # 下半身（lower keyframes）
+    "keyframe_pelvis_link",        # 0
+    "keyframe_left_hip_link",      # 1
+    "keyframe_left_knee_link",     # 2
+    "keyframe_left_ankle_link",    # 3
+    "keyframe_right_hip_link",     # 4
+    "keyframe_right_knee_link",    # 5
+    "keyframe_right_ankle_link",   # 6
+    # 上半身
+    "keyframe_head_link",          # 7
+    "keyframe_torso_link",         # 8
+    "keyframe_left_collar_link",   # 9
+    "keyframe_left_shoulder_link", # 10
+    "keyframe_left_elbow_link",    # 11
+    "keyframe_left_wrist_link",    # 12
+    "keyframe_right_collar_link",  # 13
+    "keyframe_right_shoulder_link",# 14
+    "keyframe_right_elbow_link",   # 15
+    "keyframe_right_wrist_link",   # 16
 ]
 
 
@@ -44,7 +74,7 @@ def build_pt_motion(qpos_list, qvel_list, model, robot_type, fps):
     """
     从 qpos_list (T, 36)、qvel_list (T, 35) 构建与 output/data.pt 同结构的 dict，
     用于 torch.save(.pt)。含 base_*、joint_*（G1 与 adam_sp 均为 29 维，顺序与各自 XML 一致）、link_*（17 个 body）。
-    速度统一用帧间差分 + fps 计算，而不是直接使用 qvel，保证与数据集训练的时间尺度一致。
+    速度统一用中心差分 + fps 计算（中间帧 (x[i+1]-x[i-1])/(2*dt)，首尾复制相邻），不直接使用 qvel。
     """
     qpos = np.array(qpos_list, dtype=np.float32)
     qvel = np.array(qvel_list, dtype=np.float32)  # 目前仅用于兼容接口，速度实际改用差分计算
@@ -55,19 +85,24 @@ def build_pt_motion(qpos_list, qvel_list, model, robot_type, fps):
         bid = mj.mj_name2id(model, mj.mjtObj.mjOBJ_BODY, name)
         body_ids.append(bid if bid >= 0 else None)
 
-    base_position = qpos[:, :3]
+    base_position = qpos[:, :3].copy()
+    # 记录首帧的世界坐标，用于统一平移 base 和 link
+    base_xy0 = base_position[0, :2].copy()
+    # XY 以首帧为原点平移（首帧 base_position 的 x,y = 0）
+    base_position[:, 0] -= base_xy0[0]
+    base_position[:, 1] -= base_xy0[1]
     quat = qpos[:, 3:7]
     base_pose = np.zeros((T, 3), dtype=np.float32)
     for i in range(T):
         w, x, y, z = quat[i]
         r = R.from_quat([x, y, z, w])
         base_pose[i] = r.as_euler("xyz")
-    # === 使用帧间差分 + fps 计算 base 线速度 / 角速度 ===
+    # === 中心差分 + fps 计算 base 线速度 / 角速度（中间帧 2*dt，首尾复制相邻）===
     dt = 1.0 / fps if fps > 0 else 1.0 / 30.0
     base_velocity = np.zeros((T, 3), dtype=np.float32)
     base_angular_velocity = np.zeros((T, 3), dtype=np.float32)
     if T > 1:
-        # 中心差分，端点复制相邻
+        # 中心差分
         base_velocity[1:-1] = (base_position[2:] - base_position[:-2]) / (2 * dt)
         base_velocity[0] = base_velocity[1]
         base_velocity[-1] = base_velocity[-2]
@@ -82,7 +117,7 @@ def build_pt_motion(qpos_list, qvel_list, model, robot_type, fps):
     dof = qpos[:, 7:36]
     # G1 与 adam_sp 都按各自 XML 的 DoF 顺序完整保存 29 维关节，播放时可直接还原 retarget 结果
     joint_position = dof.astype(np.float32)
-    # 关节速度同样用差分计算（帧率 = fps）
+    # 关节速度：中心差分
     joint_velocity = np.zeros_like(joint_position, dtype=np.float32)
     if T > 1:
         joint_velocity[1:-1] = (joint_position[2:] - joint_position[:-2]) / (2 * dt)
@@ -102,7 +137,12 @@ def build_pt_motion(qpos_list, qvel_list, model, robot_type, fps):
                 xmat = np.array(data.xmat[bid]).reshape(3, 3)
                 r = R.from_matrix(xmat)
                 link_orientation[i, j] = r.as_euler("xyz")
-    # link_* 速度同样使用帧间差分 + fps
+
+    # link 位置也减去同样的 XY 偏移，使其与 base 处于同一坐标系（首帧 base 在 (0,0)）
+    link_position[..., 0] -= base_xy0[0]
+    link_position[..., 1] -= base_xy0[1]
+
+    # link 线速度 / 角速度：中心差分，首尾复制相邻
     link_velocity = np.zeros((T, NUM_LINK_BODIES, 3), dtype=np.float32)
     link_angular_velocity = np.zeros((T, NUM_LINK_BODIES, 3), dtype=np.float32)
     for j in range(NUM_LINK_BODIES):
@@ -225,7 +265,7 @@ if __name__ == "__main__":
             "booster_t1", "booster_t1_29dof", "stanford_toddy", "fourier_n1",
             "engineai_pm01", "kuavo_s45", "hightorque_hi", "galaxea_r1pro",
             "berkeley_humanoid_lite", "booster_k1", "pnd_adam_lite", "adam_sp",
-            "openloong", "tienkung",
+            "openloong", "tienkung", "unitree_g1_27dof",
         ],
         default="unitree_g1",
     )
@@ -239,6 +279,12 @@ if __name__ == "__main__":
     parser.add_argument("--record_video", action="store_true", help="录屏")
     parser.add_argument("--rate_limit", action="store_true", help="按原帧率限速")
     parser.add_argument("--tgt_fps", type=float, default=50, help="对齐目标帧率（默认 50 Hz）")
+    parser.add_argument(
+        "--base_height_offset",
+        type=float,
+        default=0.0,
+        help="贴地后整体上移的基座高度偏移（m），用于让 base/link_position 高度分布更接近旧数据集，例如 G1 可尝试 0.2~0.3",
+    )
     args = parser.parse_args()
 
     SMPLX_FOLDER = HERE / ".." / "assets" / "body_models"
@@ -265,6 +311,7 @@ if __name__ == "__main__":
         actual_human_height=actual_human_height,
         src_human="smplx",
         tgt_robot=args.robot,
+        base_height_offset=args.base_height_offset,
     )
     robot_motion_viewer = RobotMotionViewer(
         robot_type=args.robot,

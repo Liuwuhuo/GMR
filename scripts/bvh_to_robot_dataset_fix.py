@@ -50,7 +50,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu"],
+        choices=["lafan1", "nokov", "sfu", "noitom", "mocap"],
         default="lafan1",
         help="BVH format; affects how load_bvh_file parses joint hierarchy.",
     )

@@ -8,11 +8,64 @@ from tqdm import tqdm
 import os
 import numpy as np
 import pickle
+import sys
 
-def load_optitrack_fbx_motion_file(motion_file):
+
+def _load_pkl_motion_file(motion_file):
     with open(motion_file, "rb") as f:
         motion_data = pickle.load(f)
     return motion_data
+
+
+def _convert_skeleton_motion_to_retarget_frames(motion):
+    import torch
+    from poselib.core.rotation3d import quat_rotate, quat_mul_norm
+
+    global_positions = quat_rotate(
+        torch.tensor([0.70711, 0, 0, 0.70711]),
+        motion.global_translation,
+    ).detach().cpu().numpy() / 100.0  # cm -> m
+    global_quaternions = quat_mul_norm(
+        torch.tensor([0.70711, 0, 0, 0.70711]),
+        motion.global_rotation,
+    ).detach().cpu().numpy()  # y-up -> z-up
+    joint_names = motion.skeleton_tree.node_names
+
+    data = []
+    num_frames = global_positions.shape[0]
+    num_joints = len(joint_names)
+    for frame in range(num_frames):
+        frame_data = {}
+        for i in range(num_joints):
+            frame_data[joint_names[i].split("_")[1]] = [
+                global_positions[frame, i].tolist(),
+                global_quaternions[frame, i, [3, 0, 1, 2]].tolist(),  # xyzw -> wxyz
+            ]
+        data.append(frame_data)
+    return data
+
+
+def load_optitrack_motion_file(motion_file, fbx_root_joint="Hips", fbx_fps=120):
+    ext = os.path.splitext(motion_file)[1].lower()
+    if ext in [".pkl", ".pickle"]:
+        return _load_pkl_motion_file(motion_file)
+    if ext == ".fbx":
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        third_party_root = os.path.join(project_root, "third_party")
+        if third_party_root not in sys.path:
+            sys.path.insert(0, third_party_root)
+        from poselib.skeleton.skeleton3d import SkeletonMotion
+
+        motion = SkeletonMotion.from_fbx(
+            fbx_file_path=motion_file,
+            root_joint=fbx_root_joint,
+            fps=fbx_fps,
+        )
+        return _convert_skeleton_motion_to_retarget_frames(motion)
+    raise ValueError(
+        f"Unsupported motion file extension: {ext}. "
+        "Expected .pkl/.pickle or .fbx"
+    )
 
 def offset_to_ground(retargeter: GMR, motion_data):
     offset = np.inf
@@ -34,14 +87,28 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--motion_file",
-        help="FBX motion file to load (OptiTrack motion).",
+        help="OptiTrack motion file path (.pkl converted data or raw .fbx).",
         required=True,
         type=str,
+    )
+
+    parser.add_argument(
+        "--fbx_root_joint",
+        default="Hips",
+        type=str,
+        help="Root joint name used when parsing raw .fbx.",
+    )
+
+    parser.add_argument(
+        "--fbx_fps",
+        default=120,
+        type=int,
+        help="FBX sampling fps used by PoseLib when parsing raw .fbx.",
     )
     
     parser.add_argument(
         "--robot",
-        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01"],
+        choices=["unitree_g1", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "adam_sp"],
         default="unitree_g1",
     )
         
@@ -80,9 +147,13 @@ if __name__ == "__main__":
         qpos_list = []
 
     
-    # Load OptiTrack FMB motion trajectory
-    print(f"Loading OptiTrack FBX motion file: {args.motion_file}")
-    data_frames = load_optitrack_fbx_motion_file(args.motion_file)
+    # Load OptiTrack motion trajectory (.pkl or .fbx)
+    print(f"Loading OptiTrack motion file: {args.motion_file}")
+    data_frames = load_optitrack_motion_file(
+        args.motion_file,
+        fbx_root_joint=args.fbx_root_joint,
+        fbx_fps=args.fbx_fps,
+    )
     print(f"Loaded {len(data_frames)} frames")
     
     
@@ -139,7 +210,7 @@ if __name__ == "__main__":
         smplx_data = data_frames[i]
 
         # retarget
-        qpos = retargeter.retarget(smplx_data)
+        qpos, _ = retargeter.retarget(smplx_data)
 
         # visualize
         robot_motion_viewer.step(

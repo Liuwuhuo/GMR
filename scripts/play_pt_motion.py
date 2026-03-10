@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 使用 MuJoCo 播放运动数据（.pt 或 .pkl）。
-- .pt：base_position, base_pose(欧拉), joint_position(27)，不含 waist_roll/waist_pitch，脚本中置 0。
+- .pt：
+  - 支持老版 G1 data.pt：base_position, base_pose(欧拉), joint_position(27/29)；
+  - 也支持新数据：base_position, base_quat(wxyz), joint_position(29)，无 base_pose。
 - .pkl：root_pos, root_rot, dof_pos（或直接 qpos），与 retarget 输出格式一致。
 支持 --robot unitree_g1（默认）或 adam_sp。
 """
@@ -17,34 +19,69 @@ import mujoco.viewer
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-# 宇树 G1：29 关节顺序中 waist_roll=13, waist_pitch=14（0-based），数据只有 27 维不含这两项
+# 宇树 G1：29 关节顺序中 waist_roll=13, waist_pitch=14（0-based），老数据只有 27 维不含这两项
 WAIST_ROLL_IDX = 13
 WAIST_PITCH_IDX = 14
 G1_NQ = 7 + 29  # free(7) + joints(29)
-# adam_sp 腰部顺序为 roll, pitch, yaw；G1 为 yaw, roll, pitch
-ADAM_WAIST_ROLL_IDX = 12
-ADAM_WAIST_PITCH_IDX = 13
-ADAM_WAIST_YAW_IDX = 14
 
 
-def load_pt_motion(pt_file, robot="unitree_g1"):
-    """从 .pt 加载轨迹，返回 (qpos T×36, fps, is_adam_native)。is_adam_native 为 True 表示 joint 已是 Adam 顺序，播放 adam_sp 时无需再转。"""
+def load_pt_motion(pt_file, robot="unitree_g1", base_quat_xyzw=False):
+    """从 .pt 加载轨迹，返回 (qpos T×36, fps)。
+
+    约定：
+    - joint_position 为 29 维：直接视为与对应 XML 一致的关节顺序（不再额外重排）。
+    - joint_position 为 27 维：按 G1 约定在 13/14 维插入 waist_roll/waist_pitch=0，以便填满 29 维。
+    - base_quat：默认按 xyzw（PhysHSI/legged_gym 等常见）；若文件为 wxyz 则传 base_quat_xyzw=False（或 --quat-wxyz）。
+    """
     import torch
     data = torch.load(pt_file, map_location="cpu", weights_only=False)
     if isinstance(data, dict):
         data = {k: v.numpy() if hasattr(v, "numpy") else np.asarray(v) for k, v in data.items()}
 
+    if "base_position" not in data or "joint_position" not in data:
+        raise KeyError("pt 需至少包含 base_position 与 joint_position")
+
     base_pos = np.asarray(data["base_position"], dtype=np.float64)
-    base_pose = np.asarray(data["base_pose"], dtype=np.float64)  # (T, 3) 欧拉 roll,pitch,yaw 弧度
     joint_pos = np.asarray(data["joint_position"], dtype=np.float64)  # (T, 27) 或 (T, 29)
-    file_robot = data.get("robot", None)  # retarget 时写入，用于判断 joint 顺序
 
     T = base_pos.shape[0]
-    # 接地：用 link_position 最低点对齐地面 z=0，避免机器人浮空
+
+    # 支持两种姿态表示：
+    # 1) base_pose: 欧拉角 xyz（老数据）
+    # 2) base_quat: 四元数，默认 xyzw（scipy 顺序，PhysHSI 常见）；若 base_quat_xyzw=False 则按 wxyz
+    if "base_pose" in data:
+        base_pose = np.asarray(data["base_pose"], dtype=np.float64)
+    elif "base_quat" in data:
+        base_quat = np.asarray(data["base_quat"], dtype=np.float64).reshape(T, 4)
+        base_pose = np.zeros((T, 3), dtype=np.float64)
+        for i in range(T):
+            if base_quat_xyzw:
+                # 文件里是 xyzw，直接给 scipy
+                r = R.from_quat(base_quat[i])
+            else:
+                # 文件里是 wxyz，转成 xyzw 再给 scipy
+                w, x, y, z = base_quat[i]
+                r = R.from_quat([x, y, z, w])
+            base_pose[i] = r.as_euler("xyz")
+    else:
+        raise KeyError("pt 需包含 base_pose(欧拉) 或 base_quat(四元数) 之一")
+
+    # 接地：用 link_position 最低点或 base_position 最低点对齐地面 z=0，避免机器人浮空
+    base_pos = np.asarray(base_pos, dtype=np.float64).copy()
     if "link_position" in data:
-        link_pos = np.asarray(data["link_position"], dtype=np.float64)  # (T, 17, 3)
-        min_z = float(link_pos[:, :, 2].min())
+        link_pos = np.asarray(data["link_position"], dtype=np.float64)  # (T, N, 3)，N 可为 6 或 17
+        if link_pos.ndim == 3 and link_pos.shape[1] > 0:
+            min_z = 0
+            base_pos[:, 2] -= min_z
+    else:
+        # 无 link_position 时用 base 自身最低点接地
+        min_z = 0
         base_pos[:, 2] -= min_z
+    # 若有 base_height 字段，则 base 的 z 直接使用 base_height（标量或每帧 (T,)）
+    if "base_height" in data:
+        h = np.asarray(data["base_height"], dtype=np.float64).ravel()
+        base_pos[:, 2] = np.broadcast_to(h, (T,)).copy()
+
     # 欧拉 -> 四元数 wxyz（MuJoCo）
     quats = np.zeros((T, 4))
     for i in range(T):
@@ -52,14 +89,9 @@ def load_pt_motion(pt_file, robot="unitree_g1"):
         q_xyzw = rot.as_quat()
         quats[i] = (q_xyzw[3], q_xyzw[0], q_xyzw[1], q_xyzw[2])
 
-    # 29 维且为 adam_sp retarget 的 .pt：joint 已是 Adam 顺序(roll,pitch,yaw)，直接使用，腰部与 retarget 一致
-    if joint_pos.shape[1] == 29 and file_robot == "adam_sp":
+    # 29 维：直接使用文件中的顺序（认为与 XML 一致），不做额外重排
+    if joint_pos.shape[1] == 29:
         dof_full = joint_pos.copy()
-        is_adam_native = True
-    elif joint_pos.shape[1] == 29:
-        # 29 维但非 Adam 文件（如 G1 retarget）：按 G1 顺序使用
-        dof_full = joint_pos.copy()
-        is_adam_native = False
     else:
         assert joint_pos.shape[1] == 27, f"joint_position 需为 (T, 27) 或 (T, 29)，当前 {joint_pos.shape}"
         dof_full = np.zeros((T, 29), dtype=np.float64)
@@ -67,12 +99,11 @@ def load_pt_motion(pt_file, robot="unitree_g1"):
         dof_full[:, WAIST_ROLL_IDX] = 0.0
         dof_full[:, WAIST_PITCH_IDX] = 0.0
         dof_full[:, WAIST_PITCH_IDX + 1 :] = joint_pos[:, WAIST_ROLL_IDX:]
-        is_adam_native = False
 
     qpos_seq = np.concatenate([base_pos, quats, dof_full], axis=1)
     assert qpos_seq.shape == (T, G1_NQ), f"qpos shape {qpos_seq.shape} != (T, {G1_NQ})"
     fps = float(data.get("fps", 50.0))
-    return qpos_seq, fps, is_adam_native
+    return qpos_seq, fps
 
 
 def load_pkl_motion(pkl_file):
@@ -105,29 +136,18 @@ def load_pkl_motion(pkl_file):
     return qpos_seq, fps
 
 
-def qpos_g1_to_adam(qpos_seq):
-    """将 G1 顺序的 qpos (T, 36) 转为 adam_sp 顺序：waist 为 roll,pitch,yaw。retarget 数据已是正确方向，不做关节取负。"""
-    # dof: G1 索引 12=yaw, 13=roll, 14=pitch -> adam 12=roll, 13=pitch, 14=yaw
-    dof = qpos_seq[:, 7:36].copy()
-    out = qpos_seq.copy()
-    out[:, 7 : 7 + 12] = dof[:, 0:12]  # 腿
-    out[:, 7 + ADAM_WAIST_ROLL_IDX] = dof[:, WAIST_ROLL_IDX]   # 0
-    out[:, 7 + ADAM_WAIST_PITCH_IDX] = dof[:, WAIST_PITCH_IDX]  # 0
-    out[:, 7 + ADAM_WAIST_YAW_IDX] = dof[:, 12]  # waist_yaw
-    out[:, 7 + 15 : 36] = dof[:, 15:29]  # 手臂
-    return out
-
-
 def main():
     HERE = pathlib.Path(__file__).resolve().parent
     parser = argparse.ArgumentParser(description="Play motion (.pt or .pkl) with Unitree G1 or adam_sp in MuJoCo")
-    parser.add_argument("motion_file", type=str, help="Path to .pt or .pkl (e.g. datasets/g1_dof27_data/tennis_hit/data.pkl)")
+    parser.add_argument("motion_file", type=str, help="Path to .pt or .pkl (e.g. datasets/g1_dof27_data/tennis_hit/data.pkl)", default="/home/liuhongji/workspace/AdaMimic/legged_gym/resources/dataset/g1_dof29_data/badminton_hit/output/data.pt")
     parser.add_argument("--robot", type=str, default="unitree_g1", choices=["unitree_g1", "adam_sp"],
                         help="Robot model to play: unitree_g1 (default) or adam_sp")
     parser.add_argument("--fps", type=float, default=None, help="Playback frequency (Hz); default: from file or 50")
     parser.add_argument("--no-loop", action="store_true", help="Stop at end instead of looping")
-    parser.add_argument("--height-offset", type=float, default=0.02,
+    parser.add_argument("--height-offset", type=float, default=0.0,
                         help="整体抬升 base_z (m)，默认 0.02；.pt 会先接地再加此值")
+    parser.add_argument("--quat-wxyz", action="store_true",
+                        help=".pt 中 base_quat 为 wxyz 顺序时使用；默认按 xyzw（PhysHSI/legged_gym 常见）")
     args = parser.parse_args()
 
     motion_path = pathlib.Path(args.motion_file)
@@ -152,22 +172,19 @@ def main():
     print(f"加载: {motion_path}")
     try:
         if ext == ".pt":
-            qpos_seq, frequency, is_adam_native = load_pt_motion(str(motion_path), robot=args.robot)
+            # 默认 base_quat 按 xyzw；--quat-wxyz 时按 wxyz
+            qpos_seq, frequency = load_pt_motion(
+                str(motion_path), robot=args.robot, base_quat_xyzw=not args.quat_wxyz
+            )
             if args.fps is not None:
                 frequency = args.fps
         else:
             qpos_seq, frequency = load_pkl_motion(str(motion_path))
-            is_adam_native = False
             if args.fps is not None:
                 frequency = args.fps
     except Exception as e:
         print(f"加载失败: {e}")
         sys.exit(1)
-
-    # 仅当播放 adam_sp 且数据不是 Adam 原生顺序时，才做 G1→Adam 腰部重排
-    if args.robot == "adam_sp" and qpos_seq.shape[1] == G1_NQ and not is_adam_native:
-        qpos_seq = qpos_g1_to_adam(qpos_seq)
-        print("已按 adam_sp 转换：腰部顺序 (roll,pitch,yaw)")
 
     # qpos_seq[:, 2] += args.height_offset
     # if args.height_offset != 0:

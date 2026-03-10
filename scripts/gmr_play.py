@@ -17,16 +17,21 @@ def load_motion_data(motion_file):
         # 尝试不同的数据键名
         if 'qpos' in data:
             qpos = data['qpos']
-            # qpos[:, 26] *= 2
-            # qpos[:, 27] *= 2
-            # qpos[:, 28] *= 2
-            # qpos[:, 33] *= 2
-            # qpos[:, 34] *= 2
-            # qpos[:, 35] *= 2
             print(f"使用 qpos 数据，形状: {qpos.shape}")
         elif 'pos' in data:
             qpos = data['pos']
             print(f"使用 pos 数据，形状: {qpos.shape}")
+        elif all(k in data for k in ['fps', 'joint_pos', 'body_pos_w', 'body_quat_w']):
+            # bvh_to_robot_npz 格式: fps(1,) joint_pos(T,29) body_pos_w(T,N,3) body_quat_w(T,N,4) wxyz
+            # 用第 0 号 body 作为 root，与 joint_pos 拼成 qpos
+            print("使用 fps + joint_pos + body_pos_w + body_quat_w 组合")
+            joint_pos = np.asarray(data['joint_pos'])
+            body_pos_w = np.asarray(data['body_pos_w'])
+            body_quat_w = np.asarray(data['body_quat_w'])
+            root_pos = body_pos_w[:, 0, :]   # (T, 3)
+            root_rot = body_quat_w[:, 0, :]  # (T, 4) 已是 wxyz
+            qpos = np.concatenate([root_pos, root_rot, joint_pos], axis=1)
+            print(f"  joint_pos {joint_pos.shape}, body_pos_w {body_pos_w.shape}, -> qpos {qpos.shape}")
         elif all(k in data for k in ['root_pos', 'root_rot', 'dof_pos']):
             print("使用 root_pos + root_rot + dof_pos 组合")
             root_pos = data['root_pos']
@@ -39,7 +44,11 @@ def load_motion_data(motion_file):
         else:
             raise KeyError("找不到合适的位置数据")
         
-        frequency = float(data.get('frequency', data.get('freq', 100.0)))
+        # 帧率：优先 fps(1,)，否则 frequency / freq
+        if 'fps' in data:
+            frequency = float(np.asarray(data['fps']).flat[0])
+        else:
+            frequency = float(data.get('frequency', data.get('freq', 100.0)))
         
     elif ext == '.pkl':
         import pickle
@@ -69,7 +78,11 @@ def load_motion_data(motion_file):
         else:
             raise ValueError("无法解析PKL文件格式")
         
-        frequency = 100.0
+        # 帧率：优先 fps(1,)，否则 frequency / freq
+        if 'fps' in data:
+            frequency = float(np.asarray(data['fps']).flat[0])
+        else:
+            frequency = float(data.get('frequency', data.get('freq', 100.0)))
     
     else:
         raise ValueError(f"不支持的文件格式: {ext}")
@@ -245,7 +258,7 @@ def main():
             viewer.sync()
             
             # 避免CPU占用过高
-            time.sleep(0.02)
+            time.sleep(base_frame_time)
         
         pbar.close()
         print(f"\n播放完成！总帧数: {len(qpos_seq)}")

@@ -51,7 +51,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu"],
+        choices=["lafan1", "nokov", "sfu", "noitom", "mocap"],
         default="lafan1",
         help="BVH format; affects how load_bvh_file parses joint hierarchy.",
     )
@@ -90,7 +90,9 @@ if __name__ == "__main__":
             
             # Load LAFAN1 trajectory
             try:
-                lafan1_data_frames, actual_human_height = load_bvh_file(bvh_file_path)
+                lafan1_data_frames, actual_human_height = load_bvh_file(
+                    bvh_file_path, format=args.format
+                )
                 src_fps = 30  # LAFAN1 data is typically 30 FPS
             except Exception as e:
                 print(f"Error loading {bvh_file_path}: {e}")

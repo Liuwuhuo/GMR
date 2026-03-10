@@ -136,9 +136,16 @@ def read_bvh(filename, start=None, end=None, order=None):
             i += 1
             continue
 
-        dmatch = line.strip().split(' ')
+        # Use generic whitespace split to avoid empty tokens caused by repeated spaces/tabs.
+        dmatch = line.strip().split()
         if dmatch:
-            data_block = np.array(list(map(float, dmatch)))
+            try:
+                data_block = np.array(list(map(float, dmatch)))
+            except ValueError as e:
+                raise ValueError(
+                    f"Failed to parse BVH numeric row in {filename} "
+                    f"(motion frame index {i}): {line.strip()!r}"
+                ) from e
             N = len(parents)
             fi = i - start if start else i
             if channels == 3:

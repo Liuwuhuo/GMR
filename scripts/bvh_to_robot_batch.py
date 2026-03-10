@@ -106,7 +106,7 @@ def main():
     )
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu"],
+        choices=["lafan1", "nokov", "sfu", "noitom", "mocap"],
         default="lafan1",
     )
     parser.add_argument(
