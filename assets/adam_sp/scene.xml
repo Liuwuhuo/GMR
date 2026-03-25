@@ -1,5 +1,5 @@
 <mujoco model="adam scene">
-	<include file="adam_inspire.xml" />
+	<include file="adam_inspire_full.xml" />
 	<!-- <include file="adam_sp.xml" /> -->
 	<statistic center="0 0 1" extent="1.8" />
 	<visual>

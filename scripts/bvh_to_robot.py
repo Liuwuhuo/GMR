@@ -43,7 +43,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom", "mocap"],
+        choices=["lafan1", "nokov", "sfu", "noitom", "mocap", "opt_mocap", "sfu"],
         default="lafan1",
     )
     
@@ -194,7 +194,7 @@ if __name__ == "__main__":
         smplx_data = lafan1_data_frames[i]
 
         # retarget
-        qpos, qvel = retargeter.retarget(smplx_data, no_fly=True)
+        qpos, qvel = retargeter.retarget(smplx_data, no_fly=False)
 
         # qpos_list = np.array(qpos_list)
 

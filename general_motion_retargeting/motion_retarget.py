@@ -171,7 +171,13 @@ class GeneralMotionRetargeting:
                 self.task_errors2[task] = []
 
   
-    def update_targets(self, human_data, offset_to_ground=False, no_fly = False):
+    def update_targets(
+        self,
+        human_data,
+        offset_to_ground=False,
+        no_fly=False,
+        apply_ground_alignment=True,
+    ):
         # === 帧四元数符号对齐 ===
         if self.last_human_data is not None:
             aligned_human_data = {}
@@ -190,10 +196,11 @@ class GeneralMotionRetargeting:
         human_data = self.offset_human_data(human_data, self.pos_offsets1, self.rot_offsets1)
         human_data = self.apply_ground_offset(human_data)
         # self.ground_offset = self.calculate_foot_bottom_offset()
-        if offset_to_ground and no_fly:
-            human_data = self.offset_human_data_to_ground(human_data)
-        else:
-            human_data = self.offset_human_data_to_ground_fly(human_data)
+        if apply_ground_alignment:
+            if offset_to_ground and no_fly:
+                human_data = self.offset_human_data_to_ground(human_data)
+            else:
+                human_data = self.offset_human_data_to_ground_fly(human_data)
             
         self.scaled_human_data = human_data
 
@@ -210,9 +217,20 @@ class GeneralMotionRetargeting:
                 task.set_target(mink.SE3.from_rotation_and_translation(mink.SO3(rot), pos))
             
             
-    def retarget(self, human_data, offset_to_ground=True, no_fly = False):
+    def retarget(
+        self,
+        human_data,
+        offset_to_ground=True,
+        no_fly=False,
+        apply_ground_alignment=True,
+    ):
         # Update the task targets
-        self.update_targets(human_data, offset_to_ground, no_fly)
+        self.update_targets(
+            human_data,
+            offset_to_ground=offset_to_ground,
+            no_fly=no_fly,
+            apply_ground_alignment=apply_ground_alignment,
+        )
 
         if self.use_ik_match_table1:
             # Solve the IK problem
@@ -334,8 +352,8 @@ class GeneralMotionRetargeting:
     def offset_human_data_to_ground(self, human_data):
         """find the lowest point of the human data and offset the human data to the ground"""
         offset_human_data = {}
-        ground_offset = 0.1
         lowest_pos = np.inf
+        found_foot_like_joint = False
 
         for body_name in human_data.keys():
             # only consider the foot/Foot
@@ -344,7 +362,18 @@ class GeneralMotionRetargeting:
             pos, quat = human_data[body_name]
             if pos[2] < lowest_pos:
                 lowest_pos = pos[2]
-                lowest_body_name = body_name
+                found_foot_like_joint = True
+
+        # Fallback for datasets that do not name foot joints with "Foot/foot"
+        # (e.g., ankle/toe naming only). This avoids lowest_pos staying +inf.
+        if not found_foot_like_joint:
+            lowest_pos = min(pos[2] for pos, quat in human_data.values())
+
+        if not np.isfinite(lowest_pos):
+            raise ValueError(
+                f"Invalid ground reference z={lowest_pos}. "
+                "Please check input human_data values."
+            )
         for body_name in human_data.keys():
             pos, quat = human_data[body_name]
             offset_human_data[body_name] = [pos, quat]

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+import re
 import numpy as np
 import mujoco
 import mujoco.viewer
@@ -6,10 +8,31 @@ import time
 import sys
 import os
 from tqdm import tqdm
+from general_motion_retargeting.params import ROBOT_XML_DICT
 
-def load_motion_data(motion_file):
+
+def to_wxyz(quat_array, quat_format):
+    """将四元数数组转换为 wxyz。输入形状 (..., 4)。"""
+    q = np.asarray(quat_array)
+    if q.shape[-1] != 4:
+        raise ValueError(f"四元数最后一维必须是4，当前: {q.shape}")
+    if quat_format == "wxyz":
+        return q
+    if quat_format == "xyzw":
+        return q[..., [3, 0, 1, 2]]
+    raise ValueError(f"不支持的 quat_format: {quat_format}")
+
+
+def load_motion_data(motion_file, quat_format="wxyz", fps_override=None):
     """加载运动数据，支持多种格式"""
     ext = os.path.splitext(motion_file)[1].lower()
+
+    def infer_fps_from_name(path, default_fps=100.0):
+        name = os.path.basename(path)
+        m = re.search(r"(\d+(?:\.\d+)?)\s*fps", name, flags=re.IGNORECASE)
+        if m:
+            return float(m.group(1))
+        return float(default_fps)
     
     if ext == '.npz':
         data = np.load(motion_file, allow_pickle=True)
@@ -29,24 +52,39 @@ def load_motion_data(motion_file):
             body_pos_w = np.asarray(data['body_pos_w'])
             body_quat_w = np.asarray(data['body_quat_w'])
             root_pos = body_pos_w[:, 0, :]   # (T, 3)
-            root_rot = body_quat_w[:, 0, :]  # (T, 4) 已是 wxyz
+            root_rot = to_wxyz(body_quat_w[:, 0, :], quat_format)  # (T, 4) -> wxyz
             qpos = np.concatenate([root_pos, root_rot, joint_pos], axis=1)
             print(f"  joint_pos {joint_pos.shape}, body_pos_w {body_pos_w.shape}, -> qpos {qpos.shape}")
         elif all(k in data for k in ['root_pos', 'root_rot', 'dof_pos']):
             print("使用 root_pos + root_rot + dof_pos 组合")
             root_pos = data['root_pos']
-            root_rot = data['root_rot']
+            root_rot = to_wxyz(data['root_rot'], quat_format)
             dof_pos = data['dof_pos']
             qpos = np.array([
                 np.concatenate([root_pos[i], root_rot[i], dof_pos[i]])
                 for i in range(len(root_pos))
             ])
+        elif all(k in data for k in ['base_pos_w', 'base_quat_w', 'joint_pos']):
+            # label 类型 npz:
+            # base_pos_w(T,3), base_quat_w(T,4,wxyz), joint_pos(T,N)
+            print("使用 base_pos_w + base_quat_w + joint_pos 组合")
+            base_pos_w = np.asarray(data['base_pos_w'])
+            base_quat_w = to_wxyz(np.asarray(data['base_quat_w']), quat_format)
+            joint_pos = np.asarray(data['joint_pos'])
+            qpos = np.concatenate([base_pos_w, base_quat_w, joint_pos], axis=1)
+            print(
+                f"  base_pos_w {base_pos_w.shape}, "
+                f"base_quat_w {base_quat_w.shape}, "
+                f"joint_pos {joint_pos.shape} -> qpos {qpos.shape}"
+            )
         else:
             raise KeyError("找不到合适的位置数据")
         
-        # 帧率：优先 fps(1,)，否则 frequency / freq
+        # 帧率：优先 fps(1,)，其次 framerate，否则 frequency / freq
         if 'fps' in data:
             frequency = float(np.asarray(data['fps']).flat[0])
+        elif 'framerate' in data:
+            frequency = float(np.asarray(data['framerate']).flat[0])
         else:
             frequency = float(data.get('frequency', data.get('freq', 100.0)))
         
@@ -63,8 +101,7 @@ def load_motion_data(motion_file):
             elif all(k in data for k in ['root_pos', 'root_rot', 'dof_pos']):
                 print("使用 root_pos + root_rot + dof_pos 组合")
                 root_pos = data['root_pos']
-                root_rot = data['root_rot']
-                root_rot[:, [0, 1, 2, 3]] = root_rot[:, [3, 0, 1, 2]]
+                root_rot = to_wxyz(data['root_rot'], quat_format)
                 dof_pos = data['dof_pos']
                 qpos = np.array([
                     np.concatenate([root_pos[i], root_rot[i], dof_pos[i]])
@@ -84,34 +121,72 @@ def load_motion_data(motion_file):
         else:
             frequency = float(data.get('frequency', data.get('freq', 100.0)))
     
+    elif ext == '.npy':
+        arr = np.load(motion_file, allow_pickle=True)
+        arr = np.asarray(arr)
+        # 特定 G1 格式: (T, 58) = 29关节位置 + 29关节速度
+        if arr.ndim == 2 and arr.shape[1] == 58:
+            print("使用 G1 特定 .npy 格式: [joint_pos(29), joint_vel(29)]")
+            joint_pos = arr[:, :29]
+            T = joint_pos.shape[0]
+            root_pos = np.zeros((T, 3), dtype=joint_pos.dtype)
+            root_rot = np.zeros((T, 4), dtype=joint_pos.dtype)
+            root_rot[:, 0] = 1.0  # wxyz identity
+            qpos = np.concatenate([root_pos, root_rot, joint_pos], axis=1)
+            frequency = infer_fps_from_name(motion_file, default_fps=50.0)
+            print(f"  joint_pos {joint_pos.shape} -> qpos {qpos.shape}")
+            print(f"  fps: {frequency} (文件名推断/默认)")
+        else:
+            raise ValueError(
+                f".npy 格式暂不支持，期望 (T,58)，当前 {arr.shape}"
+            )
     else:
         raise ValueError(f"不支持的文件格式: {ext}")
     
+    if fps_override is not None:
+        frequency = float(fps_override)
+        print(f"使用 --fps 覆盖帧率: {frequency}Hz")
+
     print(f"轨迹: {len(qpos)}帧, {frequency}Hz")
     return qpos, frequency
 
 def main():
-    if len(sys.argv) < 3:
-        print("用法: python play.py <机器人名> <运动文件>")
+    parser = argparse.ArgumentParser(description="播放 GMR 运动文件（npz/pkl）")
+    parser.add_argument("robot", help="机器人名（需在 ROBOT_XML_DICT 中）")
+    parser.add_argument("motion_file", help="运动文件路径（.npz/.pkl）")
+    parser.add_argument(
+        "--quat-format",
+        choices=["wxyz", "xyzw"],
+        default="wxyz",
+        help="输入文件里的根四元数格式（默认 wxyz）",
+    )
+    parser.add_argument(
+        "--fps",
+        type=float,
+        default=None,
+        help="手动指定播放帧率（Hz），会覆盖文件中的帧率信息",
+    )
+    args = parser.parse_args()
+
+    robot = args.robot
+    motion_file = args.motion_file
+    if robot not in ROBOT_XML_DICT:
+        print(f"错误: 未知机器人 '{robot}'，请检查 params.py 中 ROBOT_XML_DICT")
         return
-    
-    robot, motion_file = sys.argv[1], sys.argv[2]
-    scene_path = f"../assets/{robot}/scene.xml"
-    
+    scene_path = str(ROBOT_XML_DICT[robot])
     if not os.path.exists(scene_path):
-        # 尝试其他路径
-        alt_path = f"assets/{robot}/scene.xml"
-        if os.path.exists(alt_path):
-            scene_path = alt_path
-        else:
-            print(f"错误: 找不到场景文件 {robot}/scene.xml")
-            return
+        print(f"错误: 找不到场景文件 {scene_path}")
+        return
     
     print(f"场景: {scene_path}")
     
     try:
         # 加载运动数据
-        qpos_seq, frequency = load_motion_data(motion_file)
+        qpos_seq, frequency = load_motion_data(
+            motion_file,
+            quat_format=args.quat_format,
+            fps_override=args.fps,
+        )
     except Exception as e:
         print(f"加载数据失败: {e}")
         return
@@ -231,16 +306,20 @@ def main():
         while viewer.is_running and idx < len(qpos_seq):
             current_time = time.time()
             
-            # 正常播放（当未暂停时）
-            if not paused and (current_time - last_frame_time >= frame_time):
-                last_frame_time = current_time
-                idx += 1
+            # 正常播放（当未暂停时）：支持追帧，尽量贴近目标频率
+            if not paused:
+                elapsed = current_time - last_frame_time
+                if elapsed >= frame_time:
+                    step_frames = int(elapsed / frame_time)
+                    idx += max(1, step_frames)
+                    last_frame_time += step_frames * frame_time
             
             # 确保idx在有效范围内
             idx = max(0, min(len(qpos_seq) - 1, idx))
             
             # 更新姿态
             data.qpos[:] = qpos_seq[idx]
+            # data.qpos[2] += 0.04
             mujoco.mj_forward(model, data)
             
             # 更新进度条
@@ -257,8 +336,8 @@ def main():
             
             viewer.sync()
             
-            # 避免CPU占用过高
-            time.sleep(base_frame_time)
+            # 避免CPU占用过高；不再固定 sleep 到一帧时长，否则高频会被额外限速
+            time.sleep(0.001)
         
         pbar.close()
         print(f"\n播放完成！总帧数: {len(qpos_seq)}")

@@ -45,6 +45,10 @@ def load_bvh_file(bvh_file, format="lafan1"):
             # FBX-like foot handling: foot position + foot orientation.
             result["LeftFootMod"] = [result["LeftFoot"][0], result["LeftFoot"][1]]
             result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
+        elif format == "opt_mocap":
+            # New opt-mocap skeleton: synthesize FootMod from ankle-roll joints.
+            result["LeftFootMod"] = [result["ankle_l"][0], result["ankle_l"][1]]
+            result["RightFootMod"] = [result["ankle_r"][0], result["ankle_r"][1]]
         else:
             raise ValueError(f"Invalid format: {format}")
             

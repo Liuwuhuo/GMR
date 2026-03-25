@@ -197,7 +197,7 @@
 									<body name="keyframe_left_ankle_link" pos="0.0 0.0 -0.061">
 										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7" />
 									</body>
-									<body name="foot_bottom_left" pos="0.047 0.0 -0.062">
+									<body name="foot_bottom_left" pos="0.0 0.0 -0.062">
 										<!-- 为了不影响物理，使用非常小的惯性 -->
 										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
 										<!-- 可视化标记（可选） -->
@@ -309,7 +309,7 @@
 									<body name="keyframe_right_ankle_link" pos="0.0 0 -0.061">
 										<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7" />
 									</body>
-									<body name="foot_bottom_right" pos="0.047 0.0 -0.062">
+									<body name="foot_bottom_right" pos="0.0 0.0 -0.062">
 										<!-- 为了不影响物理，使用非常小的惯性 -->
 										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
 										<!-- 可视化标记（可选） -->
@@ -407,7 +407,7 @@
 								<geom mesh="shoulderRollLeft_3" class="visual" />
 								<geom mesh="shoulderRollLeft_4" class="visual" />
 								<geom name="shoulderRollLeft_collision" size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
-								<site name="site_shoulderRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+								<!-- <site name="site_shoulderRollLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 								<body name="keyframe_left_shoulder_link" pos="0 0 0">
 									<inertial pos="0 0 0" mass="0.001" diaginertia="1e-7 1e-7 1e-7" />
 								</body>
@@ -417,7 +417,7 @@
 									<geom mesh="shoulderYawLeft_0" class="visual" />
 									<geom mesh="shoulderYawLeft_1" material="black" class="visual" />
 									<geom name="shoulderYawLeft_collision" size="0.0302 0.06" pos="0 0 -0.08" type="capsule" class="collision" />
-									<!-- <site name="site_shoulderYawLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
+									<site name="site_shoulderYawLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<body name="elbowLeft" pos="0 -0.0285 -0.20415">
 										<site name="site_elbowLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 										<inertial pos="-0.0216442 0.0277621 -0.0446964" quat="0.897923 0.0631943 -0.210786 -0.381195" mass="0.854" diaginertia="0.000828975 0.000780354 0.000400291" />
@@ -536,12 +536,12 @@
 								<geom mesh="shoulderRollRight_3" class="visual" />
 								<geom mesh="shoulderRollRight_4" class="visual" />
 								<geom name="shoulderRollRight_collision" size="0.0354 0.021" pos="-0.035 0 0" quat="0.707105 0 0.707108 0" type="capsule" class="collision" />
-								<site name="site_shoulderRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+								<!-- <site name="site_shoulderRollRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
 								<body name="keyframe_right_shoulder_link" pos="0 0 0">
 									<inertial pos="0 0 0" mass="0.001" diaginertia="1e-07 1e-07 1e-07"/>
 								</body>
 								<body name="shoulderYawRight" pos="-0.0335 -0.034 -0.0585">
-									<!-- <site name="site_shoulderYawRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
+									<site name="site_shoulderYawRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
 									<inertial pos="-0.00089274 -0.00096643 -0.0698052" quat="0.999767 0.0172729 -0.0100354 0.00814411" mass="0.6963" diaginertia="0.00304741 0.00298071 0.000413386" />
 									<joint name="shoulderYaw_Right" pos="0 0 0" axis="0 0 1" range="-1.6 1.6" actuatorfrcrange="-65 65" />
 									<geom mesh="shoulderYawRight_0" material="black" class="visual" />

@@ -80,6 +80,15 @@ IK_CONFIG_DICT = {
     "bvh_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_mocap_adam_sp.json",
     },
+    "bvh_opt_mocap":{
+        "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
+    },
+    "bvh_joint_mocap":{
+        "adam_sp": IK_CONFIG_ROOT / "bvh_joint_mocap_adam_sp.json",
+    },
+    "bvh_opt_mocap_footmod":{
+        "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
+    },
     "fbx":{
         "unitree_g1": IK_CONFIG_ROOT / "fbx_to_g1.json",
         "unitree_g1_27dof": IK_CONFIG_ROOT / "fbx_to_g1.json",

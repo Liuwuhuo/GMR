@@ -65,9 +65,9 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--target_fps",
-        default=30,
-        type=int,
-        help="Target FPS for the retargeted motion.",
+        default=None,
+        type=float,
+        help="Target FPS for the retargeted motion. If omitted, infer from BVH Frame Time and round.",
     )
 
     parser.add_argument(
@@ -159,7 +159,10 @@ if __name__ == "__main__":
             bvh_data_frames, actual_human_height = load_bvh_file(
                 bvh_file_path, format=args.format
             )
-            src_fps = args.target_fps
+            if args.target_fps is None:
+                src_fps = infer_fps_from_bvh_frame_time(bvh_file_path)
+            else:
+                src_fps = int(round(args.target_fps))
         except Exception as e:
             print(f"Error loading {bvh_file_path}: {e}")
             continue
