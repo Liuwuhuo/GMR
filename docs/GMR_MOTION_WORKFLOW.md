@@ -195,7 +195,7 @@ if apply_ground_alignment:
 |------|------|------|------|
 | `bvh_to_robot.py` | `.bvh` | 默认 `retarget/<robot>/<format>/<name>.pkl` | 单条；`--format`；`--robot`；`--motion_fps` 或从 BVH `Frame Time` 推断；`--start_frame`/`--end_frame`；可视化 + 可选 `--save_path`。`src_human` 为 `bvh_<format>`。 |
 | `bvh_to_robot_dataset.py` | 目录下递归 `.bvh` | 镜像目录结构 `.pkl` | 批量；`--target_fps` 默认 30；`--format`；`--override`。 |
-| `bvh_to_robot_npz.py` | `.bvh` | `.npz` | 单条数据集风格；`--target_fps`；`--compressed`；`--compute_local_body_pos`；`--height_adjust`/`--perframe_adjust`；默认保存路径 `retarget/<robot>/<format>/<name>.npz`。 |
+| `bvh_to_robot_npz.py` | `.bvh` | `.npz` | 单条数据集风格；`--target_fps`；`--compressed`；`--compute_local_body_pos`；`--height_adjust`/`--perframe_adjust`；新增 `--format jpg`：适配“简化 LAFAN-like 骨架”（缺 Foot/Toe/Hand）。代码会合成 IK 需要的 key：`Spine2=Chest/Spine`、`LeftUpLeg=LeftLeg`、`LeftLeg=LeftShin`、`LeftFootMod=LeftShin`、`LeftHand=LeftForeArm`（右侧同理）；默认保存路径 `retarget/<robot>/<format>/<name>.npz`。 |
 | `bvh_to_robot_npz_dataset.py` | `--src_folder` | `--tgt_folder` 下 `.npz` | 批量 NPZ；可选 `--record_video`；`--compressed` 等；机器人列表见脚本内 `choices`（含 `pnd_adam_lite`、`adam_sp` 等）。 |
 
 ### 5.2 BVH → 机器人（关节级 / 直接读 BVH，不经 `lafan1` 后处理）

@@ -219,13 +219,15 @@ def main():
     base_frame_time = 1.0 / frequency
     speed_scale = 1.0
     frame_time = base_frame_time / speed_scale
+    # 与 idx 同步的“上一帧逻辑时间”，暂停时不应累积，否则恢复时会一次性追帧、tqdm 的 it/s 会飙高
+    last_frame_time = time.time()
     
     # Shift键状态
     shift_pressed = False
     
     def key_callback(keycode):
         """按键回调函数"""
-        nonlocal paused, idx, speed_scale, frame_time, shift_pressed
+        nonlocal paused, idx, speed_scale, frame_time, shift_pressed, last_frame_time
         
         # 检测Shift键
         if keycode in [340, 344]:  # 左右Shift键码
@@ -234,7 +236,10 @@ def main():
         
         # 空格键：暂停/继续
         if keycode == 32:  # 空格
+            was_paused = paused
             paused = not paused
+            if was_paused and not paused:
+                last_frame_time = time.time()
             print(f"\n{'暂停' if paused else '播放'}")
         
         # +/- 键：调整速度

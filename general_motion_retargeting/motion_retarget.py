@@ -21,6 +21,8 @@ class GeneralMotionRetargeting:
         use_velocity_limit: bool=True,
         use_collision_limit: bool=True,
         base_height_offset: float = 0.0,
+        force_feet_same_height: bool = False,
+        force_feet_level: bool = False,
     ) -> None:
 
         # load the robot model
@@ -127,6 +129,57 @@ class GeneralMotionRetargeting:
         self.base_height_offset = base_height_offset
 
         self.last_human_data = None
+        self.force_feet_same_height = force_feet_same_height
+        self.force_feet_level = force_feet_level
+
+    def enforce_feet_same_height(self, human_data):
+        """Force left/right foot target z to be identical when both exist."""
+        # Common naming pairs across supported human formats.
+        foot_pairs = [
+            ("left_foot", "right_foot"),
+            ("LeftFootMod", "RightFootMod"),
+            ("LeftFoot", "RightFoot"),
+            ("left_ankle", "right_ankle"),
+            ("ankle_l", "ankle_r"),
+        ]
+        for left_name, right_name in foot_pairs:
+            if left_name in human_data and right_name in human_data:
+                left_pos = np.array(human_data[left_name][0], dtype=np.float64)
+                right_pos = np.array(human_data[right_name][0], dtype=np.float64)
+                target_z = 0.5 * (left_pos[2] + right_pos[2])
+                left_pos[2] = target_z
+                right_pos[2] = target_z
+                human_data[left_name][0] = left_pos
+                human_data[right_name][0] = right_pos
+                break
+        return human_data
+
+    def enforce_feet_level(self, human_data):
+        """Force feet orientation to be horizontal (keep yaw, zero roll/pitch)."""
+        foot_names = [
+            "left_foot",
+            "right_foot",
+            "LeftFootMod",
+            "RightFootMod",
+            "LeftFoot",
+            "RightFoot",
+            "left_ankle",
+            "right_ankle",
+            "ankle_l",
+            "ankle_r",
+        ]
+        for foot_name in foot_names:
+            if foot_name not in human_data:
+                continue
+            pos, quat = human_data[foot_name]
+            rot = R.from_quat(quat, scalar_first=True)
+            euler_xyz = rot.as_euler("xyz", degrees=False)
+            yaw_only = np.array([0.0, 0.0, euler_xyz[2]], dtype=np.float64)
+            level_quat = R.from_euler("xyz", yaw_only, degrees=False).as_quat(
+                scalar_first=True
+            )
+            human_data[foot_name] = [pos, level_quat]
+        return human_data
 
     def setup_retarget_configuration(self):
         self.configuration = mink.Configuration(self.model)
@@ -201,6 +254,11 @@ class GeneralMotionRetargeting:
                 human_data = self.offset_human_data_to_ground(human_data)
             else:
                 human_data = self.offset_human_data_to_ground_fly(human_data)
+
+        if self.force_feet_same_height:
+            human_data = self.enforce_feet_same_height(human_data)
+        if self.force_feet_level:
+            human_data = self.enforce_feet_level(human_data)
             
         self.scaled_human_data = human_data
 
@@ -351,34 +409,26 @@ class GeneralMotionRetargeting:
 
     def offset_human_data_to_ground(self, human_data):
         """find the lowest point of the human data and offset the human data to the ground"""
-        offset_human_data = {}
-        lowest_pos = np.inf
-        found_foot_like_joint = False
-
-        for body_name in human_data.keys():
-            # only consider the foot/Foot
-            if "Foot" not in body_name and "foot" not in body_name:
-                continue
-            pos, quat = human_data[body_name]
-            if pos[2] < lowest_pos:
-                lowest_pos = pos[2]
-                found_foot_like_joint = True
-
+        foot_like_heights = [
+            pos[2]
+            for body_name, (pos, quat) in human_data.items()
+            if "foot" in body_name.lower()
+        ]
         # Fallback for datasets that do not name foot joints with "Foot/foot"
-        # (e.g., ankle/toe naming only). This avoids lowest_pos staying +inf.
-        if not found_foot_like_joint:
-            lowest_pos = min(pos[2] for pos, quat in human_data.values())
+        # (e.g., ankle/toe naming only).
+        candidate_heights = foot_like_heights or [pos[2] for pos, quat in human_data.values()]
+        lowest_pos = min(candidate_heights)
 
         if not np.isfinite(lowest_pos):
             raise ValueError(
                 f"Invalid ground reference z={lowest_pos}. "
                 "Please check input human_data values."
             )
-        for body_name in human_data.keys():
-            pos, quat = human_data[body_name]
-            offset_human_data[body_name] = [pos, quat]
-            offset_human_data[body_name][0] = pos - np.array([0, 0, lowest_pos])# - np.array([0, 0, self.ground_offset])
-        return offset_human_data
+        offset_vec = np.array([0, 0, lowest_pos])
+        return {
+            body_name: [pos - offset_vec, quat]
+            for body_name, (pos, quat) in human_data.items()
+        }
             
     def offset_human_data_to_ground_fly(self, human_data):
         """
@@ -389,19 +439,15 @@ class GeneralMotionRetargeting:
         """
         # 只在第一次调用时，根据当前帧计算最低高度；之后不再更新，避免跳跃被压回地面
         if not hasattr(self, "_human_ground_lowest_z"):
-            lowest_pos = min(pos[2] for pos, quat in human_data.values())
-            self._human_ground_lowest_z = lowest_pos
+            self._human_ground_lowest_z = min(pos[2] for pos, quat in human_data.values())
         lowest_pos = self._human_ground_lowest_z
 
-        offset_human_data = {}
-        for body_name in human_data.keys():
-            pos, quat = human_data[body_name]
-            offset_human_data[body_name] = [pos, quat]
-            # 将全身整体下移 lowest_pos，再上移 base_height_offset（对齐机器人站立高度）
-            offset_human_data[body_name][0] = (
-                pos - np.array([0, 0, lowest_pos]) + np.array([0, 0, self.base_height_offset])
-            )
-        return offset_human_data
+        # 将全身整体下移 lowest_pos，再上移 base_height_offset（对齐机器人站立高度）
+        offset_vec = np.array([0, 0, lowest_pos - self.base_height_offset])
+        return {
+            body_name: [pos - offset_vec, quat]
+            for body_name, (pos, quat) in human_data.items()
+        }
 
     def set_ground_offset(self, ground_offset):
         self.ground_offset = ground_offset

@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
 import argparse
 import pathlib
 import os
+import re
 import time
 import gc
 import mujoco as mj
@@ -13,6 +15,23 @@ from general_motion_retargeting.kinematics_model import KinematicsModel
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
 from rich import print
+
+
+def infer_fps_from_bvh_frame_time(bvh_file):
+    """从BVH文件中提取帧率"""
+    frame_time = None
+    with open(bvh_file, "r", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            match = re.match(r"\s*Frame Time:\s+([\d\.eE+-]+)", line)
+            if match:
+                frame_time = float(match.group(1))
+                break
+
+    if frame_time is None:
+        raise ValueError(f"Cannot find 'Frame Time' in BVH file: {bvh_file}")
+    if frame_time <= 0:
+        raise ValueError(f"Invalid Frame Time ({frame_time}) in BVH file: {bvh_file}")
+    return int(round(1.0 / frame_time))
 
 
 if __name__ == "__main__":
@@ -35,7 +54,16 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "noitom", "sfu", "mocap"],
+        choices=[
+            "lafan1",
+            "nokov",
+            "sfu",
+            "noitom",
+            "mocap",
+            "opt_mocap",
+            "jpg_lafan1",
+            "smpl4d_bvh",
+        ],
         default="lafan1",
         help="BVH format type.",
     )
@@ -50,7 +78,7 @@ if __name__ == "__main__":
             "fourier_n1",
             "engineai_pm01",
             "pal_talos",
-            "pnd_adam_lite",
+            "adam_sp_pro",
             "adam_sp",
         ],
         default="unitree_g1",
@@ -111,6 +139,34 @@ if __name__ == "__main__":
         help="Video output path. If None, videos will be saved in {tgt_folder}/videos/ with same filename as npz.",
     )
 
+    parser.add_argument(
+        "--rate_limit",
+        action="store_true",
+        default=False,
+        help="Limit playback to output_fps during visualization.",
+    )
+
+    parser.add_argument(
+        "--start_frame",
+        type=int,
+        default=0,
+        help="Start frame (inclusive)",
+    )
+
+    parser.add_argument(
+        "--end_frame",
+        type=int,
+        default=None,
+        help="End frame (exclusive)",
+    )
+
+    parser.add_argument(
+        "--no_fly",
+        action="store_true",
+        default=False,
+        help="Prevent flying (keep feet on ground).",
+    )
+
     args = parser.parse_args()
 
     src_folder = args.src_folder
@@ -154,11 +210,27 @@ if __name__ == "__main__":
             print(f"Skipping {bvh_file_path} because {tgt_file_path} exists")
             continue
 
+        # 格式兼容性处理
+        bvh_load_format = args.format
+        gmr_src_human = f"bvh_{args.format}"
+        if args.format == "jpg_lafan1":
+            bvh_load_format = "jpg_lafan1"
+            gmr_src_human = "bvh_lafan1"
+        elif args.format == "smpl4d_bvh":
+            bvh_load_format = "smpl4d_bvh"
+            gmr_src_human = "bvh_lafan1"
+
         # Load BVH trajectory
         try:
             bvh_data_frames, actual_human_height = load_bvh_file(
-                bvh_file_path, format=args.format
+                bvh_file_path, format=bvh_load_format
             )
+            
+            # 帧裁剪
+            start = max(0, args.start_frame)
+            end = args.end_frame if args.end_frame is not None else len(bvh_data_frames)
+            bvh_data_frames = bvh_data_frames[start:end]
+            
             if args.target_fps is None:
                 src_fps = infer_fps_from_bvh_frame_time(bvh_file_path)
             else:
@@ -170,7 +242,7 @@ if __name__ == "__main__":
         # Initialize the retargeting system
         try:
             retargeter = GMR(
-                src_human=f"bvh_{args.format}",
+                src_human=gmr_src_human,
                 tgt_robot=args.robot,
                 actual_human_height=actual_human_height,
             )
@@ -180,6 +252,20 @@ if __name__ == "__main__":
             print(f"Error initializing retargeter for {bvh_file_path}: {e}")
             continue
 
+        # 关键帧验证（针对特定格式）
+        if args.format in ("jpg_lafan1", "smpl4d_bvh") and len(bvh_data_frames) > 0:
+            needed_keys = set(retargeter.pos_offsets1.keys())
+            first_keys = set(bvh_data_frames[0].keys())
+            missing = sorted(list(needed_keys - first_keys))
+            if missing:
+                print(f"Warning: {args.format}: BVH loader did not synthesize required IK keys. "
+                       f"Missing (from first frame): {missing}.")
+                # 过滤只保留需要的键
+                bvh_data_frames = [
+                    {k: v for k, v in frame.items() if k in needed_keys}
+                    for frame in bvh_data_frames
+                ]
+
         # Retarget to get all qpos
         qpos_list = []
         qvel_list = []
@@ -188,7 +274,11 @@ if __name__ == "__main__":
                 smplx_data = bvh_data_frames[curr_frame]
 
                 # Retarget till convergence
-                qpos, qvel = retargeter.retarget(smplx_data,offset_to_ground=True)
+                qpos, qvel = retargeter.retarget(
+                    smplx_data,
+                    offset_to_ground=True,
+                    no_fly=args.no_fly
+                )
 
                 qpos_list.append(qpos.copy())
                 qvel_list.append(qvel.copy())
@@ -231,7 +321,7 @@ if __name__ == "__main__":
                         torch.from_numpy(root_rot).to(device=device, dtype=torch.float),
                         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float),
                     )
-                    ground_offset = 0.00
+                    ground_offset = 0.0
                     if not args.perframe_adjust:
                         lowest_height = torch.min(body_pos[..., 2]).item()
                         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
@@ -276,6 +366,7 @@ if __name__ == "__main__":
                 np.savez_compressed(tgt_file_path, **save_dict)
             else:
                 np.savez(tgt_file_path, **save_dict)
+            print(f"Saved: {tgt_file_path}")
         except Exception as e:
             print(f"Error saving {tgt_file_path}: {e}")
             continue
@@ -335,7 +426,7 @@ if __name__ == "__main__":
                                 root_pos=root_pos[frame_idx],
                                 root_rot=root_rot[frame_idx],
                                 dof_pos=dof_pos[frame_idx],
-                                rate_limit=False,
+                                rate_limit=args.rate_limit,
                                 follow_camera=True,
                             )
 
@@ -364,4 +455,4 @@ if __name__ == "__main__":
                 print(f"Error generating video for {bvh_file_path}: {e}")
                 continue
 
-    print(f"Done. Saved {len(bvh_files)} files")
+    print(f"Done. Processed {len(bvh_files)} files")

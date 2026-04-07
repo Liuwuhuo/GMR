@@ -73,6 +73,8 @@ class RobotMotionViewer:
         # Internal pause state (launch_passive doesn't auto-pause main loop)
         self.paused = False
         self.pause_key = ord(' ')  # spacebar
+        # Last step() kwargs so wait_while_paused() can keep redrawing while blocked
+        self._pause_snapshot = None
 
         # Wrap keyboard callback to support pause toggle
         def wrapped_key_callback(keycode):
@@ -107,6 +109,19 @@ class RobotMotionViewer:
             
             # Initialize renderer for video recording
             self.renderer = mj.Renderer(self.model, height=video_height, width=video_width)
+
+    def wait_while_paused(self):
+        """
+        阻塞主循环直到取消暂停（Space）。仅冻结「数据处理」时应在每帧 retarget 之前调用；
+        否则 pause 只影响 step() 内的显示，IK/tqdm 仍会继续跑。
+        """
+        while self.paused and self.viewer.is_running:
+            snap = self._pause_snapshot
+            if snap is not None:
+                self.step(**snap)
+            else:
+                self.viewer.sync()
+                time.sleep(0.01)
         
     def step(self, 
             # robot data
@@ -125,6 +140,17 @@ class RobotMotionViewer:
         """
         Visualize one frame. If paused, only refresh rendering (no physics update).
         """
+        self._pause_snapshot = {
+            "root_pos": root_pos,
+            "root_rot": root_rot,
+            "dof_pos": dof_pos,
+            "human_motion_data": human_motion_data,
+            "show_human_body_name": show_human_body_name,
+            "human_point_scale": human_point_scale,
+            "human_pos_offset": human_pos_offset,
+            "rate_limit": rate_limit,
+            "follow_camera": follow_camera,
+        }
         if self.paused:
             # ── PAUSED MODE: keep UI alive, but freeze robot state ──
             if follow_camera:

@@ -34,7 +34,16 @@ def main():
     parser.add_argument("--bvh_file", required=True, help="BVH file path")
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom", "mocap", "opt_mocap"],
+        choices=[
+            "lafan1",
+            "nokov",
+            "sfu",
+            "noitom",
+            "mocap",
+            "opt_mocap",
+            "jpg_lafan1",
+            "smpl4d_bvh",
+        ],
         default="lafan1",
     )
     parser.add_argument(
@@ -108,8 +117,17 @@ def main():
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
 
+    bvh_load_format = args.format
+    gmr_src_human = f"bvh_{args.format}"
+    if args.format == "jpg_lafan1":
+        bvh_load_format = "jpg_lafan1"
+        gmr_src_human = "bvh_lafan1"
+    elif args.format == "smpl4d_bvh":
+        bvh_load_format = "smpl4d_bvh"
+        gmr_src_human = "bvh_lafan1"
+
     bvh_data_frames, actual_human_height = load_bvh_file(
-        args.bvh_file, format=args.format
+        args.bvh_file, format=bvh_load_format
     )
     start = max(0, args.start_frame)
     end = args.end_frame if args.end_frame is not None else len(bvh_data_frames)
@@ -122,10 +140,23 @@ def main():
     num_frames = len(bvh_data_frames)
 
     retargeter = GMR(
-        src_human=f"bvh_{args.format}",
+        src_human=gmr_src_human,
         tgt_robot=args.robot,
         actual_human_height=actual_human_height,
     )
+    if args.format in ("jpg_lafan1", "smpl4d_bvh") and num_frames > 0:
+        needed_keys = set(retargeter.pos_offsets1.keys())
+        first_keys = set(bvh_data_frames[0].keys())
+        missing = sorted(list(needed_keys - first_keys))
+        if missing:
+            raise KeyError(
+                f"{args.format}: BVH loader did not synthesize required IK keys. "
+                f"Missing (from first frame): {missing}."
+            )
+        bvh_data_frames = [
+            {k: v for k, v in frame.items() if k in needed_keys}
+            for frame in bvh_data_frames
+        ]
     robot_motion_viewer = RobotMotionViewer(
         robot_type=args.robot,
         motion_fps=output_fps,
@@ -137,6 +168,8 @@ def main():
     qpos_list = []
     qvel_list = []
     for i in tqdm(range(num_frames), desc="Retargeting"):
+        # 否则 Space 只冻结 viewer，retarget/tqdm 仍会继续
+        robot_motion_viewer.wait_while_paused()
         qpos, qvel = retargeter.retarget(bvh_data_frames[i], offset_to_ground=True, no_fly=False)
         robot_motion_viewer.step(
             root_pos=qpos[:3],
