@@ -94,6 +94,12 @@ if __name__ == "__main__":
 
     parser.add_argument("--start_frame", type=int, default=0, help="Start frame index (inclusive)")
     parser.add_argument("--end_frame", type=int, default=None, help="End frame index (exclusive)")
+    parser.add_argument(
+        "--drop_first_frame",
+        action="store_true",
+        default=False,
+        help="Drop the first retargeted frame (useful when frame 0 is unstable).",
+    )
     
     args = parser.parse_args()
     
@@ -195,6 +201,10 @@ if __name__ == "__main__":
 
         # retarget
         qpos, qvel = retargeter.retarget(smplx_data, no_fly=False)
+
+        if args.drop_first_frame and i == 0:
+            # Skip unstable first frame for both visualization and saved output.
+            continue
 
         # qpos_list = np.array(qpos_list)
 

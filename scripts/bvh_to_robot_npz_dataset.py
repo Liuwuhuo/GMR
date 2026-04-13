@@ -166,6 +166,21 @@ if __name__ == "__main__":
         default=False,
         help="Prevent flying (keep feet on ground).",
     )
+    parser.add_argument(
+        "--drop_first_frame",
+        action="store_true",
+        default=False,
+        help="Drop the first retargeted frame (useful when frame 0 is unstable).",
+    )
+    parser.add_argument(
+        "--export_motion_fields",
+        action="store_true",
+        default=False,
+        help=(
+            "Also export motion fields: framerate, joint_names, joint_pos, "
+            "base_pos_w, base_quat_w."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -288,6 +303,12 @@ if __name__ == "__main__":
 
         qpos_list = np.array(qpos_list)
         qvel_list = np.array(qvel_list)
+        if args.drop_first_frame:
+            if qpos_list.shape[0] <= 1:
+                print(f"Skipping {bvh_file_path}: cannot drop first frame (<=1 frame).")
+                continue
+            qpos_list = qpos_list[1:]
+            qvel_list = qvel_list[1:]
         root_pos = qpos_list[:, :3]
         root_rot = qpos_list[:, 3:7]  # Keep wxyz format
         dof_pos = qpos_list[:, 7:]
@@ -350,6 +371,27 @@ if __name__ == "__main__":
             "dof_pos": dof_pos,
             "dof_vel": dof_vel,
         }
+
+        # Optional field names used by downstream motion pipelines.
+        # - framerate: scalar-like array [fps]
+        # - joint_names: actuator order (same order as joint_pos columns)
+        # - joint_pos: robot joint positions, shape [T, DoF]
+        # - base_pos_w: base position in world frame, shape [T, 3]
+        # - base_quat_w: base quaternion (wxyz) in world frame, shape [T, 4]
+        if args.export_motion_fields:
+            motor_name_by_id = sorted(
+                retargeter.robot_motor_names.items(), key=lambda kv: kv[1]
+            )
+            joint_names = [name for name, _ in motor_name_by_id]
+            save_dict.update(
+                {
+                    "framerate": np.array([src_fps], dtype=np.float64),
+                    "joint_names": np.asarray(joint_names, dtype=object),
+                    "joint_pos": dof_pos,
+                    "base_pos_w": root_pos,
+                    "base_quat_w": root_rot,
+                }
+            )
 
         # Only add optional fields if they are not None
         if local_body_pos is not None:

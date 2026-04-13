@@ -55,6 +55,12 @@ if __name__ == "__main__":
         default="lafan1",
         help="BVH format; affects how load_bvh_file parses joint hierarchy.",
     )
+    parser.add_argument(
+        "--drop_first_frame",
+        action="store_true",
+        default=False,
+        help="Drop the first retargeted frame (useful when frame 0 is unstable).",
+    )
 
     args = parser.parse_args()
 
@@ -121,6 +127,11 @@ if __name__ == "__main__":
                 qpos_list.append(qpos.copy())
             
             qpos_list = np.array(qpos_list)
+            if args.drop_first_frame:
+                if qpos_list.shape[0] <= 1:
+                    print(f"Skipping {bvh_file_path}: cannot drop first frame (<=1 frame).")
+                    continue
+                qpos_list = qpos_list[1:]
 
             # Initialize the forward kinematics
             # device = "cuda:0" if torch.cuda.is_available() else "cpu"

@@ -269,6 +269,32 @@ Each frame of **robot motion data** can be understood as a tuple of (robot_base_
 
 ## Usage
 
+### Extended scripts and data formats (NPZ, joint BVH, PT tools)
+
+The table below is a **quick index** for additional helpers under `scripts/`. For **supported formats, quaternion conventions (wxyz vs xyzw), BVH `--format` values, and full CLI flags**, see **[docs/GMR_MOTION_WORKFLOW.md](docs/GMR_MOTION_WORKFLOW.md)** (detailed reference).
+
+| Script | Input | Output / role |
+|--------|--------|----------------|
+| `bvh_to_robot.py` | `.bvh` | Single motion → `.pkl`, MuJoCo viewer |
+| `bvh_to_robot_dataset.py` | folder of `.bvh` | Batch → `.pkl` |
+| `bvh_to_robot_npz.py` | `.bvh` | Single → `.npz` (dataset-style fields) |
+| `bvh_to_robot_npz_dataset.py` | `--src_folder` | Batch → `.npz` |
+| `bvh_joint_to_robot.py` | `.bvh` (joint / OptiTrack-style) | `.npz` (`bvh_joint_mocap` / `bvh_opt_mocap*`) |
+| `smplx_to_robot.py` | SMPL-X `.npz` | Retarget + optional `.pkl` |
+| `gvhmr_to_robot.py` | `hmr4d_results.pt` | GVHMR → robot, viewer |
+| `gvhmr_to_robot_dataset.py` | tree of `hmr4d_results.pt` | Batch → `.pkl` + videos |
+| `npz_to_robot_npz.py` | G1-style `.npz` | Retarget → target robot `.npz` (e.g. Adam) |
+| `json_to_robot_npz.py` | JSON (`Labels`/`Frames`) | `.npz` compatible with BVH-NPZ pipeline |
+| `g1_27pt_to_29pt.py` / `g1_29pt_to_27pt.py` | `.pt` | Pad or strip waist DoFs on G1 joint tensors |
+| `gmr_play.py` | `.npz` / `.pkl` / G1 `.npy` `(T,58)` | MuJoCo playback (`ROBOT_XML_DICT`) |
+| `play_pt_motion.py` | `.pt` / `.pkl` | Playback for dataset-style torch pickles |
+| `parse_npz.py` | `.npz` / `.npy` | Print keys, shapes, inferred fps |
+| `parse_g1_pt.py` | `.pt` | Keys, shapes, inferred G1 dof labels |
+| `print_pt_first_frames.py` | `.pt` | First N frames dump |
+| `inspect_box_in_pt.py` | `.pt` | Rich inspect + optional `--viz` |
+| `inspect_bvh_first_frame_rot.py` | `.bvh` | One-frame IK targets / debug |
+| `optitrack_to_robot.py` | live NatNet | Real-time retarget (`fbx` mapping) |
+
 ### Retargeting from SMPL-X (AMASS, OMOMO) to Robot
 
 > [!NOTE]

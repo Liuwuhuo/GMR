@@ -86,8 +86,11 @@ def fbx_to_npy(file_name_in, root_joint_name, fps):
     time_sec = anim_range.GetStart().GetSecondDouble()
     time_range_sec = anim_range.GetStop().GetSecondDouble() - time_sec
     fbx_fps = frame_count / time_range_sec
-    if fps != 120:
-        fbx_fps = fps
+    # If caller specifies fps, always respect it.
+    # Previous logic only overrode when fps != 120, which made "--fbx_fps 120"
+    # impossible to apply and silently fell back to stack-derived fps.
+    if fps is not None and fps > 0:
+        fbx_fps = float(fps)
     print("FPS: ", fbx_fps)
     while time_sec < anim_range.GetStop().GetSecondDouble():
         fbx_time = fbx.FbxTime()
@@ -141,7 +144,12 @@ def _get_frame_count(fbx_scene):
     anim_range = anim_stack.GetLocalTimeSpan()
     duration = anim_range.GetDuration()
     fps = duration.GetFrameRate(duration.GetGlobalTimeMode())
-    frame_count = duration.GetFrameCount(True)
+    try:
+        # Older FBX Python bindings accepted bool here.
+        frame_count = duration.GetFrameCount(True)
+    except TypeError:
+        # Newer bindings require FbxTime.EMode (or default with no args).
+        frame_count = duration.GetFrameCount()
 
     return anim_range, frame_count, fps
 
