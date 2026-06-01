@@ -99,7 +99,12 @@
                   <joint name="ankleRoll_Left" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="toeLeft" />
                   <geom name="toe_left" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" rgba="1 0 0 0" />
-                  <site name="site_toeLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+                  <!-- <site name="site_toeLeft" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
+                  <body name="foot_bottom_left" pos="0.05 0.0 -0.062">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
+										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+										<site name="site_foot_bottom_left" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
                 </body>
               </body>
             </body>
@@ -138,7 +143,12 @@
                   <joint name="ankleRoll_Right" pos="0 0 0" axis="1 0 0" range="-0.3491 0.3491" actuatorfrcrange="-12 12" />
                   <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="toeRight" />
                   <geom name="toe_right" size="0.12 0.05 0.015" pos="0.047 0.0 -0.05" quat="0 0 0 1" type="box" rgba="1 0 0 0" />
-                  <site name="site_toeRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
+                  <!-- <site name="site_toeRight" pos="0 0 0" size="0.02" rgba="0 0 1 1"/> -->
+                  <body name="foot_bottom_right" pos="0.05 0.0 -0.062">
+										<inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
+										<geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+										<site name="site_foot_bottom_right" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+									</body>
                 </body>
               </body>
             </body>
@@ -161,10 +171,10 @@
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="torso" />
             <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="torso" />
 						<site name="site_torso" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
-						<body name="head" pos="0 0 0.42">
+						<!-- <body name="head" pos="0 0 0.42">
 							<geom name="head" type="sphere" size=".0001" density="0"/>
 							<site name="site_head" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>
-						</body>
+						</body> -->
             <body name="shoulderPitchLeft" pos="0 0.165094 0.25923" quat="0.984808 0.173648 0 0">
               <inertial pos="0.00542694 0.0268987 0.00010792" quat="0.0525836 0.7027 -0.0564441 0.707292" mass="0.216148" diaginertia="0.000380649 0.000322752 0.000187229" />
               <joint name="shoulderPitch_Left" pos="0 0 0" axis="0 1 0" range="-3.613 2.042" actuatorfrcrange="-65 65" />
@@ -401,14 +411,19 @@
             </body>
             <body name="neckYaw_link" pos="-0.013 0 0.29855">
               <inertial pos="0.0228442 -0.00120876 0.0992634" quat="0.495063 -0.105336 -0.0540824 0.860751" mass="0.399168" diaginertia="0.00132695 0.00131013 0.000128728" />
-              <!-- <joint name="neckYaw" pos="0 0 0" axis="0 0 1" range="-1.571 1.571" actuatorfrcrange="-6.4 6.4" /> -->
+              <joint name="neckYaw" pos="0 0 0" axis="0 0 1" range="-1.571 1.571" actuatorfrcrange="-6.4 6.4" />
               <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="neckYaw_link" />
               <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="neckYaw_link" />
               <body name="neckPitch_link" pos="0.0316 0.01995 0.14595">
                 <inertial pos="0.0174597 -0.0210407 0.0470534" quat="0.0247474 0.519975 0.0323442 0.85321" mass="0.956204" diaginertia="0.00368918 0.00348892 0.00231144" />
-                <!-- <joint name="neckPitch" pos="0 0 0" axis="0 1 0" range="-0.873 0.873" actuatorfrcrange="-6.4 6.4" /> -->
+                <joint name="neckPitch" pos="0 0 0" axis="0 1 0" range="-0.873 0.873" actuatorfrcrange="-6.4 6.4" />
                 <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="neckPitch_link" />
                 <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="neckPitch_link" />
+                <body name="head" pos="0 0 0">
+                  <inertial pos="0 0 0" mass="0.001" diaginertia="0.000001 0.000001 0.000001"/>
+                  <geom type="sphere" size="0.005" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+                  <site name="site_head" pos="0 0 0" size="0.02" rgba="1 0 0 1" type="sphere"/>
+                </body>
               </body>
             </body>
           </body>
@@ -470,9 +485,9 @@
     <motor joint="R_ring_MCP_joint" name="R_ring_MCP_joint" ctrlrange="-1.0 1.0" />
     <motor joint="R_ring_DIP_joint" name="R_ring_DIP_joint" ctrlrange="-1.0 1.0" />
     <motor joint="R_pinky_MCP_joint" name="R_pinky_MCP_joint" ctrlrange="-1.0 1.0" />
-    <motor joint="R_pinky_DIP_joint" name="R_pinky_DIP_joint" ctrlrange="-1.0 1.0" />
+    <motor joint="R_pinky_DIP_joint" name="R_pinky_DIP_joint" ctrlrange="-1.0 1.0" /> -->
     <motor joint="neckYaw" name="neckYaw" ctrlrange="-6.4 6.4" />
-    <motor joint="neckPitch" name="neckPitch" ctrlrange="-6.4 6.4" /> -->
+    <motor joint="neckPitch" name="neckPitch" ctrlrange="-6.4 6.4" />
   </actuator>
   <sensor>
     <jointpos name="pos_hipPitch_Left" joint="hipPitch_Left" />
@@ -528,8 +543,8 @@
     <jointpos name="pos_R_ring_DIP_joint" joint="R_ring_DIP_joint" />
     <jointpos name="pos_R_pinky_MCP_joint" joint="R_pinky_MCP_joint" />
     <jointpos name="pos_R_pinky_DIP_joint" joint="R_pinky_DIP_joint" /> -->
-    <!-- <jointpos name="pos_neckYaw" joint="neckYaw" />
-    <jointpos name="pos_neckPitch" joint="neckPitch" /> -->
+    <jointpos name="pos_neckYaw" joint="neckYaw" />
+    <jointpos name="pos_neckPitch" joint="neckPitch" />
     <jointvel name="vel_hipPitch_Left" joint="hipPitch_Left" />
     <jointvel name="vel_hipRoll_Left" joint="hipRoll_Left" />
     <jointvel name="vel_hipYaw_Left" joint="hipYaw_Left" />
@@ -582,9 +597,9 @@
     <jointvel name="vel_R_ring_MCP_joint" joint="R_ring_MCP_joint" />
     <jointvel name="vel_R_ring_DIP_joint" joint="R_ring_DIP_joint" />
     <jointvel name="vel_R_pinky_MCP_joint" joint="R_pinky_MCP_joint" />
-    <jointvel name="vel_R_pinky_DIP_joint" joint="R_pinky_DIP_joint" />
+    <jointvel name="vel_R_pinky_DIP_joint" joint="R_pinky_DIP_joint" /> -->
     <jointvel name="vel_neckYaw" joint="neckYaw" />
-    <jointvel name="vel_neckPitch" joint="neckPitch" /> -->
+    <jointvel name="vel_neckPitch" joint="neckPitch" />
     <jointactuatorfrc name="force_hipPitch_Left" joint="hipPitch_Left" />
     <jointactuatorfrc name="force_hipRoll_Left" joint="hipRoll_Left" />
     <jointactuatorfrc name="force_hipYaw_Left" joint="hipYaw_Left" />
@@ -637,9 +652,9 @@
     <jointactuatorfrc name="force_R_ring_MCP_joint" joint="R_ring_MCP_joint" />
     <jointactuatorfrc name="force_R_ring_DIP_joint" joint="R_ring_DIP_joint" />
     <jointactuatorfrc name="force_R_pinky_MCP_joint" joint="R_pinky_MCP_joint" />
-    <jointactuatorfrc name="force_R_pinky_DIP_joint" joint="R_pinky_DIP_joint" />
+    <jointactuatorfrc name="force_R_pinky_DIP_joint" joint="R_pinky_DIP_joint" /> -->
     <jointactuatorfrc name="force_neckYaw" joint="neckYaw" />
-    <jointactuatorfrc name="force_neckPitch" joint="neckPitch" /> -->
+    <jointactuatorfrc name="force_neckPitch" joint="neckPitch" />
     <accelerometer name="BodyAcc" site="imu" />
     <gyro name="BodyGyro" site="imu" />
     <framepos name="BodyPos" objtype="site" objname="imu" />

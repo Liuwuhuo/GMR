@@ -79,6 +79,10 @@ IK_CONFIG_DICT = {
     },
     "bvh_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_mocap_adam_sp.json",
+        "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro.json",
+    },
+    "bvh_mocap_hands": {
+        "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro_hands.json",
     },
     "bvh_opt_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
@@ -91,6 +95,9 @@ IK_CONFIG_DICT = {
     },
     "bvh_smpl4d_bvh":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_smpl4d_bvh_adam_sp.json",
+    },
+    "humanml3d": {
+        "adam_sp": IK_CONFIG_ROOT / "humanml3d_adam_sp.json",
     },
     "fbx":{
         "unitree_g1": IK_CONFIG_ROOT / "fbx_to_g1.json",

@@ -43,7 +43,7 @@ if __name__ == "__main__":
     
     parser.add_argument(
         "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom", "mocap", "opt_mocap", "sfu"],
+        choices=["lafan1", "nokov", "sfu", "noitom", "mocap", "mocap_hands", "opt_mocap", "sfu"],
         default="lafan1",
     )
     
@@ -99,6 +99,21 @@ if __name__ == "__main__":
         action="store_true",
         default=False,
         help="Drop the first retargeted frame (useful when frame 0 is unstable).",
+    )
+    parser.add_argument(
+        "--drop_first_n_frames",
+        type=int,
+        default=0,
+        help="Drop first N retargeted frames (applied before saving).",
+    )
+    parser.add_argument(
+        "--export_motion_fields",
+        action="store_true",
+        default=False,
+        help=(
+            "Also export motion fields: framerate, joint_names, joint_pos, "
+            "base_pos_w, base_quat_w."
+        ),
     )
     
     args = parser.parse_args()
@@ -173,16 +188,10 @@ if __name__ == "__main__":
 
 
     while True:
-
-        if robot_motion_viewer.paused is False:
-            if args.loop:
-                i = (i + 1) % len(lafan1_data_frames)
-            else:
-                i += 1
-                if i >= len(lafan1_data_frames):
-                    # time.sleep(10000.0)  # 无限期休眠，不占用 CPU
-                    # pass
-                    break
+        # 与 bvh_to_robot_npz.py 保持一致：暂停时阻塞，不继续 retarget。
+        robot_motion_viewer.wait_while_paused()
+        if (not args.loop) and i >= len(lafan1_data_frames):
+            break
         
         # FPS measurement
         fps_counter += 1
@@ -204,50 +213,12 @@ if __name__ == "__main__":
 
         if args.drop_first_frame and i == 0:
             # Skip unstable first frame for both visualization and saved output.
+            if args.loop:
+                i = (i + 1) % len(lafan1_data_frames)
+            else:
+                i += 1
             continue
 
-        # qpos_list = np.array(qpos_list)
-
-        root_pos = np.array([qpos[:3] for qpos in qpos_list])
-        # save from wxyz to xyzw
-        root_rot = np.array([qpos[3:7][[1,2,3,0]] for qpos in qpos_list])
-        dof_pos = np.array([qpos[7:] for qpos in qpos_list])
-
-        # num_frames = root_pos.shape[0]
-
-        # device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        # xml_file = "/home/liuhongji/RL/GMR/assets/adam_sp/adam_inspire.xml"
-        # kinematics_model = KinematicsModel(xml_file, device=device)
-        
-        # # obtain local body pos
-        # identity_root_pos = torch.zeros((num_frames, 3), device=device)
-        # identity_root_rot = torch.zeros((num_frames, 4), device=device)
-        # identity_root_rot[:, -1] = 1.0
-        # local_body_pos, _ = kinematics_model.forward_kinematics(
-        #     identity_root_pos, 
-        #     identity_root_rot, 
-        #     torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-        # )
-        # body_names = kinematics_model.body_names
-
-        # HEIGHT_ADJUST = False
-        # PERFRAME_ADJUST = False
-        # if HEIGHT_ADJUST:
-        #     body_pos, _ = kinematics_model.forward_kinematics(
-        #         torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
-        #         torch.from_numpy(root_rot).to(device=device, dtype=torch.float),
-        #         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-        #     )
-        #     ground_offset = 0.00
-        #     if not PERFRAME_ADJUST:
-        #         lowest_height = torch.min(body_pos[..., 2]).item()
-        #         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
-        #     else:
-        #         for i in range(root_pos.shape[0]):
-        #             lowest_body_part = torch.min(body_pos[i, :, 2])
-        #             root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
-
-        
         # visualize
         robot_motion_viewer.step(
             root_pos=qpos[:3],
@@ -262,12 +233,31 @@ if __name__ == "__main__":
         
         if args.save_path is not None:
             qpos_list.append(qpos)
+
+        if args.loop:
+            i = (i + 1) % len(lafan1_data_frames)
+        else:
+            i += 1
     
     if args.save_path is not None:
         import pickle
 
         local_body_pos = None
         body_names = None
+
+        qpos_arr = np.asarray(qpos_list)
+        drop_n = max(0, int(args.drop_first_n_frames))
+        if drop_n > 0:
+            if qpos_arr.shape[0] <= drop_n:
+                raise ValueError(
+                    f"Cannot drop first {drop_n} frame(s): total saved frames = {qpos_arr.shape[0]}"
+                )
+            qpos_arr = qpos_arr[drop_n:]
+
+        root_pos = qpos_arr[:, :3]
+        # save from wxyz to xyzw
+        root_rot = qpos_arr[:, 3:7]
+        dof_pos = qpos_arr[:, 7:]
         
         motion_data = {
             "fps": motion_fps,
@@ -277,6 +267,22 @@ if __name__ == "__main__":
             "local_body_pos": local_body_pos,
             "link_body_list": body_names,
         }
+
+        if args.export_motion_fields:
+            motor_name_by_id = sorted(
+                retargeter.robot_motor_names.items(), key=lambda kv: kv[1]
+            )
+            joint_names = [name for name, _ in motor_name_by_id]
+            motion_data.update(
+                {
+                    "framerate": np.array([motion_fps], dtype=np.float64),
+                    "joint_names": np.asarray(joint_names, dtype=object),
+                    "joint_pos": dof_pos,
+                    "base_pos_w": root_pos,
+                    # Keep field naming parity with npz exporter.
+                    "base_quat_w": qpos_arr[:, 3:7],
+                }
+            )
         with open(args.save_path, "wb") as f:
             pickle.dump(motion_data, f)
         print(f"Saved to {args.save_path}")

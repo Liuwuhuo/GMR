@@ -14,6 +14,7 @@ from general_motion_retargeting.utils.lafan1 import load_bvh_file
 from general_motion_retargeting.kinematics_model import KinematicsModel
 from general_motion_retargeting import GeneralMotionRetargeting as GMR
 from general_motion_retargeting import RobotMotionViewer
+from general_motion_retargeting import qvel_from_qpos_central
 from rich import print
 
 
@@ -60,6 +61,7 @@ if __name__ == "__main__":
             "sfu",
             "noitom",
             "mocap",
+            "mocap_hands",
             "opt_mocap",
             "jpg_lafan1",
             "smpl4d_bvh",
@@ -173,6 +175,12 @@ if __name__ == "__main__":
         help="Drop the first retargeted frame (useful when frame 0 is unstable).",
     )
     parser.add_argument(
+        "--drop_first_n_frames",
+        type=int,
+        default=0,
+        help="Drop first N retargeted frames (applied before saving).",
+    )
+    parser.add_argument(
         "--export_motion_fields",
         action="store_true",
         default=False,
@@ -234,6 +242,9 @@ if __name__ == "__main__":
         elif args.format == "smpl4d_bvh":
             bvh_load_format = "smpl4d_bvh"
             gmr_src_human = "bvh_lafan1"
+        elif args.format == "mocap_hands":
+            bvh_load_format = "mocap_hands"
+            gmr_src_human = "bvh_mocap_hands"
 
         # Load BVH trajectory
         try:
@@ -260,6 +271,7 @@ if __name__ == "__main__":
                 src_human=gmr_src_human,
                 tgt_robot=args.robot,
                 actual_human_height=actual_human_height,
+                velocity_fps=src_fps,
             )
             model = mj.MjModel.from_xml_path(retargeter.xml_file)
             data = mj.MjData(model)
@@ -283,32 +295,36 @@ if __name__ == "__main__":
 
         # Retarget to get all qpos
         qpos_list = []
-        qvel_list = []
         try:
             for curr_frame in range(len(bvh_data_frames)):
                 smplx_data = bvh_data_frames[curr_frame]
 
                 # Retarget till convergence
-                qpos, qvel = retargeter.retarget(
+                qpos, _ = retargeter.retarget(
                     smplx_data,
                     offset_to_ground=True,
                     no_fly=args.no_fly
                 )
 
                 qpos_list.append(qpos.copy())
-                qvel_list.append(qvel.copy())
         except Exception as e:
             print(f"Error retargeting {bvh_file_path}: {e}")
             continue
 
         qpos_list = np.array(qpos_list)
-        qvel_list = np.array(qvel_list)
+        drop_n = max(0, int(args.drop_first_n_frames))
         if args.drop_first_frame:
-            if qpos_list.shape[0] <= 1:
-                print(f"Skipping {bvh_file_path}: cannot drop first frame (<=1 frame).")
+            drop_n = max(drop_n, 1)
+        if drop_n > 0:
+            if qpos_list.shape[0] <= drop_n:
+                print(
+                    f"Skipping {bvh_file_path}: cannot drop first {drop_n} frame(s) "
+                    f"(total={qpos_list.shape[0]})."
+                )
                 continue
-            qpos_list = qpos_list[1:]
-            qvel_list = qvel_list[1:]
+            qpos_list = qpos_list[drop_n:]
+        # 基于最终保留的 qpos 序列统一重算速度，确保 drop 后速度与轨迹一致。
+        qvel_list = qvel_from_qpos_central(qpos_list, src_fps)
         root_pos = qpos_list[:, :3]
         root_rot = qpos_list[:, 3:7]  # Keep wxyz format
         dof_pos = qpos_list[:, 7:]

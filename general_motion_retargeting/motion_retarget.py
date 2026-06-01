@@ -230,6 +230,7 @@ class GeneralMotionRetargeting:
         offset_to_ground=False,
         no_fly=False,
         apply_ground_alignment=True,
+        ground_align_scope="full_body",
     ):
         # === 帧四元数符号对齐 ===
         if self.last_human_data is not None:
@@ -251,7 +252,9 @@ class GeneralMotionRetargeting:
         # self.ground_offset = self.calculate_foot_bottom_offset()
         if apply_ground_alignment:
             if offset_to_ground and no_fly:
-                human_data = self.offset_human_data_to_ground(human_data)
+                human_data = self.offset_human_data_to_ground(
+                    human_data, scope=ground_align_scope
+                )
             else:
                 human_data = self.offset_human_data_to_ground_fly(human_data)
 
@@ -281,6 +284,7 @@ class GeneralMotionRetargeting:
         offset_to_ground=True,
         no_fly=False,
         apply_ground_alignment=True,
+        ground_align_scope="full_body",
     ):
         # Update the task targets
         self.update_targets(
@@ -288,6 +292,7 @@ class GeneralMotionRetargeting:
             offset_to_ground=offset_to_ground,
             no_fly=no_fly,
             apply_ground_alignment=apply_ground_alignment,
+            ground_align_scope=ground_align_scope,
         )
 
         if self.use_ik_match_table1:
@@ -407,16 +412,35 @@ class GeneralMotionRetargeting:
            
         return offset_human_data
 
-    def offset_human_data_to_ground(self, human_data):
-        """find the lowest point of the human data and offset the human data to the ground"""
-        foot_like_heights = [
-            pos[2]
-            for body_name, (pos, quat) in human_data.items()
-            if "foot" in body_name.lower()
-        ]
-        # Fallback for datasets that do not name foot joints with "Foot/foot"
-        # (e.g., ankle/toe naming only).
-        candidate_heights = foot_like_heights or [pos[2] for pos, quat in human_data.values()]
+    def offset_human_data_to_ground(self, human_data, scope="full_body"):
+        """Align human motion so a reference height sits at z=0.
+
+        Parameters
+        ----------
+        human_data : dict
+        scope : {"full_body", "feet_hint"}
+            - full_body (default): minimum z over **all** tracked bodies. Better for
+              crawling / lying where the lowest point may not be the feet.
+            - feet_hint: prefer joints whose name contains "foot"; if none, use all
+              bodies. Can help when only feet should define ground for upright motion.
+        """
+        all_heights = [pos[2] for pos, quat in human_data.values()]
+        if scope == "full_body":
+            candidate_heights = all_heights
+        elif scope == "feet_hint":
+            foot_like_heights = [
+                pos[2]
+                for body_name, (pos, quat) in human_data.items()
+                if "foot" in body_name.lower()
+            ]
+            # Fallback when no "foot" in names (e.g. ankle/toe only).
+            candidate_heights = foot_like_heights or all_heights
+        else:
+            raise ValueError(
+                f"Unknown ground_align_scope / scope={scope!r}; "
+                "expected 'feet_hint' or 'full_body'."
+            )
+
         lowest_pos = min(candidate_heights)
 
         if not np.isfinite(lowest_pos):

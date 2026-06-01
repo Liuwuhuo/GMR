@@ -71,10 +71,19 @@ def load_smplx_from_pkl(pkl_path, smplx_body_model_path, clip_key=None):
 
 def load_smplx_file(smplx_file, smplx_body_model_path):
     smplx_data = np.load(smplx_file, allow_pickle=True)
+    # npz may omit gender (e.g. some exports); match pkl loader default.
+    if "gender" not in smplx_data.files:
+        gender = "neutral"
+    else:
+        g = smplx_data["gender"]
+        if isinstance(g, np.ndarray) and g.size == 1:
+            gender = str(g.item())
+        else:
+            gender = str(g)
     body_model = smplx.create(
         smplx_body_model_path,
         "smplx",
-        gender=str(smplx_data["gender"]),
+        gender=gender,
         use_pca=False,
     )
     # print(smplx_data["pose_body"].shape)

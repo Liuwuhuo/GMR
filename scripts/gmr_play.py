@@ -155,7 +155,7 @@ def main():
     parser.add_argument("robot", help="机器人名（需在 ROBOT_XML_DICT 中）")
     parser.add_argument("motion_file", help="运动文件路径（.npz/.pkl）")
     parser.add_argument(
-        "--quat-format",
+        "--quat_format",
         choices=["wxyz", "xyzw"],
         default="wxyz",
         help="输入文件里的根四元数格式（默认 wxyz）",
@@ -165,12 +165,6 @@ def main():
         type=float,
         default=None,
         help="手动指定播放帧率（Hz），会覆盖文件中的帧率信息",
-    )
-    parser.add_argument(
-        "--start-frame",
-        type=int,
-        default=0,
-        help="播放起始帧索引（默认0；若首帧异常可设为1）",
     )
     args = parser.parse_args()
 
@@ -214,14 +208,14 @@ def main():
             qpos_seq = np.concatenate([qpos_seq, padding], axis=1)
     
     # 调整高度
-    if qpos_seq[0, 2] < 0.3:
-        height_diff = 0.95 - qpos_seq[0, 2]
-        print(f"调整高度: +{height_diff:.3f}")
-        qpos_seq[:, 2] += height_diff
+    # if qpos_seq[0, 2] < 0.3:
+    #     height_diff = 0.95 - qpos_seq[0, 2]
+    #     print(f"调整高度: +{height_diff:.3f}")
+    #     qpos_seq[:, 2] += height_diff
     
     # 播放控制变量
     paused = True  # 初始为暂停状态
-    idx = max(0, min(len(qpos_seq) - 1, int(args.start_frame)))
+    idx = 0
     base_frame_time = 1.0 / frequency
     speed_scale = 1.0
     frame_time = base_frame_time / speed_scale
@@ -271,7 +265,7 @@ def main():
         # 左右方向键：百分比跳转
         elif keycode == 262:  # 右箭头
             jump_percent = 5 if shift_pressed else 1
-            jump_frames = 1
+            jump_frames = max(1, int(len(qpos_seq) * jump_percent / 100))
             idx = min(len(qpos_seq) - 1, idx + jump_frames)
             print(f"\n前进{jump_percent}%: {idx}帧 ({jump_frames}帧)")
             
@@ -283,8 +277,8 @@ def main():
         
         # R键：重置
         elif keycode == 114:  # R
-            idx = max(0, min(len(qpos_seq) - 1, int(args.start_frame)))
-            print(f"\n重置到起始帧: {idx}")
+            idx = 0
+            print("\n重置到第一帧")
         
         # 重置Shift状态（除非是Shift键本身）
         shift_pressed = False

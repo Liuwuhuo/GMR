@@ -4,20 +4,20 @@
     "ground_height": -0.0,
     "human_height_assumption": 1.8,
     "use_ik_match_table1": true,
-    "use_ik_match_table2": true,
+    "use_ik_match_table2": false,
     "human_scale_table": {
-        "pelvis": 1.1,
-        "spine3": 1.1,
-        "left_hip": 1.1,
-        "right_hip": 1.1,
-        "left_knee": 1.1,
-        "right_knee": 1.1,
-        "left_foot": 1.1,
-        "right_foot": 1.1,
-        "left_shoulder": 1.1,
-        "right_shoulder": 1.1,
-        "left_elbow": 1.1,
-        "right_elbow": 1.1
+        "pelvis": 1.0,
+        "spine2": 1.0,
+        "left_hip": 1.0,
+        "right_hip": 1.0,
+        "left_knee": 1.0,
+        "right_knee": 1.0,
+        "left_foot": 0.9,
+        "right_foot": 0.9,
+        "left_shoulder": 1.0,
+        "right_shoulder": 1.0,
+        "left_elbow": 1.0,
+        "right_elbow": 1.0
     },
     "ik_match_table1": {
         "pelvis": [
@@ -36,7 +36,7 @@
                 -0.5
             ]
         ],
-        "hipRollLeft": [
+        "thighLeft": [
             "left_hip",
             0,
             10,
@@ -54,8 +54,8 @@
         ],
         "shinLeft": [
             "left_knee",
-            0,
-            10,
+            50,
+            1,
             [
                 0.0,
                 0.0,
@@ -68,7 +68,7 @@
                 -0.5
             ]
         ],
-        "toeLeft": [
+        "foot_bottom_left": [
             "left_foot",
             100,
             10,
@@ -84,7 +84,7 @@
                 -0.5
             ]
         ],
-        "hipRollRight": [
+        "thighRight": [
             "right_hip",
             0,
             10,
@@ -102,8 +102,8 @@
         ],
         "shinRight": [
             "right_knee",
-            0,
-            10,
+            50,
+            1,
             [
                 0.0,
                 0.0,
@@ -116,7 +116,7 @@
                 -0.5
             ]
         ],
-        "toeRight": [
+        "foot_bottom_right": [
             "right_foot",
             100,
             10,
@@ -133,8 +133,8 @@
             ]
         ],
         "torso": [
-            "spine3",
-            0,
+            "spine2",
+            100,
             10,
             [
                 0.0,
@@ -150,8 +150,8 @@
         ],
         "shoulderRollLeft": [
             "left_shoulder",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -166,8 +166,8 @@
         ],
         "elbowLeft": [
             "left_elbow",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -182,8 +182,8 @@
         ],
         "shoulderRollRight": [
             "right_shoulder",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -198,8 +198,8 @@
         ],
         "elbowRight": [
             "right_elbow",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,

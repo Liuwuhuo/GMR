@@ -104,21 +104,6 @@ def main():
     )
     parser.add_argument("--start_frame", type=int, default=0, help="Start frame (inclusive)")
     parser.add_argument("--end_frame", type=int, default=None, help="End frame (exclusive)")
-    parser.add_argument(
-        "--drop_first_frame",
-        action="store_true",
-        default=False,
-        help="Drop the first retargeted frame (useful when frame 0 is unstable).",
-    )
-    parser.add_argument(
-        "--export_motion_fields",
-        action="store_true",
-        default=False,
-        help=(
-            "Also export motion fields: framerate, joint_names, joint_pos, "
-            "base_pos_w, base_quat_w."
-        ),
-    )
     args = parser.parse_args()
 
     if args.save_path is None:
@@ -199,13 +184,6 @@ def main():
 
     qpos_arr = np.asarray(qpos_list)
     qvel_arr = np.asarray(qvel_list)
-    if args.drop_first_frame:
-        if qpos_arr.shape[0] <= 1:
-            raise ValueError("Cannot drop first frame: sequence has <= 1 frame.")
-        qpos_arr = qpos_arr[1:]
-        qvel_arr = qvel_arr[1:]
-        print("Dropped first retargeted frame.")
-
     root_pos = qpos_arr[:, :3]
     root_rot = qpos_arr[:, 3:7]  # wxyz
     dof_pos = qpos_arr[:, 7:]
@@ -251,28 +229,6 @@ def main():
         "dof_pos": dof_pos,
         "dof_vel": dof_vel,
     }
-
-    # Optional field names used by downstream motion pipelines.
-    # - framerate: scalar-like array [fps]
-    # - joint_names: actuator order (same order as joint_pos columns)
-    # - joint_pos: robot joint positions, shape [T, DoF]
-    # - base_pos_w: base position in world frame, shape [T, 3]
-    # - base_quat_w: base quaternion (wxyz) in world frame, shape [T, 4]
-    if args.export_motion_fields:
-        motor_name_by_id = sorted(
-            retargeter.robot_motor_names.items(), key=lambda kv: kv[1]
-        )
-        joint_names = [name for name, _ in motor_name_by_id]
-        save_dict.update(
-            {
-                "framerate": np.array([output_fps], dtype=np.float64),
-                "joint_names": np.asarray(joint_names, dtype=object),
-                "joint_pos": dof_pos,
-                "base_pos_w": root_pos,
-                "base_quat_w": root_rot,
-            }
-        )
-
     if local_body_pos is not None:
         save_dict["local_body_pos"] = local_body_pos
     if body_names is not None:

@@ -2,9 +2,9 @@
     "robot_root_name": "pelvis",
     "human_root_name": "pelvis",
     "ground_height": 0.0,
-    "human_height_assumption": 1.6,
+    "human_height_assumption": 1.8,
     "use_ik_match_table1": true,
-    "use_ik_match_table2": true,
+    "use_ik_match_table2": false,
     "human_scale_table": {
         "pelvis": 1.0,
         "spine2": 1.0,
@@ -12,8 +12,8 @@
         "right_hip": 1.0,
         "left_knee": 1.0,
         "right_knee": 1.0,
-        "left_foot": 1.0,
-        "right_foot": 1.0,
+        "left_foot": 0.9,
+        "right_foot": 0.9,
         "left_shoulder": 1.0,
         "right_shoulder": 1.0,
         "left_elbow": 1.0,
@@ -56,8 +56,8 @@
         ],
         "shinLeft": [
             "left_knee",
-            0,
-            10,
+            50,
+            1,
             [
                 0.0,
                 0.0,
@@ -104,8 +104,8 @@
         ],
         "shinRight": [
             "right_knee",
-            0,
-            10,
+            50,
+            1,
             [
                 0.0,
                 0.0,
@@ -136,8 +136,8 @@
         ],
         "torso": [
             "spine2",
-            0,
             100,
+            10,
             [
                 0.0,
                 0.0,
@@ -152,8 +152,8 @@
         ],
         "shoulderRollLeft": [
             "left_shoulder",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -168,8 +168,8 @@
         ],
         "elbowLeft": [
             "left_elbow",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -184,8 +184,8 @@
         ],
         "wristRollLeft": [
             "left_wrist",
+            100,
             0,
-            10,
             [
                 0.0,
                 0.0,
@@ -200,8 +200,8 @@
         ],
         "shoulderRollRight": [
             "right_shoulder",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -216,8 +216,8 @@
         ],
         "elbowRight": [
             "right_elbow",
-            0,
-            10,
+            50,
+            2,
             [
                 0.0,
                 0.0,
@@ -232,8 +232,8 @@
         ],
         "wristRollRight": [
             "right_wrist",
+            100,
             0,
-            10,
             [
                 0.0,
                 0.0,
