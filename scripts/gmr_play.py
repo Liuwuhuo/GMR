@@ -166,6 +166,26 @@ def main():
         default=None,
         help="手动指定播放帧率（Hz），会覆盖文件中的帧率信息",
     )
+    parser.add_argument(
+        "--box_pos",
+        type=float,
+        nargs=2,
+        default=None,
+        metavar=("X", "Y"),
+        help="覆盖场景中 box body 的世界 xy（绝对坐标，仅当场景含 box 时生效）",
+    )
+    parser.add_argument(
+        "--box_z",
+        type=float,
+        default=None,
+        help="覆盖 box body 的世界 z（默认沿用 xml 中的值）",
+    )
+    parser.add_argument(
+        "--box_step",
+        type=float,
+        default=0.05,
+        help="实时微调 box 时每次移动的步长（米）",
+    )
     args = parser.parse_args()
 
     robot = args.robot
@@ -194,7 +214,19 @@ def main():
     # 加载模型
     model = mujoco.MjModel.from_xml_path(scene_path)
     data = mujoco.MjData(model)
-    
+
+    # 可选的固定交互物体（box）。静态 body 没有自由度，直接改 model.body_pos 即可移动。
+    box_bid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "box")
+    box_step = args.box_step
+    if box_bid != -1:
+        if args.box_pos is not None:
+            model.body_pos[box_bid, :2] = args.box_pos  # 覆盖（绝对坐标），非叠加
+        if args.box_z is not None:
+            model.body_pos[box_bid, 2] = args.box_z
+        bp = model.body_pos[box_bid]
+        print(f"检测到 box，初始位置: [{bp[0]:.3f}, {bp[1]:.3f}, {bp[2]:.3f}]")
+        print("  实时微调: I/K = ±x, L/J = ±y, U/O = ±z（步长 --box_step）")
+
     print(f"模型nq: {model.nq}, 数据nq: {qpos_seq.shape[1]}")
     
     # 调整维度
@@ -279,7 +311,24 @@ def main():
         elif keycode == 114:  # R
             idx = 0
             print("\n重置到第一帧")
-        
+
+        # I/K/J/L/U/O：实时微调 box 位置（仅当场景含 box）
+        elif box_bid != -1 and keycode in (73, 75, 74, 76, 85, 79):
+            if keycode == 73:    # I: +x
+                model.body_pos[box_bid, 0] += box_step
+            elif keycode == 75:  # K: -x
+                model.body_pos[box_bid, 0] -= box_step
+            elif keycode == 76:  # L: +y
+                model.body_pos[box_bid, 1] += box_step
+            elif keycode == 74:  # J: -y
+                model.body_pos[box_bid, 1] -= box_step
+            elif keycode == 85:  # U: +z
+                model.body_pos[box_bid, 2] += box_step
+            elif keycode == 79:  # O: -z
+                model.body_pos[box_bid, 2] -= box_step
+            bp = model.body_pos[box_bid]
+            print(f"\n箱子位置(绝对): [{bp[0]:.3f}, {bp[1]:.3f}, {bp[2]:.3f}]")
+
         # 重置Shift状态（除非是Shift键本身）
         shift_pressed = False
     
@@ -295,6 +344,8 @@ def main():
     print("  上下箭头: 单帧跳转")
     print("  左右箭头: 跳转1% (先按Shift再按左右: 跳转5%)")
     print("  R: 重置到第一帧")
+    if box_bid != -1:
+        print("  I/K: 箱子 ±x   L/J: 箱子 ±y   U/O: 箱子 ±z")
     print("\n状态: 按空格开始播放")
     
     # 创建可视化

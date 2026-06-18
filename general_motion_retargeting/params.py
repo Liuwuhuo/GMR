@@ -22,6 +22,7 @@ ROBOT_XML_DICT = {
     "booster_k1": ASSET_ROOT / "booster_k1" / "K1_serial.xml",
     "pnd_adam_lite": ASSET_ROOT / "pnd_adam_lite" / "scene.xml",
     "adam_sp": ASSET_ROOT / "adam_sp" / "scene.xml",
+    "adam_sp_box": ASSET_ROOT / "adam_sp" / "scene_box.xml",
     "adam_sp_pro": ASSET_ROOT / "adam_sp_pro" / "scene_adam_sp_pro.xml",
     "tienkung": ASSET_ROOT / "tienkung" / "mjcf" / "tienkung.xml",
     "pal_talos": ASSET_ROOT / "pal_talos" / "talos.xml",
@@ -81,11 +82,12 @@ IK_CONFIG_DICT = {
         "adam_sp": IK_CONFIG_ROOT / "bvh_mocap_adam_sp.json",
         "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro.json",
     },
-    "bvh_mocap_hands": {
-        "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro_hands.json",
-    },
     "bvh_opt_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
+        "adam_sp_box": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
+    },
+    "bvh_mocap_hands": {
+        "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro_hands.json",
     },
     "bvh_joint_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_joint_mocap_adam_sp.json",
@@ -135,6 +137,7 @@ ROBOT_BASE_DICT = {
     "booster_k1": "Trunk",
     "pnd_adam_lite": "pelvis",
     "adam_sp": "pelvis",
+    "adam_sp_box": "pelvis",
     "adam_sp_pro": "pelvis",
     "tienkung": "Base_link",
     "pal_talos": "base_link",
@@ -158,6 +161,7 @@ VIEWER_CAM_DISTANCE_DICT = {
     "booster_k1": 2.0,
     "pnd_adam_lite": 3.0,
     "adam_sp": 3.0,
+    "adam_sp_box": 3.0,
     "adam_sp_pro": 3.0,
     "tienkung": 3.0,
     "pal_talos": 3.0,

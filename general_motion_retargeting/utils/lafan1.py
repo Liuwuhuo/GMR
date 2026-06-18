@@ -1,8 +1,34 @@
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 from scipy.spatial.transform import Rotation as R
 
 import general_motion_retargeting.utils.lafan_vendor.utils as utils
 from general_motion_retargeting.utils.lafan_vendor.extract import read_bvh
+
+# Temporal low-pass strength (in frames) for noisy mocap sources. 0 disables it.
+OPT_MOCAP_SMOOTH_SIGMA = 2.0
+
+
+def _smooth_frames(frames, sigma):
+    """Low-pass each bone's position and orientation over time to remove
+    high-frequency capture noise (which the IK would otherwise reproduce as
+    jitter). Quaternions are sign-aligned and renormalized after filtering."""
+    if sigma <= 0 or len(frames) < 3:
+        return frames
+    bones = list(frames[0].keys())
+    n = len(frames)
+    for bone in bones:
+        pos = np.array([frames[i][bone][0] for i in range(n)], dtype=float)
+        quat = np.array([frames[i][bone][1] for i in range(n)], dtype=float)
+        for i in range(1, n):
+            if np.dot(quat[i - 1], quat[i]) < 0:
+                quat[i] = -quat[i]
+        pos = gaussian_filter1d(pos, sigma, axis=0, mode="nearest")
+        quat = gaussian_filter1d(quat, sigma, axis=0, mode="nearest")
+        quat /= np.linalg.norm(quat, axis=1, keepdims=True)
+        for i in range(n):
+            frames[i][bone] = [pos[i], quat[i]]
+    return frames
 
 
 def load_bvh_file(bvh_file, format="lafan1"):
@@ -19,7 +45,11 @@ def load_bvh_file(bvh_file, format="lafan1"):
 
     # Keep the same axis conversion as existing BVH pipelines:
     # y-up BVH -> z-up retarget space used by downstream IK.
-    rotation_matrix = np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]])
+    # opt_mocap data is already z-up, so skip the conversion (identity).
+    if format == "opt_mocap":
+        rotation_matrix = np.eye(3)
+    else:
+        rotation_matrix = np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]])
     rotation_quat = R.from_matrix(rotation_matrix).as_quat(scalar_first=True)
 
     # Most legacy BVH datasets in this repo are in centimeters and need /100.
@@ -56,9 +86,9 @@ def load_bvh_file(bvh_file, format="lafan1"):
             result["LeftFootMod"] = [result["LeftFoot"][0], result["LeftFoot"][1]]
             result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
         elif format == "opt_mocap":
-            # New opt-mocap skeleton: synthesize FootMod from ankle-roll joints.
-            result["LeftFootMod"] = [result["ankle_l"][0], result["ankle_l"][1]]
-            result["RightFootMod"] = [result["ankle_r"][0], result["ankle_r"][1]]
+            # Same BVH skeleton and foot handling as mocap (Hips / LeftFoot).
+            result["LeftFootMod"]  = [result["LeftFoot"][0],  result["LeftFoot"][1]]
+            result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
         elif format == "smpl4d_bvh":
             # 4D-Human BVH already uses its own label space.
             # Use dedicated IK config bvh_smpl4d_bvh_* for name mapping.
@@ -71,7 +101,12 @@ def load_bvh_file(bvh_file, format="lafan1"):
             raise ValueError(f"Invalid format: {format}")
             
         frames.append(result)
-    
+
+    # opt_mocap captures contain high-frequency rotational noise; smooth it so
+    # the retargeted robot does not vibrate.
+    if format == "opt_mocap":
+        frames = _smooth_frames(frames, OPT_MOCAP_SMOOTH_SIGMA)
+
     # human_height = result["Head"][0][2] - min(result["LeftFootMod"][0][2], result["RightFootMod"][0][2])
     # human_height = human_height + 0.2  # cm to m
     human_height = 1.75  # cm to m

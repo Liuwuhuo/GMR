@@ -448,7 +448,10 @@ class GeneralMotionRetargeting:
                 f"Invalid ground reference z={lowest_pos}. "
                 "Please check input human_data values."
             )
-        offset_vec = np.array([0, 0, lowest_pos])
+        # Shift the lowest tracked point to z=0, then lift by base_height_offset
+        # to compensate for robot foot collision geometry sitting below the
+        # tracked foot body (otherwise the soles sink into the ground).
+        offset_vec = np.array([0, 0, lowest_pos - self.base_height_offset])
         return {
             body_name: [pos - offset_vec, quat]
             for body_name, (pos, quat) in human_data.items()

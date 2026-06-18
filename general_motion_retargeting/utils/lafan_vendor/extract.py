@@ -61,6 +61,10 @@ def read_bvh(filename, start=None, end=None, order=None):
     orients = np.array([]).reshape((0, 4))
     offsets = np.array([]).reshape((0, 3))
     parents = np.array([], dtype=int)
+    # Per-joint euler rotation order. Some BVH exporters use a different
+    # rotation order for individual joints (e.g. shoulders/forearms), so we
+    # must convert each joint with its own order instead of a single global one.
+    order_by_index = {}
 
     # Parse the  file, line by line
     for line in f:
@@ -95,13 +99,15 @@ def read_bvh(filename, start=None, end=None, order=None):
         chanmatch = re.match(r"\s*CHANNELS\s+(\d+)", line)
         if chanmatch:
             channels = int(chanmatch.group(1))
+            channelis = 0 if channels == 3 else 3
+            channelie = 3 if channels == 3 else 6
+            parts = line.split()[2 + channelis:2 + channelie]
+            if any([p not in channelmap for p in parts]):
+                continue
+            this_order = "".join([channelmap[p] for p in parts])
             if order is None:
-                channelis = 0 if channels == 3 else 3
-                channelie = 3 if channels == 3 else 6
-                parts = line.split()[2 + channelis:2 + channelie]
-                if any([p not in channelmap for p in parts]):
-                    continue
-                order = "".join([channelmap[p] for p in parts])
+                order = this_order
+            order_by_index[active] = this_order
             continue
 
         jmatch = re.match("\s*JOINT\s+(\w+)", line)
@@ -167,8 +173,16 @@ def read_bvh(filename, start=None, end=None, order=None):
 
     f.close()
 
-    rotations = utils.euler_to_quat(np.radians(rotations), order=order)
-    rotations = utils.remove_quat_discontinuities(rotations)
+    rotations_rad = np.radians(rotations)
+    # Convert per joint using its own euler order (falls back to the global
+    # order when a joint did not declare one). For files with a single shared
+    # order this is identical to the original single-call behavior.
+    quats = np.zeros(rotations.shape[:-1] + (4,))
+    for j in range(len(names)):
+        quats[:, j, :] = utils.euler_to_quat(
+            rotations_rad[:, j, :], order=order_by_index.get(j, order)
+        )
+    rotations = utils.remove_quat_discontinuities(quats)
 
     return Anim(rotations, positions, offsets, parents, names)
 

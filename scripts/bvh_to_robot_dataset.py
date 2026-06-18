@@ -1,189 +1,166 @@
-import argparse
-import pathlib
-import os
-import mujoco as mj
-import numpy as np
-from tqdm import tqdm
-import torch
-import pickle
+#!/usr/bin/env python3
+"""Batch version of bvh_to_robot.py.
 
-from general_motion_retargeting.utils.lafan1 import load_bvh_file
-from general_motion_retargeting.kinematics_model import KinematicsModel
-from general_motion_retargeting import GeneralMotionRetargeting as GMR
+Walks a folder of BVH files and retargets each one to a robot, reusing the exact
+same core (formats, base_height_offset, ground/no_fly handling, pkl/npz output,
+extra fields) as scripts/bvh_to_robot.py. No viewer/visualization.
+"""
+import argparse
+import os
+
+from tqdm import tqdm
 from rich import print
+
+from general_motion_retargeting import GeneralMotionRetargeting as GMR
+from general_motion_retargeting.utils.lafan1 import load_bvh_file
+
+from bvh_to_robot import (
+    infer_fps_from_bvh_frame_time,
+    format_to_loader_and_src,
+    filter_synthesized_keys,
+    retarget_frames,
+    build_motion_data,
+    write_motion_file,
+)
+
+
+def build_arg_parser():
+    parser = argparse.ArgumentParser(
+        description="Batch retarget a folder of BVH files to a robot (no viewer)."
+    )
+    parser.add_argument("--src_folder", required=True, help="Folder of BVH files (searched recursively).")
+    parser.add_argument(
+        "--tgt_folder",
+        default=None,
+        help="Output folder. Default: retarget/{robot}/{format}.",
+    )
+    parser.add_argument(
+        "--format",
+        choices=[
+            "lafan1", "nokov", "sfu", "noitom", "mocap", "mocap_hands",
+            "opt_mocap", "jpg_lafan1", "smpl4d_bvh",
+        ],
+        default="lafan1",
+    )
+    parser.add_argument(
+        "--robot",
+        choices=[
+            "unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy",
+            "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp", "adam_sp_box",
+        ],
+        default="unitree_g1",
+    )
+    parser.add_argument("--output_format", choices=["auto", "pkl", "npz"], default="auto")
+    parser.add_argument("--compressed", action="store_true", default=False)
+    parser.add_argument(
+        "--motion_fps",
+        "--target_fps",
+        dest="motion_fps",
+        default=None,
+        type=float,
+        help="Output FPS. If omitted, inferred per file from BVH Frame Time.",
+    )
+    parser.add_argument("--start_frame", type=int, default=0)
+    parser.add_argument("--end_frame", type=int, default=None)
+    parser.add_argument("--drop_first_frame", action="store_true", default=False)
+    parser.add_argument("--drop_first_n_frames", type=int, default=0)
+    parser.add_argument(
+        "--fly",
+        action="store_true",
+        default=False,
+        help="Disable per-frame ground alignment (no_fly=False). Default keeps the root grounded.",
+    )
+    parser.add_argument("--base_height_offset", type=float, default=0.0)
+    parser.add_argument("--compute_local_body_pos", action="store_true", default=False)
+    parser.add_argument("--height_adjust", action="store_true", default=False)
+    parser.add_argument("--perframe_adjust", action="store_true", default=False)
+    parser.add_argument("--export_motion_fields", action="store_true", default=False)
+    parser.add_argument(
+        "--override",
+        action="store_true",
+        default=False,
+        help="Re-process files even if the output already exists.",
+    )
+    return parser
+
+
+def retarget_one_file(bvh_file, args, out_ext):
+    bvh_load_format, gmr_src_human = format_to_loader_and_src(args.format)
+    frames, actual_human_height = load_bvh_file(bvh_file, format=bvh_load_format)
+
+    start = max(0, args.start_frame)
+    end = args.end_frame if args.end_frame is not None else len(frames)
+    frames = frames[start:end]
+
+    if args.motion_fps is None:
+        motion_fps = infer_fps_from_bvh_frame_time(bvh_file)
+    else:
+        motion_fps = int(round(args.motion_fps))
+
+    retargeter = GMR(
+        src_human=gmr_src_human,
+        tgt_robot=args.robot,
+        actual_human_height=actual_human_height,
+        base_height_offset=args.base_height_offset,
+    )
+    frames = filter_synthesized_keys(retargeter, frames, args.format)
+
+    qpos_list, qvel_list = retarget_frames(
+        retargeter, frames, no_fly=not args.fly,
+        drop_first_frame=args.drop_first_frame, show_progress=False,
+    )
+    return build_motion_data(
+        retargeter,
+        motion_fps,
+        qpos_list,
+        qvel_list,
+        drop_first_n_frames=args.drop_first_n_frames,
+        compute_local_body_pos=args.compute_local_body_pos,
+        height_adjust=args.height_adjust,
+        perframe_adjust=args.perframe_adjust,
+        export_motion_fields=args.export_motion_fields,
+    )
+
+
+def main():
+    args = build_arg_parser().parse_args()
+
+    tgt_folder = args.tgt_folder or os.path.join("retarget", args.robot, args.format)
+    out_ext = "npz" if args.output_format == "npz" else "pkl"
+    print(f"输出目录: {tgt_folder} (.{out_ext})")
+
+    bvh_files = []
+    for dirpath, _, filenames in os.walk(args.src_folder):
+        for filename in sorted(filenames):
+            if filename.lower().endswith(".bvh"):
+                bvh_files.append(os.path.join(dirpath, filename))
+
+    if not bvh_files:
+        print(f"在 {args.src_folder} 下没有找到 .bvh 文件")
+        return
+
+    success, skipped, failed = 0, 0, 0
+    for bvh_file in tqdm(bvh_files, desc="Retargeting files"):
+        rel = os.path.relpath(bvh_file, args.src_folder)
+        tgt_file = os.path.join(tgt_folder, os.path.splitext(rel)[0] + f".{out_ext}")
+
+        if os.path.exists(tgt_file) and not args.override:
+            skipped += 1
+            continue
+
+        try:
+            motion_data = retarget_one_file(bvh_file, args, out_ext)
+            os.makedirs(os.path.dirname(tgt_file), exist_ok=True)
+            write_motion_file(motion_data, tgt_file, args.output_format, args.compressed)
+            success += 1
+        except Exception as e:
+            failed += 1
+            print(f"[red]失败[/red] {bvh_file}: {e}")
+
+    print("=" * 50)
+    print(f"完成: 成功 {success} | 跳过 {skipped} | 失败 {failed}")
+    print(f"输出保存在: {tgt_folder}")
 
 
 if __name__ == "__main__":
-    HERE = pathlib.Path(__file__).parent
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--src_folder",
-        help="Folder containing BVH motion files to load.",
-        required=True,
-        type=str,
-    )
-    
-    parser.add_argument(
-        "--tgt_folder",
-        help="Folder to save the retargeted motion files.",
-        # default="../../motion_data/LAFAN1_g1_gmr"
-    )
-    
-    parser.add_argument(
-        "--robot",
-        choices=["unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy", "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp"],
-        default="unitree_g1",
-    )
-    
-    parser.add_argument(
-        "--override",
-        default=False,
-        action="store_true",
-    )
-    
-    parser.add_argument(
-        "--target_fps",
-        default=30,
-        type=int,
-        help="Target FPS for output motion. Used in FrameDuration.",
-    )
-    
-    parser.add_argument(
-        "--format",
-        choices=["lafan1", "nokov", "sfu", "noitom", "mocap"],
-        default="lafan1",
-        help="BVH format; affects how load_bvh_file parses joint hierarchy.",
-    )
-    parser.add_argument(
-        "--drop_first_frame",
-        action="store_true",
-        default=False,
-        help="Drop the first retargeted frame (useful when frame 0 is unstable).",
-    )
-
-    args = parser.parse_args()
-
-    if args.tgt_folder is None:
-        default_dir = "retarget"
-        datasets_dir = args.format
-        robot_dir = args.robot
-        os.makedirs(default_dir, exist_ok=True)
-        tgt_folder = os.path.join(default_dir, robot_dir, datasets_dir)
-        print(f"未指定保存路径，使用默认路径: {tgt_folder}")
-    
-    src_folder = args.src_folder
-    # tgt_folder = args.tgt_folder
-
-   
-   
-        
-    # walk over all files in src_folder
-    for dirpath, _, filenames in os.walk(src_folder):
-        for filename in tqdm(sorted(filenames), desc="Retargeting files"):
-            if not filename.endswith(".bvh"):
-                continue
-                
-            # get the bvh file path
-            bvh_file_path = os.path.join(dirpath, filename)
-            
-            # get the target file path
-            tgt_file_path = bvh_file_path.replace(src_folder, tgt_folder).replace(".bvh", ".pkl")
-
-            if os.path.exists(tgt_file_path) and not args.override:
-                print(f"Skipping {bvh_file_path} because {tgt_file_path} exists")
-                continue
-            
-            # Load LAFAN1 trajectory
-            try:
-                lafan1_data_frames, actual_human_height = load_bvh_file(
-                    bvh_file_path, format=args.format
-                )
-                src_fps = 30  # LAFAN1 data is typically 30 FPS
-            except Exception as e:
-                print(f"Error loading {bvh_file_path}: {e}")
-                continue
-
-            
-            # Initialize the retargeting system
-            retarget = GMR(
-                src_human=f"bvh_{args.format}",
-                tgt_robot=args.robot,
-                actual_human_height=actual_human_height,
-            )
-            model = mj.MjModel.from_xml_path(retarget.xml_file)
-            data = mj.MjData(model)
-
-            
-
-            # retarget to get all qpos
-            qpos_list = []
-            for curr_frame in range(len(lafan1_data_frames)):
-                smplx_data = lafan1_data_frames[curr_frame]
-                
-                # Retarget till convergence
-                qpos, qvel = retarget.retarget(smplx_data)
-                
-                qpos_list.append(qpos.copy())
-            
-            qpos_list = np.array(qpos_list)
-            if args.drop_first_frame:
-                if qpos_list.shape[0] <= 1:
-                    print(f"Skipping {bvh_file_path}: cannot drop first frame (<=1 frame).")
-                    continue
-                qpos_list = qpos_list[1:]
-
-            # Initialize the forward kinematics
-            # device = "cuda:0" if torch.cuda.is_available() else "cpu"
-            # kinematics_model = KinematicsModel(retarget.xml_file, device=device)
-            
-            root_pos = qpos_list[:, :3]
-            root_rot = qpos_list[:, 3:7]
-            root_rot[:, [0, 1, 2, 3]] = root_rot[:, [1, 2, 3, 0]]
-            root_rot_xyzw = root_rot[:, [1, 2, 3, 0]]
-            dof_pos = qpos_list[:, 7:]
-            num_frames = root_pos.shape[0]
-            
-            # obtain local body pos
-            # identity_root_pos = torch.zeros((num_frames, 3), device=device)
-            # identity_root_rot = torch.zeros((num_frames, 4), device=device)
-            # identity_root_rot[:, -1] = 1.0
-            # local_body_pos, _ = kinematics_model.forward_kinematics(
-            #     identity_root_pos, 
-            #     identity_root_rot, 
-            #     torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-            # )
-            # body_names = kinematics_model.body_names
-
-            # HEIGHT_ADJUST = False
-            # PERFRAME_ADJUST = False
-            # if HEIGHT_ADJUST:
-            #     body_pos, _ = kinematics_model.forward_kinematics(
-            #         torch.from_numpy(root_pos).to(device=device, dtype=torch.float),
-            #         torch.from_numpy(root_rot_xyzw).to(device=device, dtype=torch.float),
-            #         torch.from_numpy(dof_pos).to(device=device, dtype=torch.float)
-            #     )
-            #     ground_offset = 0.00
-            #     if not PERFRAME_ADJUST:
-            #         lowest_height = torch.min(body_pos[..., 2]).item()
-            #         root_pos[:, 2] = root_pos[:, 2] - lowest_height + ground_offset
-            #     else:
-            #         for i in range(root_pos.shape[0]):
-            #             lowest_body_part = torch.min(body_pos[i, :, 2])
-            #             root_pos[i, 2] = root_pos[i, 2] - lowest_body_part + ground_offset
-
-            motion_data = {
-                "root_pos": root_pos,
-                "root_rot": root_rot,
-                "dof_pos": dof_pos,
-                "local_body_pos": None,  # local_body_pos.cpu().numpy(),
-                "fps": src_fps,
-                "link_body_list": None,
-            }
-            
-
-            os.makedirs(os.path.dirname(tgt_file_path), exist_ok=True)
-            with open(tgt_file_path, "wb") as f:
-                pickle.dump(motion_data, f)
-
-    print("Done. saved to ", tgt_folder)
+    main()
