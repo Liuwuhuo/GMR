@@ -308,7 +308,7 @@ def main():
         pbar.update(1)
 
         smplx_data = bvh_data_frames[i]
-        qpos, qvel = retargeter.retarget(smplx_data, offset_to_ground=False, no_fly=False)
+        qpos, qvel = retargeter.retarget(smplx_data, offset_to_ground=True, no_fly=False)
 
         if args.drop_first_frame and i == 0:
             i = (i + 1) % len(bvh_data_frames) if args.loop else i + 1

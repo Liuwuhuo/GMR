@@ -34,7 +34,31 @@ def load_motion_data(motion_file, quat_format="wxyz", fps_override=None):
             return float(m.group(1))
         return float(default_fps)
     
-    if ext == '.npz':
+    if ext == '.csv':
+        # G1 数据集 csv：每行 36 列 = root pos(3) + root quat(4) + 29 关节
+        rows = []
+        with open(motion_file, "r", newline="", encoding="utf-8") as f:
+            import csv as _csv
+            for i, row in enumerate(_csv.reader(f)):
+                if not row or all(c.strip() == "" for c in row):
+                    continue
+                if i == 0:
+                    try:
+                        float(row[0])
+                    except ValueError:
+                        continue  # 跳过表头行
+                rows.append([float(x) for x in row])
+        arr = np.asarray(rows, dtype=np.float64)
+        if arr.ndim != 2 or arr.shape[1] < 7:
+            raise ValueError(f"csv 列数异常: {arr.shape}，期望 >=7（pos3+quat4+关节）")
+        root_pos = arr[:, 0:3]
+        root_rot = to_wxyz(arr[:, 3:7], quat_format)
+        joints = arr[:, 7:]
+        qpos = np.concatenate([root_pos, root_rot, joints], axis=1)
+        print(f"使用 csv 数据: pos3+quat4+joint{joints.shape[1]} -> qpos {qpos.shape}")
+        frequency = infer_fps_from_name(motion_file, default_fps=50.0)
+
+    elif ext == '.npz':
         data = np.load(motion_file, allow_pickle=True)
         
         # 尝试不同的数据键名
@@ -151,9 +175,9 @@ def load_motion_data(motion_file, quat_format="wxyz", fps_override=None):
     return qpos, frequency
 
 def main():
-    parser = argparse.ArgumentParser(description="播放 GMR 运动文件（npz/pkl）")
+    parser = argparse.ArgumentParser(description="播放 GMR 运动文件（npz/pkl/npy/csv）")
     parser.add_argument("robot", help="机器人名（需在 ROBOT_XML_DICT 中）")
-    parser.add_argument("motion_file", help="运动文件路径（.npz/.pkl）")
+    parser.add_argument("motion_file", help="运动文件路径（.npz/.pkl/.npy/.csv）。csv 为 pos3+quat4+关节，记得配合 --quat_format xyzw")
     parser.add_argument(
         "--quat_format",
         choices=["wxyz", "xyzw"],

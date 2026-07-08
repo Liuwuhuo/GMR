@@ -81,6 +81,9 @@ IK_CONFIG_DICT = {
     "bvh_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_mocap_adam_sp.json",
         "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro.json",
+        "unitree_g1": IK_CONFIG_ROOT / "bvh_mocap_to_g1.json",
+        "unitree_g1_27dof": IK_CONFIG_ROOT / "bvh_mocap_to_g1.json",
+        "unitree_g1_with_hands": IK_CONFIG_ROOT / "bvh_mocap_to_g1.json",
     },
     "bvh_opt_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
