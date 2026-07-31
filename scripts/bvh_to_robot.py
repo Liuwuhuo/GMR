@@ -108,8 +108,18 @@ def build_arg_parser():
             "opt_mocap",
             "jpg_lafan1",
             "smpl4d_bvh",
+            "test_mocap",
         ],
         default="lafan1",
+    )
+    parser.add_argument(
+        "--already_z_up",
+        action="store_true",
+        default=False,
+        help=(
+            "Skip Y-up→Z-up conversion in load_bvh_file. Only for legacy captures "
+            "that are already z-up; typical Y-up BVH (e.g. PND) should leave this off."
+        ),
     )
     parser.add_argument(
         "--robot",
@@ -122,6 +132,7 @@ def build_arg_parser():
             "engineai_pm01",
             "pal_talos",
             "adam_sp_pro",
+            "adam_sp_pro_with_hands",
             "adam_sp",
         ],
         default="unitree_g1",
@@ -246,7 +257,11 @@ def main():
     # Some formats load with one loader name but use the lafan1 IK config.
     bvh_load_format, gmr_src_human = format_to_loader_and_src(args.format)
 
-    bvh_data_frames, actual_human_height = load_bvh_file(args.bvh_file, format=bvh_load_format)
+    bvh_data_frames, actual_human_height = load_bvh_file(
+        args.bvh_file,
+        format=bvh_load_format,
+        already_z_up=args.already_z_up,
+    )
 
     # Frame slicing.
     start = max(0, args.start_frame)

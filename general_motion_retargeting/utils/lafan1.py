@@ -31,7 +31,7 @@ def _smooth_frames(frames, sigma):
     return frames
 
 
-def load_bvh_file(bvh_file, format="lafan1"):
+def load_bvh_file(bvh_file, format="lafan1", already_z_up=False):
     """
     Must return a dictionary with the following structure:
     {
@@ -39,14 +39,22 @@ def load_bvh_file(bvh_file, format="lafan1"):
         "Spine": (position, orientation),
         ...
     }
+
+    Parameters
+    ----------
+    already_z_up : bool
+        If True, skip the Y-up → Z-up world-frame conversion (legacy OptiTrack
+        exports that are already z-up). Default False: apply the same conversion
+        as other BVH formats so height lands on Z (needed for typical Y-up BVH
+        such as PND / standard OptiTrack exports).
     """
     data = read_bvh(bvh_file)
     global_data = utils.quat_fk(data.quats, data.pos, data.parents)
 
-    # Keep the same axis conversion as existing BVH pipelines:
-    # y-up BVH -> z-up retarget space used by downstream IK.
-    # opt_mocap data is already z-up, so skip the conversion (identity).
-    if format == "opt_mocap":
+    # Y-up BVH → z-up retarget space used by downstream IK.
+    # Both position and orientation are transformed by the same world rotation.
+    # Only skip when the capture is already z-up (legacy opt_mocap path).
+    if format == "test_mocap":
         rotation_matrix = np.eye(3)
     else:
         rotation_matrix = np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]])
@@ -89,6 +97,9 @@ def load_bvh_file(bvh_file, format="lafan1"):
             # Same BVH skeleton and foot handling as mocap (Hips / LeftFoot).
             result["LeftFootMod"]  = [result["LeftFoot"][0],  result["LeftFoot"][1]]
             result["RightFootMod"] = [result["RightFoot"][0], result["RightFoot"][1]]
+        elif format == "test_mocap":
+            result["LeftFootMod"] = [result["LeftFoot"][0], result["LeftToeBase"][1]]
+            result["RightFootMod"] = [result["RightFoot"][0], result["RightToeBase"][1]]
         elif format == "smpl4d_bvh":
             # 4D-Human BVH already uses its own label space.
             # Use dedicated IK config bvh_smpl4d_bvh_* for name mapping.

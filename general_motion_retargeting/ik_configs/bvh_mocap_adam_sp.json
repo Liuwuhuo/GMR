@@ -2,12 +2,12 @@
     "robot_root_name": "pelvis",
     "human_root_name": "Hips",
     "ground_height": 0.0,
-    "human_height_assumption": 1.8,
+    "human_height_assumption": 1.65,
     "use_ik_match_table1": true,
     "use_ik_match_table2": false,
     "human_scale_table": {
         "Hips": 1.0,
-        "Spine1": 1.0,
+        "Spine": 1.0,
         "LeftUpLeg": 1.0,
         "RightUpLeg": 1.0,
         "LeftLeg": 1.0,
@@ -135,7 +135,7 @@
             ]
         ],
         "torso": [
-            "Spine1",
+            "Spine",
             0,
             100,
             [
@@ -150,10 +150,10 @@
                 -0.5
             ]
         ],
-        "shoulderYawLeft": [
+        "shoulderRollLeft": [
             "LeftArm",
             0,
-            20,
+            10,
             [
                 0.0,
                 0.0,
@@ -169,7 +169,7 @@
         "elbowLeft": [
             "LeftForeArm",
             0,
-            20,
+            10,
             [
                 0.0,
                 0.0,
@@ -184,12 +184,12 @@
         ],
         "wristRollLeft": [
             "LeftHand",
-            10,
-            20,
+            30,
+            0,
             [
                 0.0,
                 0.0,
-                0.0
+                -0.05
             ],
             [
                 0.70710678,
@@ -198,10 +198,10 @@
                 0.0
             ]
         ],
-        "shoulderYawRight": [
+        "shoulderRollRight": [
             "RightArm",
             0,
-            20,
+            10,
             [
                 0.0,
                 0.0,
@@ -217,7 +217,7 @@
         "elbowRight": [
             "RightForeArm",
             0,
-            20,
+            10,
             [
                 0.0,
                 0.0,
@@ -232,12 +232,12 @@
         ],
         "wristRollRight": [
             "RightHand",
-            10,
-            20,
+            30,
+            0,
             [
                 0.0,
                 0.0,
-                0.0
+                -0.05
             ],
             [
                 0.0,
@@ -361,7 +361,7 @@
             ]
         ],
         "torso": [
-            "Spine1",
+            "Spine",
             0,
             10,
             [

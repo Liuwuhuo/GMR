@@ -69,6 +69,12 @@ if __name__ == "__main__":
         default="lafan1",
         help="BVH format type.",
     )
+    parser.add_argument(
+        "--already_z_up",
+        action="store_true",
+        default=False,
+        help="Skip Y-up→Z-up conversion (legacy already-z-up captures only).",
+    )
 
     parser.add_argument(
         "--robot",
@@ -249,7 +255,9 @@ if __name__ == "__main__":
         # Load BVH trajectory
         try:
             bvh_data_frames, actual_human_height = load_bvh_file(
-                bvh_file_path, format=bvh_load_format
+                bvh_file_path,
+                format=bvh_load_format,
+                already_z_up=args.already_z_up,
             )
             
             # 帧裁剪

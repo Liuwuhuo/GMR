@@ -24,6 +24,7 @@ ROBOT_XML_DICT = {
     "adam_sp": ASSET_ROOT / "adam_sp" / "scene.xml",
     "adam_sp_box": ASSET_ROOT / "adam_sp" / "scene_box.xml",
     "adam_sp_pro": ASSET_ROOT / "adam_sp_pro" / "scene_adam_sp_pro.xml",
+    "adam_sp_pro_with_hands": ASSET_ROOT / "adam_sp_pro" / "scene_adam_sp_pro_with_hands.xml",
     "tienkung": ASSET_ROOT / "tienkung" / "mjcf" / "tienkung.xml",
     "pal_talos": ASSET_ROOT / "pal_talos" / "talos.xml",
 }
@@ -85,12 +86,18 @@ IK_CONFIG_DICT = {
         "unitree_g1_27dof": IK_CONFIG_ROOT / "bvh_mocap_to_g1.json",
         "unitree_g1_with_hands": IK_CONFIG_ROOT / "bvh_mocap_to_g1.json",
     },
+    "bvh_test_mocap":{
+        "adam_sp": IK_CONFIG_ROOT / "bvh_test_mocap_adam_sp.json",
+        "adam_sp_pro": IK_CONFIG_ROOT / "bvh_test_mocap_adam_sp_pro.json",
+        "adam_sp_pro_with_hands": IK_CONFIG_ROOT / "bvh_test_mocap_adam_sp_pro_hands.json",
+    },
     "bvh_opt_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
         "adam_sp_box": IK_CONFIG_ROOT / "bvh_opt_mocap_adam_sp.json",
     },
     "bvh_mocap_hands": {
         "adam_sp_pro": IK_CONFIG_ROOT / "bvh_mocap_adam_pro_hands.json",
+        "adam_sp_pro_with_hands": IK_CONFIG_ROOT / "bvh_mocap_adam_pro_hands.json",
     },
     "bvh_joint_mocap":{
         "adam_sp": IK_CONFIG_ROOT / "bvh_joint_mocap_adam_sp.json",
@@ -142,6 +149,7 @@ ROBOT_BASE_DICT = {
     "adam_sp": "pelvis",
     "adam_sp_box": "pelvis",
     "adam_sp_pro": "pelvis",
+    "adam_sp_pro_with_hands": "pelvis",
     "tienkung": "Base_link",
     "pal_talos": "base_link",
 }
@@ -166,6 +174,7 @@ VIEWER_CAM_DISTANCE_DICT = {
     "adam_sp": 3.0,
     "adam_sp_box": 3.0,
     "adam_sp_pro": 3.0,
+    "adam_sp_pro_with_hands": 3.0,
     "tienkung": 3.0,
     "pal_talos": 3.0,
 }

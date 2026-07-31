@@ -1,0 +1,867 @@
+{
+    "robot_root_name": "pelvis",
+    "human_root_name": "Hips",
+    "ground_height": 0.0,
+    "human_height_assumption": 0.7,
+    "use_ik_match_table1": true,
+    "use_ik_match_table2": false,
+    "human_scale_table": {
+        "Hips": 1.0,
+        "Spine1": 1.0,
+        "LeftUpLeg": 1.0,
+        "RightUpLeg": 1.0,
+        "LeftLeg": 1.0,
+        "RightLeg": 1.0,
+        "LeftFootMod": 1.0,
+        "RightFootMod": 1.0,
+        "LeftArm": 1.0,
+        "RightArm": 1.0,
+        "LeftForeArm": 1.0,
+        "RightForeArm": 1.0,
+        "LeftHand": 1.0,
+        "RightHand": 1.0,
+        "Head": 1.0,
+        "LeftHandThumb1": 1.0,
+        "LeftHandThumb2": 1.0,
+        "LeftHandThumb3": 1.0,
+        "LeftHandIndex1": 1.0,
+        "LeftHandIndex3": 1.0,
+        "LeftHandMiddle1": 1.0,
+        "LeftHandMiddle3": 1.0,
+        "LeftHandRing1": 1.0,
+        "LeftHandRing3": 1.0,
+        "LeftHandPinky1": 1.0,
+        "LeftHandPinky3": 1.0,
+        "RightHandThumb1": 1.0,
+        "RightHandThumb2": 1.0,
+        "RightHandThumb3": 1.0,
+        "RightHandIndex1": 1.0,
+        "RightHandIndex3": 1.0,
+        "RightHandMiddle1": 1.0,
+        "RightHandMiddle3": 1.0,
+        "RightHandRing1": 1.0,
+        "RightHandRing3": 1.0,
+        "RightHandPinky1": 1.0,
+        "RightHandPinky3": 1.0
+    },
+    "ik_match_table1": {
+        "pelvis": [
+            "Hips",
+            0,
+            50,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "thighLeft": [
+            "LeftUpLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "shinLeft": [
+            "LeftLeg",
+            0,
+            20,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "toeLeft": [
+            "LeftFootMod",
+            100,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.704,
+                0.0620,
+                -0.0620,
+                0.704
+            ]
+        ],
+        "thighRight": [
+            "RightUpLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "shinRight": [
+            "RightLeg",
+            0,
+            20,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "toeRight": [
+            "RightFootMod",
+            100,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.704,
+                0.0620,
+                -0.0620,
+                0.704
+            ]
+        ],
+        "torso": [
+            "Spine1",
+            0,
+            50,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "head": [
+            "Head",
+            0,
+            100,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.707,
+                0,
+                0,
+                0.707
+            ]
+        ],
+        "shoulderYawLeft": [
+            "LeftArm",
+            0,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "elbowLeft": [
+            "LeftForeArm",
+            0,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "wristRollLeft": [
+            "LeftHand",
+            20,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_thumb_proximal_base": [
+            "LeftHandThumb1",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_thumb_proximal": [
+            "LeftHandThumb2",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_thumb_intermediate": [
+            "LeftHandThumb3",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_index_proximal": [
+            "LeftHandIndex1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_index_distal": [
+            "LeftHandIndex3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_middle_proximal": [
+            "LeftHandMiddle1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_middle_distal": [
+            "LeftHandMiddle3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_ring_proximal": [
+            "LeftHandRing1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_ring_distal": [
+            "LeftHandRing3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_pinky_proximal": [
+            "LeftHandPinky1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "L_pinky_distal": [
+            "LeftHandPinky3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+            ]
+        ],
+        "shoulderYawRight": [
+            "RightArm",
+            0,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "elbowRight": [
+            "RightForeArm",
+            0,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "wristRollRight": [
+            "RightHand",
+            20,
+            20,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_thumb_proximal_base": [
+            "RightHandThumb1",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_thumb_proximal": [
+            "RightHandThumb2",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_thumb_intermediate": [
+            "RightHandThumb3",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_index_proximal": [
+            "RightHandIndex1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_index_distal": [
+            "RightHandIndex3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_middle_proximal": [
+            "RightHandMiddle1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_middle_distal": [
+            "RightHandMiddle3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_ring_proximal": [
+            "RightHandRing1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_ring_distal": [
+            "RightHandRing3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_pinky_proximal": [
+            "RightHandPinky1",
+            0,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ],
+        "R_pinky_distal": [
+            "RightHandPinky3",
+            0,
+            8,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ]
+        ]
+    },
+    "ik_match_table2": {
+        "pelvis": [
+            "Hips",
+            0,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "hipPitchLeft": [
+            "LeftUpLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "shinLeft": [
+            "LeftLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "foot_bottom_left": [
+            "LeftFootMod",
+            100,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "hipPitchRight": [
+            "RightUpLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "shinRight": [
+            "RightLeg",
+            10,
+            5,
+            [
+                -0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "foot_bottom_right": [
+            "RightFootMod",
+            100,
+            10,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "torso": [
+            "Spine1",
+            0,
+            10,
+            [
+                -0.1,
+                0.0,
+                0.0
+            ],
+            [
+                0.5,
+                -0.5,
+                -0.5,
+                -0.5
+            ]
+        ],
+        "shoulderPitchLeft": [
+            "LeftArm",
+            0,
+            30,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.70710678,
+                0.0,
+                -0.70710678,
+                0.0
+            ]
+        ],
+        "elbowLeft": [
+            "LeftForeArm",
+            20,
+            5,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.70710678,
+                0.0,
+                -0.70710678,
+                0.0
+            ]
+        ],
+        "keyframe_left_wrist_link": [
+            "LeftHand",
+            100,
+            5,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.70710678,
+                0.0,
+                -0.70710678,
+                0.0
+            ]
+        ],
+        "shoulderPitchRight": [
+            "RightArm",
+            0,
+            30,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.707106781,
+                0.0,
+                0.707106781
+            ]
+        ],
+        "elbowRight": [
+            "RightForeArm",
+            20,
+            5,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.707106781,
+                0.0,
+                0.707106781
+            ]
+        ],
+        "keyframe_right_wrist_link": [
+            "RightHand",
+            100,
+            5,
+            [
+                0.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.707106781,
+                0.0,
+                0.707106781
+            ]
+        ]
+    }
+}

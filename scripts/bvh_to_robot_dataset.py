@@ -43,10 +43,17 @@ def build_arg_parser():
         default="lafan1",
     )
     parser.add_argument(
+        "--already_z_up",
+        action="store_true",
+        default=False,
+        help="Skip Y-up→Z-up conversion (legacy already-z-up captures only).",
+    )
+    parser.add_argument(
         "--robot",
         choices=[
             "unitree_g1", "unitree_g1_with_hands", "booster_t1", "stanford_toddy",
-            "fourier_n1", "engineai_pm01", "pal_talos", "adam_sp_pro", "adam_sp", "adam_sp_box",
+            "fourier_n1", "engineai_pm01", "pal_talos",
+            "adam_sp_pro", "adam_sp_pro_with_hands", "adam_sp", "adam_sp_box",
         ],
         default="unitree_g1",
     )
@@ -86,7 +93,9 @@ def build_arg_parser():
 
 def retarget_one_file(bvh_file, args, out_ext):
     bvh_load_format, gmr_src_human = format_to_loader_and_src(args.format)
-    frames, actual_human_height = load_bvh_file(bvh_file, format=bvh_load_format)
+    frames, actual_human_height = load_bvh_file(
+        bvh_file, format=bvh_load_format, already_z_up=args.already_z_up
+    )
 
     start = max(0, args.start_frame)
     end = args.end_frame if args.end_frame is not None else len(frames)
